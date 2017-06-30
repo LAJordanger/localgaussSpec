@@ -1,0 +1,22 @@
+Type: Package
+Package: localgaussSpec
+Title: Local Gaussian spectral analysis
+Version: 0.0.0.9000
+Author: Lars Arne Jordanger
+Maintainer: Lars Arne Jordanger <lars.jordanger@gmail.com>
+Description: A package for the estimation and visualisation of local Gaussian
+    spectral densities.
+Remotes: github::LAJordanger/leanRcoding
+Depends:
+    R (>= 3.3.2)
+License: GPL-2
+Imports:	    
+Suggests:
+    leanRcoding,
+    knitr,
+    rmarkdown,
+    testthat
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
