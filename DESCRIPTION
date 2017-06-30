@@ -9,10 +9,10 @@ Description: A package for the estimation and visualisation of local Gaussian
 Remotes: github::LAJordanger/leanRcoding
 Depends:
     R (>= 3.3.2)
-License: GPL-2
+License: file LICENSE
 Imports:	    
+    leanRcoding
 Suggests:
-    leanRcoding,
     knitr,
     rmarkdown,
     testthat
