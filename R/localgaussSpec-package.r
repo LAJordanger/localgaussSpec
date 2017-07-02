@@ -54,11 +54,16 @@
 ## #'     set_seed error kill this_function list_array_join
 ## #'     list_array_dims array_to_list_array
 ## #' @importFrom utils capture.output combn head object.size str tail
-#' @importFrom plyr aaply
-#' @importFrom leanRcoding create_call error kill set_seed spy
+
+#' @importFrom digest digest
+#' @importFrom leanRcoding create_call error kill nested_if
+#'     restrict_array set_seed spy
+#' @importFrom logspline logspline plogspline
 #' @importFrom methods findMethods
+#' @importFrom plyr aaply
 #' @importFrom stats qnorm rnorm runif
-#' @importFrom stringr str_replace_all
+#' @importFrom stringr str_replace_all str_sub
+#' @importFrom utils combn
 
 ###############
 

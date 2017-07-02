@@ -11,11 +11,14 @@ Depends:
     R (>= 3.3.2)
 License: file LICENSE
 Imports:	    
+    digest,
     leanRcoding,
+    logspline,
     methods,
     plyr,
     stats,
-    stringr
+    stringr,
+    utils
 Suggests:
     knitr,
     rmarkdown,
