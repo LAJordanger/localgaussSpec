@@ -56,13 +56,14 @@
 ## #' @importFrom utils capture.output combn head object.size str tail
 
 #' @importFrom abind abind adrop
-#' @importFrom foreach %do% foreach getDoParWorkers
+#' @importFrom foreach %do% %dopar% foreach getDoParWorkers
 #' @importFrom digest digest
 #' @importFrom leanRcoding add_arrays append_dimensions
-#'     compare_spy_reports create_call error file_created
-#'     list_array_dims list_array_join kill multiply_arrays my_aaply
-#'     my_abind my_apply nested_if restrict_array set_seed
-#'     skeleton_list split_vector spy this_function update_formals
+#'     compare_spy_reports create_call dimnames_intersect error
+#'     file_created list_array_dims list_array_join kill
+#'     multiply_arrays my_aaply my_abind my_apply nested_if
+#'     restrict_array set_seed skeleton_list split_vector spy
+#'     this_function update_array update_formals
 #' @importFrom localgauss localgauss
 #' @importFrom logspline logspline plogspline
 #' @importFrom magrittr and or divide_by
