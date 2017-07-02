@@ -11,13 +11,21 @@ Depends:
     R (>= 3.3.2)
 License: file LICENSE
 Imports:	    
+    abind,
+    dfoptim,
     digest,
+    foreach,
     leanRcoding,
+    localgauss,
     logspline,
+    magrittr,
+    mvtnorm,
     methods,
     plyr,
     stats,
     stringr,
+    timeDate,
+    tseries,
     utils
 Suggests:
     knitr,

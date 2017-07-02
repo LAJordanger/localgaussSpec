@@ -55,15 +55,27 @@
 ## #'     list_array_dims array_to_list_array
 ## #' @importFrom utils capture.output combn head object.size str tail
 
+#' @importFrom abind abind adrop
+#' @importFrom foreach %do% foreach getDoParWorkers
 #' @importFrom digest digest
-#' @importFrom leanRcoding create_call error kill nested_if
-#'     restrict_array set_seed spy
+#' @importFrom leanRcoding add_arrays append_dimensions
+#'     compare_spy_reports create_call error file_created
+#'     list_array_dims list_array_join kill multiply_arrays my_aaply
+#'     my_abind my_apply nested_if restrict_array set_seed
+#'     skeleton_list split_vector spy this_function update_formals
+#' @importFrom localgauss localgauss
 #' @importFrom logspline logspline plogspline
+#' @importFrom magrittr and or divide_by
 #' @importFrom methods findMethods
+#' @importFrom mvtnorm dmvnorm pmvnorm
 #' @importFrom plyr aaply
-#' @importFrom stats qnorm rnorm runif
-#' @importFrom stringr str_replace_all str_sub
-#' @importFrom utils combn
+#' @importFrom stats kernel mad median optimise qnorm quantile rnorm
+#'     runif sd var
+#' @importFrom stringr str_detect str_replace str_replace_all
+#'     str_split str_sub
+#' @importFrom timeDate kurtosis skewness
+#' @importFrom tseries tsbootstrap
+#' @importFrom utils capture.output combn head object.size tail
 
 ###############
 
@@ -133,6 +145,11 @@ NULL
 #' @name TS_families
 #' @keywords internal
 
-TS_families <- list()
-###  REMINDER: This list will be filled up when the files starting
-###  with "TS_family_" are read during the loading of the package.
+TS_families <- if (exists("TS_families", inherits = FALSE)) {
+                   TS_families
+               } else
+                  list()
+
+
+###  REMINDER: This list will be created when the files starting with
+###  "TS_family_" are read during the loading of the package.
