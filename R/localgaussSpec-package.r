@@ -54,8 +54,11 @@
 ## #'     set_seed error kill this_function list_array_join
 ## #'     list_array_dims array_to_list_array
 ## #' @importFrom utils capture.output combn head object.size str tail
-#' @importFrom leanRcoding error kill
-#' @importFrom stats qnorm
+#' @importFrom plyr aaply
+#' @importFrom leanRcoding create_call error kill set_seed spy
+#' @importFrom methods findMethods
+#' @importFrom stats qnorm rnorm runif
+#' @importFrom stringr str_replace_all
 
 ###############
 

@@ -11,7 +11,11 @@ Depends:
     R (>= 3.3.2)
 License: file LICENSE
 Imports:	    
-    leanRcoding
+    leanRcoding,
+    methods,
+    plyr,
+    stats,
+    stringr
 Suggests:
     knitr,
     rmarkdown,
