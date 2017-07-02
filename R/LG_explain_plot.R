@@ -137,7 +137,7 @@ LG_explain_plot <- function(.plot_details,
                   collapse = " ")
         }
         ##  A very primitve solution at the moment for this part.
-        .header <- function(.text = "", n)
+        .header <- function(.text = "" ,n)
             paste("{\\Large ",
                   .text,
                   "} ",
