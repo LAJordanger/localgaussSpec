@@ -259,7 +259,7 @@ dmt <- function(
 TS_families <- c(
     TS_families,
     list(dmt =
-             list(package = "LocalCode",
+             list(package = "localgaussSpec",
                   fun = "dmt",
                   args = list(A = rbind(c(-2, -1, 0, 1),
                                         c(1/20, 1/3 - 1/20, 1/3, 1/3)),
@@ -312,7 +312,7 @@ dmt_bivariate <- function(n,
 TS_families <- c(
     TS_families,
     list(dmt_bivariate =
-             list(package = "LocalCode",
+             list(package = "localgaussSpec",
                   fun = "dmt_bivariate",
                   args = list(first_dmt =
                                   list(A = rbind(c(-2, -1, 0, 1),
@@ -432,7 +432,7 @@ TS_families <- c(
 ## TS_families <- c(
 ##     TS_families,
 ##     list(sample_rmgarch =
-##              list(package = "LocalCode",
+##              list(package = "localgaussSpec",
 ##                   fun = "sample_rmgarch",
 ##                   args = list(uspec = NULL,
 ##                               data = NULL,
@@ -520,7 +520,7 @@ TS_families <- c(
 ## ## ## ## TS_families <- c(
 ## ## ## ##     TS_families,
 ## ## ## ##     list(sample_dccgarch =
-## ## ## ##              list(package = "LocalCode",
+## ## ## ##              list(package = "localgaussSpec",
 ## ## ## ##                   fun = "sample_dccgarch",
 ## ## ## ##                   args = list(uspec = NULL,
 ## ## ## ##                               data = NULL,

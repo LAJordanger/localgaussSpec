@@ -285,7 +285,7 @@ dmt_extended <- function(
 TS_families <- c(
     TS_families,
     list(dmt_extended =
-             list(package = "LocalCode",
+             list(package = "localgaussSpec",
                   fun = "dmt_extended",
                   args = list(A = rbind(c(-2, -1, 0, 1),
                                         c(1/20, 1/3 - 1/20, 1/3, 1/3)),
