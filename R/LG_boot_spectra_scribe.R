@@ -244,22 +244,18 @@ LG_boot_spectra_scribe <- function(
             arg_list <- loop_list[[part]]$arg_list$compute
             ## ## ## ## subset_list <- loop_list[[part]]$arg_list$subset
 ###-------------------------------------------------------------------
-            ##  Create a local copy of 'list_array_join' (with the required
-            ##  arguments) for 'array_nodes' and '.class' to be used
-            ##  with 'foreach' when combining the pieces.
-            update_formals(.fun = list_array_join,
-                           array_nodes = localgaussSpec:::LG_default$result$array_nodes,
-                           .class =  localgaussSpec:::LG_default$class$array)
-#####  REMINDER: 'localgaussSpec:::LG_default' is needed here since the
-#####  formals are updated in a function from another package.
-#####  However, this solution triggers a note from devtools::check,
-#####  and as such an alternative approach must be applied, I guess it
-#####  should be sufficient to store local versions of the desired
-#####  values in the present environment?
-            ##  Perform the computation
-
-            ## capture_env() 
-            
+            ##  Create a local copy of 'list_array_join' (with the
+            ##  required arguments) for 'array_nodes' and '.class' to
+            ##  be used with 'foreach' when combining the pieces.
+            ##  Reminder: The formals are updated in a function from
+            ##  another package, and that is wy the required elements
+            ##  from 'LG_default' must be added as a list in this step.
+            update_formals(
+                .fun = list_array_join,
+                list(array_nodes = LG_default$result$array_nodes,
+                     .class =  LG_default$class$array),
+                .list = TRUE)
+            ##  Perform the computation.
             spectra <- foreach(
                 sub_piece = pieces,
                 .combine = list_array_join,
@@ -272,14 +268,6 @@ LG_boot_spectra_scribe <- function(
                                    LG_approx_extract_data)),
                         .cc_list = TRUE))
                 }
-
-            ## ## ## ## LG_boot_spectra_call <- create_call(
-            ## ## ## ##     .cc_fun = LG_boot_spectra,
-            ## ## ## ##     c(arg_list[[sub_piece]],
-            ## ## ## ##       list(LG_approx_extract_data =
-            ## ## ## ##                LG_approx_extract_data)),
-            ## ## ## ##     .cc_list = TRUE)
-            
             kill(list_array_join, sub_piece, pieces, arg_list, LG_approx_extract_data)
 ###-------------------------------------------------------------------
             ##  Save the result to file, with updated attributes
