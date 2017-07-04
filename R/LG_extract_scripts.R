@@ -47,19 +47,23 @@ LG_extract_scripts <- function(target_dir) {
                 sQuote(target_dir),
                 "must be empty!"))
     kill(.existing_content)
-    ## Copy the required files, and return information about the
-    ## number that has been copied.
-    .files <- file.copy(
+    ## Copy the required files.
+    file.copy(
         from = .source_path,
         to = target_dir,
         recursive = TRUE)
-    ##  Inform the reader about the status.
-    cat(sprintf("\n%i script-file%s copied to %s.\n",
-            sum(.files),
-            ifelse(test = sum(.files)>1,
-                   yes  = "s",
-                   no   = ""),
-            sQuote(target_dir)))
+    ##  Inform the reader about the number of files that have been
+    ##  copied.
+    .nr_files <- length(list.files(
+        path = target_dir,
+        full.names = TRUE,
+        recursive = TRUE))
+    cat(sprintf("\n%i script-file%s copied to the directory %s.\n",
+                .nr_files,
+                ifelse(test = .nr_files>1,
+                       yes  = "s",
+                       no   = ""),
+                sQuote(target_dir)))
 }
 
 ## Reminder from the testing:
