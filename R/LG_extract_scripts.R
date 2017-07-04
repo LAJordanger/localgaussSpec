@@ -69,7 +69,7 @@ LG_extract_scripts <- function(target_dir) {
 ## Reminder from the testing:
 ## target_dir <- "delete_this_after_use"
 ## dir.create(path = target_dir)
-## extract_scripts(target_dir = target_dir)
+## LG_extract_scripts(target_dir = target_dir)
 ## unlink(x = target_dir, recursive = TRUE, force = TRUE)
 
 
