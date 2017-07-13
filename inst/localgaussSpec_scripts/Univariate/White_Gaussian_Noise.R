@@ -1,11 +1,12 @@
-#' A simple reference example based on white Gaussian noise.  This
-#' version using 1974 observations.  Mimicking the `dmbp` length.
+#' White Gaussian noise of length 1974 (the same length as the
+#' 'dmbp'-example).  This example is the basis for figure 5 of
+#' "Nonlinear spectral analysis via the local Gaussian correlation".
 
 requireNamespace("localgaussSpec")
 
 ##  Specify the directory to use (must be an existing directory).
 
-main_dir <- "~/LG_DATA/Simulated/WGN"
+main_dir <- "~/LG_DATA"
 nr_samples <- 100
 
 
@@ -113,9 +114,9 @@ LG_Wrapper_Blocks_call <- leanRcoding::create_call(
 
 
 ## KIT
-rm(.TS_LG_object, lag_max, dl_vec, dl_length_out, bw_points,
-   .bws_fixed_only, omega_length_out, window,
-   arg_list_LG_Wrapper_Blocks, LG_Wrapper_Blocks_call)
+rm(.TS_LG_object, lag_max, bw_points, .bws_fixed_only,
+   omega_length_out, window, arg_list_LG_Wrapper_Blocks,
+   LG_Wrapper_Blocks_call)
 
 
 ################################################################################
