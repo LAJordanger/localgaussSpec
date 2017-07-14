@@ -85,8 +85,7 @@ TS_LG_object <- function (
     details = NULL,
     main_dir = "~/LG_DATA",  # The value from 'LG_default'
     save_dir = NULL,
-    .normalisation_rule = c("ecdf", "logspline"),
-    .adjustment_rule = "data",
+    .adjustment_rule = 0,
     .remove_ties = TRUE) {
 ###-------------------------------------------------------------------
     ##  A sanity check to see if multivariate 'TS_data' given as an
@@ -154,8 +153,6 @@ TS_LG_object <- function (
     }
     kill(content_boolean)
 ###-------------------------------------------------------------------
-    ##  Restrict '.normalisation_rule', to length one.
-    .normalisation_rule <- .normalisation_rule[1]
     ##  Collect the arguments related to the adjustment.
     .comp_arg_names <- setdiff(
         x = names(formals(LG_normalisation_adjustment)),
@@ -423,10 +420,9 @@ TS_LG_object <- function (
         ##  Create a normalised version 'TS_for_analysis'.
         TS_for_analysis <- LG_normalisation_adjustment(
             TS = TS,
-            .normalisation_rule = .normalisation_rule,
             .adjustment_rule = .adjustment_rule,
             .remove_ties = .remove_ties)
-        kill(.normalisation_rule, .adjustment_rule, .remove_ties)
+        kill(.adjustment_rule, .remove_ties)
         ##  Add 'OK_attribute'
         attr(TS_for_analysis, which = "OK_attribute") <-
             LG_default$OK_attribute
