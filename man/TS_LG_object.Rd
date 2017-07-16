@@ -5,8 +5,7 @@
 \title{Prepare a time series for a local Gaussian inspection}
 \usage{
 TS_LG_object(TS_data, details = NULL, main_dir = "~/LG_DATA",
-  save_dir = NULL, .normalisation_rule = c("ecdf", "logspline"),
-  .adjustment_rule = "data", .remove_ties = TRUE)
+  save_dir = NULL, .adjustment_rule = 0, .remove_ties = TRUE)
 }
 \arguments{
 \item{TS_data}{The time series data we will work upon.  This can
@@ -50,23 +49,13 @@ used, but only if no previous directories happens to have that
 name too -- if that should be the case, the program will
 terminate and inform the user about it.}
 
-\item{.normalisation_rule}{A value from \code{c("ecdf",
-"logspline")} that decides which kind of normalisation rule to
-use upon the data.  The "logspline"-alternative seems to give a
-more faithful representation of the data, but can encounter
-problems if there's "to much data" in some regions (which can
-occur for a long time series if some really extreme
-observations are present).  The "ecdf" doesn't encounter such
-problems, and it will also be much quicker to compute, which
-for larger time series might be an important aspect to keep in
-mind.}
-
-\item{.adjustment_rule}{Either a non-negative number, or "data".
-This will be added as an attribute to the result, and later on
-it will decide if any finite-sample adjustment should be used
-for the estimated local Gaussian autocorrelations.  Note that
-no adjustments will be performed when
-\code{.adjustment_rule=0}.}
+\item{.adjustment_rule}{A non-negative number that will be stored
+as an attribute that later on can be used in order to add some
+additional scaling (in addition to the one from the windows
+function) when the estimated local Gaussian auto- and
+cross-correlations are used for the computation of the local
+Gaussian spectra.  The default value \code{0} ensures that only
+the scaling from the window-function is used.}
 
 \item{.remove_ties}{A logical value, default \code{TRUE}, in which
 case the presence of ties will trigger a minor perturbation of
