@@ -8,7 +8,7 @@ Description: A package for the estimation and visualisation of local Gaussian
     spectral densities.
 Remotes: github::LAJordanger/leanRcoding
 Depends:
-    R (>= 3.2.4)
+    R (>= 3.3.3)
 License: file LICENSE
 Imports:	    
     abind,
