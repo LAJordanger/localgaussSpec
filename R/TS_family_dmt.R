@@ -359,85 +359,84 @@ TS_families <- c(
 ## ##  if the argument to 'gogarchspec' differs a bit from the other two
 ## ##  cases.  The difference seems to be that the 'gogarchspec' does not 
 
-## sample_rmgarch <- function(n.sim = 100,
-##                            m.sim = 10,
-##                            uspec = NULL,
-##                            data = NULL,
-##                            rseed = NULL) {
-##     if (! requireNamespace("rmgarch", quietly = TRUE))
-##         error(c("The package",
-##                 sQuote("rmgarch"),
-##                 "must be loaded for this function to work."))
-## ###-------------------------------------------------------------------
-##     ##  Sanity-check 'data'
-##     if (is.null(data))
-##         error(.argument = "data",
-##               c("This argument can not be ",
-##                 sQuote("NULL")))
-## ###-------------------------------------------------------------------
-##     ##  Reminder: 'uspec' should be created in advance, by means of
-##     ##  'multispec' and 'ugarchspec', but if they are missing, then
-##     ##  the code below gives a simple default.
-##     if (is.null(uspec)) {
-##         uspec <- rugarch::ugarchspec(
-##                               mean.model = list(armaOrder = c(0,0)),
-##                               variance.model = list(garchOrder = c(1,1), model = "sGARCH"), 
-##                               distribution.model = "norm")
-##         uspec <- rugarch::multispec(replicate(n = min(dim(data)),
-##                                               expr = uspec))
-##     }
-## ###-------------------------------------------------------------------
-##     ##  Create the object needed for the fitting
-##     spec1 <- rmgarch::cgarchspec(uspec = uspec,
-##                                  VAR = TRUE,
-##                                  robust = FALSE,
-##                                  lag = 2,
-##                                  lag.max = NULL, 
-##                                  lag.criterion = c("AIC", "HQ", "SC", "FPE"),
-##                                  external.regressors = NULL,
-##                                  robust.control = list("gamma" = 0.25, "delta" = 0.01, "nc" = 10, "ns" = 500), 
-##                                  dccOrder = c(1,1),
-##                                  asymmetric = FALSE,
-##                                  distribution.model = list(copula = c("mvnorm", "mvt")[1], 
-##                                                            method = c("Kendall", "ML")[2],
-##                                                            time.varying = TRUE, 
-##                                                            transformation = c("parametric", "empirical", "spd")[1]))
-## ###-------------------------------------------------------------------
-##     ##  Find the optimal parameters for the fit to the given data.
-##     fit1 <- rmgarch::cgarchfit(spec = spec1,
-##                                data = data,
-##                                cluster = NULL,
-##                                fit.control = list(eval.se = FALSE))
-## ###-------------------------------------------------------------------
-##     ##  Simulate the desired data
-##     sim1 <- rmgarch::cgarchsim(fit = fit1,
-##                                n.sim = n.sim,
-##                                m.sim = m.sim,
-##                                startMethod = "unconditional",
-##                                rseed = rseed,
-##                                cluster = NULL)
-## ###-------------------------------------------------------------------
-##     ##  Extract and return the part with the simulated data, stuff
-##     ##  everything into one array, such that the content is given as
-##     ##  the first dimension, the observations as the second and the
-##     ##  variables as the third.  The dimension-names will be added
-##     ##  when this function is called from 'TS_sample'.
-##     do.call(what = abind::abind,
-##             args = c(sim1@msim$simRes,
-##                      along = 0))
-## }
-    
+sample_rmgarch <- function(n.sim = 100,
+                           m.sim = 10,
+                           uspec = NULL,
+                           data = NULL,
+                           rseed = NULL) {
+    if (! requireNamespace("rmgarch", quietly = TRUE))
+        error(c("The package",
+                sQuote("rmgarch"),
+                "must be loaded for this function to work."))
+###-------------------------------------------------------------------
+    ##  Sanity-check 'data'
+    if (is.null(data))
+        error(.argument = "data",
+              c("This argument can not be ",
+                sQuote("NULL")))
+###-------------------------------------------------------------------
+    ##  Reminder: 'uspec' should be created in advance, by means of
+    ##  'multispec' and 'ugarchspec', but if they are missing, then
+    ##  the code below gives a simple default.
+    if (is.null(uspec)) {
+        uspec <- rugarch::ugarchspec(
+                              mean.model = list(armaOrder = c(0,0)),
+                              variance.model = list(garchOrder = c(1,1), model = "sGARCH"), 
+                              distribution.model = "norm")
+        uspec <- rugarch::multispec(replicate(n = min(dim(data)),
+                                              expr = uspec))
+    }
+###-------------------------------------------------------------------
+    ##  Create the object needed for the fitting
+    spec1 <- rmgarch::cgarchspec(uspec = uspec,
+                                 VAR = TRUE,
+                                 robust = FALSE,
+                                 lag = 2,
+                                 lag.max = NULL, 
+                                 lag.criterion = c("AIC", "HQ", "SC", "FPE"),
+                                 external.regressors = NULL,
+                                 robust.control = list("gamma" = 0.25, "delta" = 0.01, "nc" = 10, "ns" = 500), 
+                                 dccOrder = c(1,1),
+                                 asymmetric = FALSE,
+                                 distribution.model = list(copula = c("mvnorm", "mvt")[1], 
+                                                           method = c("Kendall", "ML")[2],
+                                                           time.varying = TRUE, 
+                                                           transformation = c("parametric", "empirical", "spd")[1]))
+###-------------------------------------------------------------------
+    ##  Find the optimal parameters for the fit to the given data.
+    fit1 <- rmgarch::cgarchfit(spec = spec1,
+                               data = data,
+                               cluster = NULL,
+                               fit.control = list(eval.se = FALSE))
+###-------------------------------------------------------------------
+    ##  Simulate the desired data
+    sim1 <- rmgarch::cgarchsim(fit = fit1,
+                               n.sim = n.sim,
+                               m.sim = m.sim,
+                               startMethod = "unconditional",
+                               rseed = rseed,
+                               cluster = NULL)
+###-------------------------------------------------------------------
+    ##  Extract and return the part with the simulated data, stuff
+    ##  everything into one array, such that the content is given as
+    ##  the first dimension, the observations as the second and the
+    ##  variables as the third.  The dimension-names will be added
+    ##  when this function is called from 'TS_sample'.
+    do.call(what = abind::abind,
+            args = c(sim1@msim$simRes,
+                     along = 0))
+}
 
-## ##  Add the new function to "TS_families".
-## TS_families <- c(
-##     TS_families,
-##     list(sample_rmgarch =
-##              list(package = "localgaussSpec",
-##                   fun = "sample_rmgarch",
-##                   args = list(uspec = NULL,
-##                               data = NULL,
-##                               rseed = NULL),
-##                   size_name = "n.sim")))
+##  Add the new function to "TS_families".
+TS_families <- c(
+    TS_families,
+    list(sample_rmgarch =
+             list(package = "localgaussSpec",
+                  fun = "sample_rmgarch",
+                  args = list(uspec = NULL,
+                              data = NULL,
+                              rseed = NULL),
+                  size_name = "n.sim")))
 
 
 
