@@ -2,153 +2,141 @@
 #' used in figures 11-14 of
 #' "Nonlinear spectral analysis via the local Gaussian correlation".
 
-##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
-##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
-##  alternatives.
+###############
+##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
+##  purpose is to provide the code needed for the reproduction of one
+##  or more of the examples used in the two papers "Nonlinear spectral
+##  analysis via the local Gaussian correlation" and "Nonlinear
+##  cross-spectrum analysis via the local Gaussian correlation".  The
+##  present setup contains a wider range of input parameters than
+##  those used in the figures of the previous mentioned papers, which
+##  enables the interested reader to see how the result varies based
+##  on these input parameters.
+#####
+##  WARNING: The user that want to adjust this script in order to
+##  investigate other time series (or a wider range of input
+##  parameters for the present example) should keep in mind that the
+##  selected input parameters must take into account the length of the
+##  investigated example. In particular, see the before mentioned
+##  papers for a discussion of how small-sample variation might occur
+##  even for long samples if the coordinates of the point of interest
+##  correspond to low or high quantiles.
+###############
 
-.b <- c(0.5, 0.75, 1)
+##############################
 
-##   Number of bootstrap replicates and block length
-nb <- 100
-block_length <- 100
+###############
+## Check that the required package(s) are available.
+.required_packages <- c("localgaussSpec")
+.successful <- vapply(
+    X = .required_packages,
+    FUN = requireNamespace,
+    quietly = TRUE,
+    FUN.VALUE = logical(1))
+if (! all(.successful)) {
+    stop(sprintf(
+        fmt = "\nThe following package%s must be installed for this script to work: %s.",
+        ifelse(test = sum(!.successful) > 1,
+               yes  = "s",
+               no   = ""),
+        paste(paste("\n\t",
+                    names(.successful[!.successful]),
+                    sep = ""),
+              collapse = ", ")))
+}
+rm(.required_packages, .successful)
+###############
 
-require(localgaussSpec)
-require(rugarch)
+##############################
 
+###############
+##  Add comment(s) related to the need for a parallel-backend suitable
+##  for the operative system.
+###############
 
-data("dmbp")
-
-##  Specify the directory to use (must be an existing directory).
+###############
+##  Specify the directory in which the resulting file-hierarchy will
+##  be stored. The default directory "LG_DATA" will be created if it
+##  does not exist, whereas other storage-alternatives must be created
+##  manually before this script is called.
 
 main_dir <- "~/LG_DATA"
+###############
 
-##  Specify the adjustment rule to use.
-.adjustment_rule <- 0
-## .adjustment_rule <- "data"
-## .adjustment_rule <- 2^(-1/sqrt(3))
+##############################
 
+###############
+##  Extract the desired time series needed for the present
+##  investigation from 'dmbp', and save it into the file-hierarchy.
+
+
+.TS <- localgaussSpec::dmbp[, "V1"]
+##  (The 'dmbp' in the 'localgaussSpec'-package is a copy of the one
+##  from the 'rugarch'-package.  It has been copied in order for this
+##  script to run without the need for installating 'rugarch' first.)
 
 set.seed(136)
-.TS <- dmbp[, "V1"]
-.TS_object <- TS_LG_object(
+tmp_TS_LG_object <- TS_LG_object(
     TS_data = .TS,
-    main_dir = main_dir,
-    .adjustment_rule = .adjustment_rule)
+    main_dir = main_dir)
+rm(.TS)
+###############
 
-##  KIT
-rm(.adjustment_rule, .TS, dmbp)
+##############################
 
-##  Define some values
+###############
+##  Compute the local Gaussian spectral densities.  This requires
+##  first that the local Gaussian correlations of interest must be
+##  computed, which implies that the points of interest must be
+##  selected together with information about the bandwidth and the
+##  number of lags. WARNING: The type of approximation must also be
+##  specified, i.e. the argument 'LG_type', where the options are
+##  "par_five" and "par_one".  The "five" and "one" refers to the
+##  number of free parameters used in the approximating bivariate
+##  local Gaussian density.  The results should be equally good for
+##  Gaussian time series, but the "par_one" option will in general
+##  produce dubious/useless results.  Only use "par_one" if it is of
+##  interest to compare the result with "par_five", otherwise avoid it
+##  as it most likely will be a waste of computational resources.
 
-lag_max <- 20
-
-omega_length_out <- 2^6
-##  Place 2/3 of the points between 0 and 0.1, and the rest can be
-##  used in the intervall between 0.1 and 0.5.
-omega_vec <- local({
-    .first <- floor(2/3 * omega_length_out)
-    unique(c(seq(from = 0,
-                 to = 0.1,
-                 length.out = .first),
-             seq(from = 0.1,
-                 to = 0.5,
-                 length.out = omega_length_out - .first + 1)))
-})
-omega_length_out <- NULL
-
-
-.LG_type <- "par_five"
-
-#####  TEST new solution
+.LG_type <- c("par_five", "par_one")
 .LG_points <- LG_select_points(
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
-    .shape = c(5, 5))
+    .shape = c(3, 3))
+lag_max <- 20
+##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
+##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
+##  alternatives.  
+.b <- c(0.5, 0.75, 1)
 
 
-arg_list_LG_Wrapper_Original <- list(
-    main_dir = main_dir,
-    data_dir = .TS_object$TS_info$save_dir,
-    TS = .TS_object$TS_info$TS,
-    lag_max = lag_max,
-    LG_points        = .LG_points,
-    .bws_mixture = c("mixture", "local", "global"),
-    bw_points = c(30, 50),
-    .bws_fixed = .b,
-    .bws_fixed_only = TRUE,    
-    omega_vec = omega_vec,
-    omega_length_out = omega_length_out,
-    window = "Tukey",
-    LG_type = .LG_type,
-    cut_vec = NULL)
+##  Some input parameters that gives the frequencies to be
+##  investigated and the smoothing to be applied when the estimates of
+##  the local Gaussian spectra are computed.
 
-##  KIT
+omega_length_out <- 2^6
+window <- "Tukey"
 
-rm(.TS_object, lag_max, omega_vec, omega_length_out, .LG_type)
-
-
+##  Do the main computation on the sample at hand.
 LG_WO <- LG_Wrapper_Original(
-    main_dir = arg_list_LG_Wrapper_Original$main_dir,
-    data_dir = arg_list_LG_Wrapper_Original$data_dir,
-    TS = arg_list_LG_Wrapper_Original$TS,
-    lag_max = arg_list_LG_Wrapper_Original$lag_max,
-    LG_points = arg_list_LG_Wrapper_Original$LG_points,
-    .bws_mixture = arg_list_LG_Wrapper_Original$.bws_mixture,
-    bw_points = arg_list_LG_Wrapper_Original$bw_points,
-    .bws_fixed = arg_list_LG_Wrapper_Original$.bws_fixed,
-    .bws_fixed_only = arg_list_LG_Wrapper_Original$.bws_fixed_only,
-    omega_vec = arg_list_LG_Wrapper_Original$omega_vec,
-    omega_length_out = arg_list_LG_Wrapper_Original$omega_length_out,
-    window = arg_list_LG_Wrapper_Original$window,
-    LG_type = arg_list_LG_Wrapper_Original$LG_type,
-    cut_vec = arg_list_LG_Wrapper_Original$cut_vec)
+    main_dir = main_dir,
+    data_dir = tmp_TS_LG_object$TS_info$save_dir,
+    TS = tmp_TS_LG_object$TS_info$TS,
+    lag_max = lag_max,
+    LG_points = .LG_points,
+    .bws_fixed = .b,
+    .bws_fixed_only = TRUE,
+    omega_length_out = omega_length_out,
+    window = window,
+    LG_type = .LG_type)
+rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type)
 
 
-##  str(LG_WO)
-
-##  KIT
-rm(arg_list_LG_Wrapper_Original)
-
-################################################################################
-##  The bootstrap-part, recycle all the arguments specified above.
-
-arg_list_LG_Wrapper_Bootstrap <- list(
-    main_dir        = main_dir,
-    spectra_dir     = LG_WO$spectra_note$data_dir,
-    nb              = nb,
-    boot_type       = NULL,
-    block_length    = block_length,
-    boot_seed       = NULL,
-    all_statistics  = FALSE,
-    log_            = FALSE,
-    lag_max         = NULL,
-    LG_points       = NULL,
-    .bws_mixture    = NULL,
-    bw_points       = NULL,
-    .bws_fixed      = NULL,
-    .bws_fixed_only = NULL,
-    content_details = NULL,
-    LG_type         = NULL,
-    omega_vec       = NULL,
-    window          = NULL,
-    cut_vec         = NULL,
-    threshold       = 100)
-
-## rm(nb, block_length)
-
-## LG_Wrapper_Bootstrap_call <- create_call(
-##     .cc_fun = LG_Wrapper_Bootstrap,
-##     arg_list_LG_Wrapper_Bootstrap,
-##     .cc_list = TRUE)
-
-## LG_Wrapper_Bootstrap_call <- ToolBox::create_call(
-##     .cc_fun = LG_Wrapper_Bootstrap,
-##     arg_list_LG_Wrapper_Bootstrap,
-##     .cc_list = TRUE)
-
-
-
-
+##  Specify the details needed for the construction of the bootstrapped
+##  pointwise confidence intervals, and do the computations.
+nb <- 100
+block_length <- 100
 
 set.seed(1421236)
 LG_WB <- LG_Wrapper_Bootstrap(
@@ -172,48 +160,64 @@ LG_WB <- LG_Wrapper_Bootstrap(
     window          = NULL,
     cut_vec         = NULL,
     threshold       = 100)
+rm(nb, block_length, LG_WO)
 
+##  Note: The 'NULL'-arguments ensures that the same values are used
+##  as in the computation based on the sample itself.  It is possible
+##  to restrict the arguments to a subset if that is desirable.  In
+##  particular: It might not be to costly to compute the local
+##  Gaussian spectral density for a wide range of input parameters
+##  when only the original sample is considered, and it could thus be
+##  of interest to first investigate that result before deciding upon
+##  which subsets of the selected parameter-space that is worthwhile
+##  to look closer upon.
+###############
 
-## str(LG_WB)
+##############################
 
-## KIT
-rm(LG_WO, arg_list_LG_Wrapper_Bootstrap, LG_Wrapper_Bootstrap_call)
-
-################################################################################
-##  Collect the pieces, and find the argument needed by `LG_shiny`.
+###############
+##  Collect the required pieces
 
 data_dir_for_LG_shiny <- LG_collect_orig_and_boot(
     main_dir = main_dir,
     data_dir = LG_WB$boot_spectra_note$data_dir)
-
-##  KIT
 rm(LG_WB)
 
-
-################################################################################
-##  Inspect the result:
-
-
+##  And start the shiny application for an interactive inspection of
+##  the result.
 
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
     data_dir = data_dir_for_LG_shiny))
 
 
-##  Reminder: 'runApp' is used in order for the interactive
-##  investigation to start when this file is sourced.  It's sufficient
-##  to use 'LG_shiny' directly when doing this from the command line.
+################################################################################
+###### NOTE:
+###  The interaction with the file-hierarchy contains tests that
+###  prevents previously computed local Gaussian correlations to be
+###  computed all over again if this script is sourced a second time,
+###  but the initial computation of '.TS_sample' will be performed
+###  every time the script is sourced.  It can thus be of interest to
+###  note that the 'dump'-function might be used to capture the
+###  'data_dir'-argument, such that the call to the shiny-application
+###  can be done without the need for the script to be sourced
+###  directly.  The result for the present script (based on the
+###  original input parameters) are given below (in the case where
+###  this script is used before the script 'dmbp_200_lags.R').
 
-##  Hint: 'dump' used on 'data_dir_for_LG_shiny' gives the code needed
-##  to recreate it, and this might be handy later on if one want to
-##  start directly with 'LG_shiny' Se the code below for how this
-##  looks like for this example.
 
 ##  dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## structure(c("490635359ea5f932d4a3b7932e7934a6", "Approx__1", 
+## structure(c("234f779b58b1cf8aee6ebcdb5d6853e0", "Approx__1", 
 ## "Boot_Approx__1", "Boot_Spectra__1"), .Names = c("ts.dir", "approx.dir", 
 ## "boot.approx.dir", "boot.spectra.dir"))
 
-##  KIT
-rm(data_dir_for_LG_shiny)
+
+#####
+## Note that 'data_dir' only contains the specification of the
+## in-hierarchy part of the required path, and this path is stored as
+## a vector.  The reason for this is that it should be possible to
+## move the storage directory 'main_dir' to another location on your
+## computer, or even move it to a computer using another OS than the
+## one used for the original computation.
+################################################################################

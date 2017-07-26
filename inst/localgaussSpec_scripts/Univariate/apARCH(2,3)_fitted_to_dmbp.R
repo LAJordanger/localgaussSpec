@@ -5,203 +5,250 @@
 #' investigated).  This example is used in figures 10, 12-14 of
 #' "Nonlinear spectral analysis via the local Gaussian correlation".
 
-##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
-##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
-##  alternatives.
+###############
+##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
+##  purpose is to provide the code needed for the reproduction of one
+##  or more of the examples used in the two papers "Nonlinear spectral
+##  analysis via the local Gaussian correlation" and "Nonlinear
+##  cross-spectrum analysis via the local Gaussian correlation".  The
+##  present setup contains a wider range of input parameters than
+##  those used in the figures of the previous mentioned papers, which
+##  enables the interested reader to see how the result varies based
+##  on these input parameters.
+#########################
+#####  EXCEPTION: Note that this includes code that updates the
+#####  functions to the 'localgaussSpec'-package.  This solution has
+#####  been used to avoid that the 'rugarch'-package has to be
+#####  installed in order to use the 'localgaussSpec'-package.
+#########################
+#####
+##  WARNING: The user that want to adjust this script in order to
+##  investigate other time series (or a wider range of input
+##  parameters for the present example) should keep in mind that the
+##  selected input parameters must take into account the length of the
+##  investigated example. In particular, see the before mentioned
+##  papers for a discussion of how small-sample variation might occur
+##  even for long samples if the coordinates of the point of interest
+##  correspond to low or high quantiles.
+###############
 
+##############################
 
-.b <- c(0.5, 0.75, 1)
+###############
+## Check that the required package(s) are available.
+.required_packages <- c("localgaussSpec", "rugarch")
+.successful <- vapply(
+    X = .required_packages,
+    FUN = requireNamespace,
+    quietly = TRUE,
+    FUN.VALUE = logical(1))
+if (! all(.successful)) {
+    stop(sprintf(
+        fmt = "\nThe following package%s must be installed for this script to work: %s.",
+        ifelse(test = sum(!.successful) > 1,
+               yes  = "s",
+               no   = ""),
+        paste(paste("\n\t",
+                    names(.successful[!.successful]),
+                    sep = ""),
+              collapse = ", ")))
+}
+rm(.required_packages, .successful)
+###############
 
+##############################
+
+###############
+##  Add comment(s) related to the need for a parallel-backend suitable
+##  for the operative system.
+###############
+
+###############
+##  Specify the directory in which the resulting file-hierarchy will
+##  be stored. The default directory "LG_DATA" will be created if it
+##  does not exist, whereas other storage-alternatives must be created
+##  manually before this script is called.
 
 main_dir <- "~/LG_DATA"
+###############
+
+##############################
+
+###############
+##  Specify the model to be used based on the 'dmbp'-data.  First
+##  specify the model '.spec' without any parameters, then fit it to
+##  'dmbp', and finally import the fitted coeffisients back into into
+##  the specification '.spec'
+
+data("dmbp")
+##  Specify the model:
+.spec <- rugarch::ugarchspec(
+    variance.model =
+        list(model = "fGARCH",
+             garchOrder = c(2, 3),
+             submodel = "APARCH",
+             external.regressors = NULL,
+             variance.targeting = FALSE),
+    mean.model =
+        list(armaOrder = c(0, 0),
+             include.mean = TRUE,
+             archm = FALSE,
+             archpow = 1,
+             arfima = FALSE,
+             external.regressors = NULL,
+             archex = FALSE),
+    distribution.model = "sstd",
+    start.pars = list(),
+    fixed.pars = list())
+##  Fit the model to the observations:
+.fitted <- rugarch::ugarchfit(
+    spec =  .spec,
+    data = dmbp[, "V1"],
+    solver = "hybrid")
+
+##  Update the coefficients:
+rugarch::setfixed(.spec) <- rugarch::coef(.fitted)
+rm(.fitted)
+
+##  NOTE: The present code shows how one particular GARCH-type model
+##  can be fitted to the 'dmbp'-data.  The original investigation
+##  included code that tested a wide variety of alternatives, before
+##  the present apARCH(2,3)-model in the end was selected as the one
+##  of interest to use in "Nonlinear spectral analysis via the local
+##  Gaussian correlation".
+###############
+
+##############################
+
+###############
+##  Simulate 'nr_samples' samples of length 'N' from the time series
+##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
+##  package-maintainer if additional models are of interest to
+##  investigate.)
 
 nr_samples <- 100
-
-
-
-require(localgaussSpec)
-require(rugarch)
-require(stringr)
-
-##  Perhaps make a more direct analysis of this later on...
-
-##  Avoid loading huge file if not necessary.
-.loaded <- exists("env_f9563e9eab9aa395422585b15fcf00a4")
-if (! .loaded)
-    load("~/LG_DATA/rugarh_fitted_models/f9563e9eab9aa395422585b15fcf00a4_dmbp.Rda")
-
-## ls(env_f9563e9eab9aa395422585b15fcf00a4$sub_env_e62ff2b8137d5b1c1a516f87be25859a,
-##    all.names = TRUE)
-## ##  [1] "arg_grid"               "arg_grid_ARFIMA"        "arg_grid_fGARCH"       
-## ##  [4] "arg_grid_fGARCH_ARFIMA" ".coef"                  ".convergence"          
-## ##  [7] ".error_report"          ".infocriteria"          ".likelihood"           
-## ## [10] "spec"                   "TS_sample_spec"        
-
-##  Create a shortcut to avoid to cumbersome code later on.
-
-.._env <- env_f9563e9eab9aa395422585b15fcf00a4$sub_env_e62ff2b8137d5b1c1a516f87be25859a
-
-###  For the purpose of the example to be used at ISNPS-2016, select
-###  an ARFIMA(0,0,0)-model, and it might also be nice to inclue a
-###  model using APARCH (I think).
-
-##  A minor intermezzo to restrict to the models having these keys.
-.key1 <- "APARCH"
-.key2 <- "ARFIMA(0,0,0)"
-
-
-.match_1 <- str_detect(string = names(.._env$.likelihood),
-                       pattern = fixed(.key1))
-.match_2 <- str_detect(string = names(.._env$.likelihood),
-                       pattern = fixed(.key2))
-
-
-sum(.match_1)
-## [1] 1944
-sum(.match_2)
-## [1] 1474
-
-.both <- as.logical(.match_1 * .match_2)
-
-sum(.both)
-## [1] 108
-
-.targets <- .._env$.likelihood[.both]
-
-##  What to select?  I guess it might be of interst to use one having
-
-.targets[10]
-## fGARCH(2,3)_APARCH_ARFIMA(0,0,0)_sstd 
-##                             -976.3838 
-
-.model_name <- "fGARCH(2,3)_APARCH_ARFIMA(0,0,0)_sstd"
-
-## ##  Alternatively, use the one with the lowest value
-## .model_name <- tail(names(.targets), n = 1)
-## ##  Not promising.
-
-## ##  The first one instead?
-## .model_name <- head(names(.targets), n = 1)
-## ##  Not looking that good either.
-
-##  Extract the specification corresponding to this model
-
-.spec <- .._env$TS_sample_spec[[.model_name]]
-
-##  Set the name of the save dir
-##  save_dir <- .model_nam
-save_dir <- NULL
-
-
-################################################################################
-##  Time to test this for computations
-TS_key <- "rugarch"
 N <- 1974
-lag_max <- 20
-bw_points <- 25
-omega_length_out <- 2^6
-window <- "Tukey"
-.normalisation_rule <- "ecdf"
-.adjustment_rule <- 0
-
+TS_key <- "rugarch"
 .seed_for_sample <- 4624342
+set.seed(.seed_for_sample)
+##  Generate the sample.
+.TS_sample <- TS_sample(
+    TS_key = TS_key,
+    N = N, 
+    n.start = 100,
+    nr_samples = nr_samples,
+    spec = .spec,
+    .seed = NULL)
+rm(nr_samples, N, .seed_for_sample)
+##  Create a unique 'save_dir' and save 'TS_sample' to the
+##  file-hierarchy.  (Note: )
+save_dir <- paste(TS_key,
+                  digest::digest(.TS_sample$TS),
+                  sep = "_")
+##  Save to file and update file-hierarchy.
+tmp_TS_LG_object <- TS_LG_object(
+    TS_data = .TS_sample,
+    main_dir = main_dir,
+    save_dir = save_dir,
+    .remove_ties = TRUE)
+rm(TS_key, .TS_sample, save_dir)
+###############
 
+##############################
+
+###############
+##  Compute the local Gaussian spectral densities.  This requires
+##  first that the local Gaussian correlations of interest must be
+##  computed, which implies that the points of interest must be
+##  selected together with information about the bandwidth and the
+##  number of lags. WARNING: The type of approximation must also be
+##  specified, i.e. the argument 'LG_type', where the options are
+##  "par_five" and "par_one".  The "five" and "one" refers to the
+##  number of free parameters used in the approximating bivariate
+##  local Gaussian density.  The results should be equally good for
+##  Gaussian time series, but the "par_one" option will in general
+##  produce dubious/useless results.  Only use "par_one" if it is of
+##  interest to compare the result with "par_five", otherwise avoid it
+##  as it most likely will be a waste of computational resources.
+
+.LG_type <- c("par_five", "par_one")
 .LG_points <- LG_select_points(
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
-    .shape = c(5, 5))
+    .shape = c(3, 3))
+lag_max <- 20
+##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
+##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
+##  alternatives.  
+.b <- c(0.5, 0.75, 1)
 
-set.seed(.seed_for_sample)
 
-##  Perform the standard sequence
-arg_list_TS_LG_object <- list(
-    TS_data = TS_sample(
-        TS_key = TS_key,
-        N = N,
-        n.start = 100,
-        nr_samples = nr_samples,
-        spec = .spec,
-        .seed = NULL),
-    main_dir = main_dir,
-    save_dir = save_dir,
-    .normalisation_rule = .normalisation_rule,
-    .adjustment_rule = .adjustment_rule,
-    .remove_ties = TRUE)
+##  Some input parameters that gives the frequencies to be
+##  investigated and the smoothing to be applied when the estimates of
+##  the local Gaussian spectra are computed.
 
-##  Fix the saving to file.
-tmp_TS_LG_object <- TS_LG_object(
-    TS_data = arg_list_TS_LG_object$TS_data,
-    main_dir = arg_list_TS_LG_object$main_dir,
-    save_dir = arg_list_TS_LG_object$save_dir,
-    .normalisation_rule = arg_list_TS_LG_object$.normalisation_rule,
-    .adjustment_rule = arg_list_TS_LG_object$.adjustment_rule,
-    .remove_ties = arg_list_TS_LG_object$.remove_ties)
+omega_length_out <- 2^6
+window <- "Tukey"
 
-##  Set up the arguments for the next step.
-arg_list_LG_Wrapper_Blocks <- list(
+##  Do the main computation.  
+.tmp_uc_LG_Wrapper_Blocks <- LG_Wrapper_Blocks(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
     lag_max = lag_max,
     LG_points = .LG_points,
-    .bws_mixture = c("mixture", "local", "global"),
-    bw_points = bw_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
-    omega_vec = NULL,
     omega_length_out = omega_length_out,
     window = window,
-    LG_type = "par_five",
-    ## LG_type = c("par_five", "par_one"),
-    cut_vec = NULL)
-##  Do the main computation.
-.tmp_uc_LG_Wrapper_Blocks <- LG_Wrapper_Blocks(
-    main_dir = arg_list_LG_Wrapper_Blocks$main_dir,
-    data_dir = arg_list_LG_Wrapper_Blocks$data_dir,
-    TS = arg_list_LG_Wrapper_Blocks$TS,
-    lag_max = arg_list_LG_Wrapper_Blocks$lag_max,
-    LG_points = arg_list_LG_Wrapper_Blocks$LG_points,
-    .bws_mixture = arg_list_LG_Wrapper_Blocks$.bws_mixture,
-    bw_points = arg_list_LG_Wrapper_Blocks$bw_points,
-    .bws_fixed = arg_list_LG_Wrapper_Blocks$.bws_fixed,
-    .bws_fixed_only = arg_list_LG_Wrapper_Blocks$.bws_fixed_only,
-    omega_vec = arg_list_LG_Wrapper_Blocks$omega_vec,
-    omega_length_out = arg_list_LG_Wrapper_Blocks$omega_length_out,
-    window = arg_list_LG_Wrapper_Blocks$window,
-    LG_type = arg_list_LG_Wrapper_Blocks$LG_type,
-    cut_vec = arg_list_LG_Wrapper_Blocks$cut_vec)
+    LG_type = .LG_type)
+rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type)
+###############
 
+##############################
+
+###############
 ##  Collect the required pieces
-data_dir <- .tmp_uc_LG_Wrapper_Blocks$CI_spectra_note$data_dir
+
 data_dir_for_LG_shiny <- LG_collect_blocks(
     main_dir = main_dir,
-    data_dir = data_dir)
+    data_dir = .tmp_uc_LG_Wrapper_Blocks$CI_spectra_note$data_dir)
+rm(.tmp_uc_LG_Wrapper_Blocks)
 
-##  dump("data_dir_for_LG_shiny", stdout())
+##  And start the shiny application for an interactive inspection of
+##  the result.
 
-
-##  Start a shiny application for the inspection of the result.
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
     data_dir = data_dir_for_LG_shiny))
 
+################################################################################
+###### NOTE:
+###  The interaction with the file-hierarchy contains tests that
+###  prevents previously computed local Gaussian correlations to be
+###  computed all over again if this script is sourced a second time,
+###  but the initial computation of '.TS_sample' will be performed
+###  every time the script is sourced.  It can thus be of interest to
+###  note that the 'dump'-function might be used to capture the
+###  'data_dir'-argument, such that the call to the shiny-application
+###  can be done without the need for the script to be sourced
+###  directly.  The result for the present script (based on the
+###  original input parameters) are given below.
 
-####   I wonder what's up with this stuff - I'm not at all confident
-####   that the value at omega equal to zero won't fizz of to infinity
-####   when more lags are added...
-
-
-##  Reminder: 'runApp' is used in order for the interactive
-##  investigation to start when this file is sourced.  It's sufficient
-##  to use 'LG_shiny' directly when doing this from the command line.
-
-##  Hint: 'dump' used on 'data_dir_for_LG_shiny' gives the code needed
-##  to recreate it, and this might be handy later on if one want to
-##  start directly with 'LG_shiny' Se the code below for how this
-##  looks like for this example.
 
 ##  dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## structure(c("1251eefebdd1e934f6960bfd9e4a561b", "Approx__1", 
+## structure(c("rugarch_d2112401cadce51bdd3cd5dbce97f8cb", "Approx__1", 
 ## "Boot_Approx__1", "Boot_Spectra"), .Names = c("ts.dir", "approx.dir", 
 ## "boot.approx.dir", "boot.spectra.dir"))
+
+
+
+#####
+## Note that 'data_dir' only contains the specification of the
+## in-hierarchy part of the required path, and this path is stored as
+## a vector.  The reason for this is that it should be possible to
+## move the storage directory 'main_dir' to another location on your
+## computer, or even move it to a computer using another OS than the
+## one used for the original computation.
+################################################################################
