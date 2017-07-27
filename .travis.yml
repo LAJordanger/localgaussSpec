@@ -1,6 +1,10 @@
 language: r
-sudo: false
+sudo: required
 cache: packages
+
+##  Add requirement for gmp-package.
+before_install:
+  - sudo apt-get install libgmp3-dev
 
 r:
  - oldrel
