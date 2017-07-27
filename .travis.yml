@@ -24,7 +24,7 @@ bioc_required: true
 # this was causing hunspell installation to fail
 before_install:
   - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-  - sudo apt-get install libgmp6-dev
+  - sudo apt-get install libgmp3-dev
 
 # Only report coverage for the release version
 after_success:
