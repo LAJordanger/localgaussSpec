@@ -106,7 +106,7 @@ LG_plot_load <- function(.look_up,
         ##  part of the code.  Reminder: These restriction lists are
         ##  adjusted later on when information about the lag is
         ##  available.
-        .restrict_global <- list(
+        .LGC_restrict_global <- list(
             second = c(TS = ifelse(
                            test = .selected == "Approx",
                            yes  = "TS_for_analysis",
@@ -115,7 +115,7 @@ LG_plot_load <- function(.look_up,
                        #####  of ad-hoc solutions earlier on...
             third = list(
                 pairs = unique(c(.look_up$pairs_ViVj, .look_up$pairs_VjVi))))
-        .restrict_local <- list(
+        .LGC_restrict_local <- list(
             first = c(
                 point_type = .look_up$point_type),
             second = c(
@@ -128,22 +128,22 @@ LG_plot_load <- function(.look_up,
                 global_local = .look_up$global_local))
 ###-------------------------------------------------------------------
         ##  Define the names to be used for the local and global arrays.
-        .global_name <- ".list_array_global"
-        .local_name <- ".list_array_local"
+        .global_name <- ".LGC_list_array_global"
+        .local_name <- ".LGC_list_array_local"
         ##  And define derived names for the intermediate parts.
         .derived_global <- structure(
             .Data = paste(.global_name,
-                          c(seq_along(.restrict_local),
+                          c(seq_along(.LGC_restrict_local),
                             "dimnames"),
                           sep = "_"),
-            .Names = c(names(.restrict_local),
+            .Names = c(names(.LGC_restrict_local),
                        "dimnames"))
         .derived_local <- structure(
             .Data = paste(.local_name,
-                          c(seq_along(.restrict_local),
+                          c(seq_along(.LGC_restrict_local),
                             "dimnames"),  
                           sep = "_"),
-            .Names = c(names(.restrict_local),
+            .Names = c(names(.LGC_restrict_local),
                        "dimnames"))
 ###-------------------------------------------------------------------
         ##  To load or not to load?  Check if existing data has been
@@ -201,32 +201,32 @@ LG_plot_load <- function(.look_up,
                 .array_nodes = c("bw_points"))
 ###-------------------------------------------------------------------
             ##  Add the restriction information to the environment.
-            .env[[.env_name]]$.restrict_global <- .restrict_global
-            .env[[.env_name]]$.restrict_local <- .restrict_local
+            .env[[.env_name]]$.LGC_restrict_global <- .LGC_restrict_global
+            .env[[.env_name]]$.LGC_restrict_local <- .LGC_restrict_local
             ##  Initiate "do them all" indicator
             .done_before <- structure(
                 .Data = rep(x = FALSE,
-                            length.out = length(.restrict_local)),
-                .Names = names(.restrict_local))
+                            length.out = length(.LGC_restrict_local)),
+                .Names = names(.LGC_restrict_local))
         } else {
             ##  Compute which parts that must be redone.
             .done_before <- structure(
                 .Data = vapply(
-                    X = seq_along(.env[[.env_name]]$.restrict_local),
+                    X = seq_along(.env[[.env_name]]$.LGC_restrict_local),
                     FUN = function(i) {
                         identical(
-                            x = .env[[.env_name]]$.restrict_local[i],
-                            y = .restrict_local[i])
+                            x = .env[[.env_name]]$.LGC_restrict_local[i],
+                            y = .LGC_restrict_local[i])
                     },
                     FUN.VALUE = logical(1)),
-                .Names = names(.restrict_local))
+                .Names = names(.LGC_restrict_local))
             ##  To ensure that all updates are properly performed,
             ##  everything after the first case of 'FALSE' in
             ##  '.done_before' must also be set to 'FALSE'.
             .done_before[] <- as.logical(cumprod(.done_before))
             ##  Update the value stored in the environment.
-            .env[[.env_name]]$.restrict_global <- .restrict_global
-            .env[[.env_name]]$.restrict_local <- .restrict_local
+            .env[[.env_name]]$.LGC_restrict_global <- .LGC_restrict_global
+            .env[[.env_name]]$.LGC_restrict_local <- .LGC_restrict_local
         }
         kill(.env_exists)
         ##  To make the code later on more compact, create a pointer to
@@ -241,7 +241,7 @@ LG_plot_load <- function(.look_up,
         ..env$.selected_percentile <-
             .look_up$.selected_percentile
         ##  Add the title, with to the '..env'
-        ..env$.title <- paste(
+        ..env$.LGC_title <- paste(
             toupper(substr(x = .look_up$details$text$plot_type,
                            start = 1,
                            stop = 1)),
@@ -268,7 +268,7 @@ LG_plot_load <- function(.look_up,
                 .original_dimnames[.sub_dim]
             })
             ..env[[.derived_local["dimnames"]]] <- local({
-                .bm <- .restrict_local$first
+                .bm <- .LGC_restrict_local$first
                 .original_dimnames <- attributes(
                     ..env[[.derived_local["first"]]][[.bm]])$original_dimnames
                 .sub_dim <- attributes(
@@ -289,15 +289,15 @@ LG_plot_load <- function(.look_up,
         ##  present configuration.
         if (! .done_before["second"]) {
             ..env[[.derived_global["second"]]] <- local({
-                .bm <- .restrict_global$second
+                .bm <- .LGC_restrict_global$second
                 .tmp <- ..env[[.derived_global["first"]]][[.bm]]
                 ##  Add dimension-names and return.
                 dimnames(.tmp) <- ..env[[.derived_global["dimnames"]]]
                 .tmp
             })
             ..env[[.derived_local["second"]]] <- local({
-                .bm <- unlist(c(.restrict_local$first,
-                                .restrict_local$second))
+                .bm <- unlist(c(.LGC_restrict_local$first,
+                                .LGC_restrict_local$second))
                 .tmp <- ..env[[.derived_local["first"]]][[.bm]]
                 ##  Add dimension-names.
                 dimnames(.tmp) <- ..env[[.derived_local["dimnames"]]]
@@ -315,23 +315,23 @@ LG_plot_load <- function(.look_up,
             ##  can be dropped (for those cases where it is constant
             ##  and equal to one.)
             if (! .look_up$lag_zero_needed) {
-                .restrict_global$third <- c(
-                    .restrict_global$third,
+                .LGC_restrict_global$third <- c(
+                    .LGC_restrict_global$third,
                     ..env$pos_lags)
-                .restrict_local$third <- c(
-                    .restrict_local$third,
+                .LGC_restrict_local$third <- c(
+                    .LGC_restrict_local$third,
                     ..env$pos_lags)
             }
             ..env[[.derived_global["third"]]] <- restrict_array(
                 .arr = ..env[[.derived_global["second"]]],
-                .restrict = .restrict_global$third)
+                .restrict = .LGC_restrict_global$third)
             ..env[[.derived_local["third"]]] <- restrict_array(
                 .arr = ..env[[.derived_local["second"]]],
-                .restrict = .restrict_local$third)
+                .restrict = .LGC_restrict_local$third)
             ##  Compute the ylimit to be used for these values (at the
             ##  moment restricted to the local case, since the global
             ##  part has not yet been included in the plot).
-            ..env$.ylim <- range(0, ..env[[.derived_local["third"]]])
+            ..env$.LGC_ylim <- range(0, ..env[[.derived_local["third"]]])
         }
 ###-------------------------------------------------------------------
         ##  Restrict the attention to the point(s) of interest (for
@@ -390,7 +390,7 @@ LG_plot_load <- function(.look_up,
             #####  Similar code for the local case
             ..env[[.derived_local["fourth"]]] <- restrict_array(
                 .arr = ..env[[.derived_local["third"]]],
-                .restrict = .restrict_local$fourth)
+                .restrict = .LGC_restrict_local$fourth)
             ##  Extend the restriction lists to include 'levels'.
             .restrict_pos_lags <- c(
                 .restrict_pos_lags,
@@ -482,7 +482,7 @@ LG_plot_load <- function(.look_up,
             ..env$.selected_percentile <-
                 .look_up$.selected_percentile
             ##  Find the x-limit to be used in the plot
-            ..env$.xlim <- range(c(0, ..env[[..env$.lag_data_frame]]$lag))
+            ..env$.LGC_xlim <- range(c(0, ..env[[..env$.lag_data_frame]]$lag))
         }
 ###-------------------------------------------------------------------
         ##  Create and return the plot
@@ -490,13 +490,13 @@ LG_plot_load <- function(.look_up,
             .data = ..env[[..env$.lag_data_frame]],
             .lag = NULL,
             .percentile = ..env$.selected_percentile,
-            .xlim = ..env$.xlim,
-            .ylim = ..env$.ylim,
+            .xlim = ..env$.LGC_xlim,
+            .ylim = ..env$.LGC_ylim,
             .aes_xy = ..env$.aes_xy,
             .sanity_checks = FALSE)
         ##  Add title and 'trustworthiness'.
         ..env$.lag_plot <- ..env$.lag_plot +
-            ggplot2::ggtitle(label = ..env$.title) +
+            ggplot2::ggtitle(label = ..env$.LGC_title) +
             ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
             annotate(geom = "text",
                      x = -Inf,
@@ -535,7 +535,7 @@ LG_plot_load <- function(.look_up,
         ##  case (even though it might not be used later on), and
         ##  then tweak the arguments of the plot-function for
         ##  these "corner"-cases.
-        .restrict_global <- list(
+        .LGS_restrict_global <- list(
             first = c(
                 auto_cross = ifelse(
                     test = .look_up$.auto_pair,
@@ -578,7 +578,7 @@ LG_plot_load <- function(.look_up,
                         .look_up$matching_global <- FALSE
 ###-------------------------------------------------------------------
         ##  Give the restrictions for the local case.
-        .restrict_local <- list(
+        .LGS_restrict_local <- list(
             first = c(
                 point_type = .look_up$point_type,
                 auto_cross = ifelse(
@@ -618,28 +618,28 @@ LG_plot_load <- function(.look_up,
             fifth = list(Y_range = .look_up$Y_range))
 ###-------------------------------------------------------------------
         ##  Define the names to be used for the local and global arrays.
-        .global_name <- ".list_array_global"
-        .local_name <- ".list_array_local"
+        .global_name <- ".LGS_list_array_global"
+        .local_name <- ".LGS_list_array_local"
         ##  And the derived names to be used for the intermediate
         ##  parts, one fore each restriction-step and one for the
         ##  dimension-names that is present at the nodes of the
         ##  list-array.
         .derived_global <- structure(
             .Data = paste(.global_name,
-                          c(seq_along(.restrict_local),
+                          c(seq_along(.LGS_restrict_local),
                             "dimnames",
                             "df"),
                           sep = "_"),
-            .Names = c(names(.restrict_local),
+            .Names = c(names(.LGS_restrict_local),
                        "dimnames",
                        "df"))
         .derived_local <- structure(
             .Data = paste(.local_name,
-                          c(seq_along(.restrict_local),
+                          c(seq_along(.LGS_restrict_local),
                             "dimnames",
                             "df"),
                           sep = "_"),
-            .Names = c(names(.restrict_local),
+            .Names = c(names(.LGS_restrict_local),
                        "dimnames",
                        "df"))
 ###-------------------------------------------------------------------
@@ -656,7 +656,7 @@ LG_plot_load <- function(.look_up,
 ###-------------------------------------------------------------------
         ##  Create the environment if it doesn't already exist,
         ##  and add the required ingredients to it, otherwise
-        ##  compare the old and new '.restrict_local' and compute
+        ##  compare the old and new '.LGS_restrict_local' and compute
         ##  the logical vector to be used when deciding which
         ##  parts that should be redone.
         if (! .env_exists) {
@@ -758,31 +758,31 @@ LG_plot_load <- function(.look_up,
             }
 
 ###-------------------------------------------------------------------
-            ##  Add '.restrict_local' to the environment.
-            .env[[.env_name]]$.restrict_local <- .restrict_local
+            ##  Add '.LGS_restrict_local' to the environment.
+            .env[[.env_name]]$.LGS_restrict_local <- .LGS_restrict_local
             ##  Initiate "do them all" indicator
             .done_before <- structure(
                 .Data = rep(x = FALSE,
-                            length.out = length(.restrict_local)),
-                .Names = names(.restrict_local))
+                            length.out = length(.LGS_restrict_local)),
+                .Names = names(.LGS_restrict_local))
         } else {
             ##  Compute which parts that must be redone.
             .done_before <- structure(
                 .Data = vapply(
-                    X = seq_along(.env[[.env_name]]$.restrict_local),
+                    X = seq_along(.env[[.env_name]]$.LGS_restrict_local),
                     FUN = function(i) {
                         identical(
-                            x = .env[[.env_name]]$.restrict_local[i],
-                            y = .restrict_local[i])
+                            x = .env[[.env_name]]$.LGS_restrict_local[i],
+                            y = .LGS_restrict_local[i])
                     },
                     FUN.VALUE = logical(1)),
-                .Names = names(.restrict_local))
+                .Names = names(.LGS_restrict_local))
             ##  To ensure that all updates are properly performed,
             ##  everything after the first case of 'FALSE' in
             ##  '.done_before' must also be set to 'FALSE'.
             .done_before[] <- as.logical(cumprod(.done_before))
             ##  Update the value stored in the environment.
-            .env[[.env_name]]$.restrict_local <- .restrict_local
+            .env[[.env_name]]$.LGS_restrict_local <- .LGS_restrict_local
         }
         kill(.env_exists, new_data_dir)
         ##  To make the code later on more compact, create a pointer to
@@ -797,7 +797,7 @@ LG_plot_load <- function(.look_up,
         ..env$.selected_percentile <- .look_up$.selected_percentile
         kill(.aes_xy, .aes_min_max)
         ##  Add the title, with to the '..env'
-        ..env$.title <- paste(
+        ..env$.LGS_title <- paste(
             toupper(substr(x = .look_up$details$text$plot_type,
                            start = 1,
                            stop = 1)),
@@ -817,7 +817,7 @@ LG_plot_load <- function(.look_up,
             ##  Create/update the stored dimension-names for the
             ##  present main-branch (based on selected values).
             ..env[[.derived_global["dimnames"]]] <- local({
-                .bm <- .restrict_global$first
+                .bm <- .LGS_restrict_global$first
                 .original_dimnames <- attributes(
                     ..env[[.derived_global["first"]]][[.bm]])$original_dimnames
                 .sub_dim <- attributes(
@@ -825,7 +825,7 @@ LG_plot_load <- function(.look_up,
                 .original_dimnames[.sub_dim]
             })
             ..env[[.derived_local["dimnames"]]] <- local({
-                .bm <- .restrict_local$first
+                .bm <- .LGS_restrict_local$first
                 .original_dimnames <- attributes(
                     ..env[[.derived_local["first"]]][[.bm]])$original_dimnames
                 .sub_dim <- attributes(
@@ -843,9 +843,9 @@ LG_plot_load <- function(.look_up,
             ..env[[.derived_global["second"]]] <-
                 if (.selected == "Boot_Spectra") {
                     local({
-                        .bm <- c(.restrict_global$first,
-                                 unlist(head(x = .restrict_global$second, n = -1)))
-                        .content <- .restrict_global$second$content
+                        .bm <- c(.LGS_restrict_global$first,
+                                 unlist(head(x = .LGS_restrict_global$second, n = -1)))
+                        .content <- .LGS_restrict_global$second$content
                         .tmp <- ..env[[.derived_global["first"]]][[.bm]][.content]
                         .class <- class(.tmp[[1]])
                         ##  Add dimensions for the array-nodes.
@@ -880,8 +880,8 @@ LG_plot_load <- function(.look_up,
                     })
                 } else
                     local({
-                        .bm <- c(.restrict_global$first,
-                                 unlist(head(x = .restrict_global$second, n = -1)),
+                        .bm <- c(.LGS_restrict_global$first,
+                                 unlist(head(x = .LGS_restrict_global$second, n = -1)),
                                  "spec",
                                  "orig")
                         .tmp <- ..env[[.derived_global["first"]]][[.bm]]
@@ -913,9 +913,9 @@ LG_plot_load <- function(.look_up,
             ..env[[.derived_local["second"]]] <-
                 if (.selected == "Boot_Spectra"){
                     local({
-                        .bm <- c(.restrict_local$first,
-                                 unlist(head(x = .restrict_local$second, n = -1)))
-                        .content <- .restrict_local$second$content
+                        .bm <- c(.LGS_restrict_local$first,
+                                 unlist(head(x = .LGS_restrict_local$second, n = -1)))
+                        .content <- .LGS_restrict_local$second$content
                         .tmp <- ..env[[.derived_local["first"]]][[.bm]][.content]
                         .class <- class(.tmp[[1]])
                         ##  Add dimensions for the array-nodes.
@@ -935,8 +935,8 @@ LG_plot_load <- function(.look_up,
                     })
                 } else
                     local({
-                        .bm <- c(.restrict_local$first,
-                                 unlist(head(x = .restrict_local$second, n = -1)),
+                        .bm <- c(.LGS_restrict_local$first,
+                                 unlist(head(x = .LGS_restrict_local$second, n = -1)),
                                  "spec",
                                  "orig")
                         .tmp <- ..env[[.derived_local["first"]]][[.bm]]
@@ -962,15 +962,15 @@ LG_plot_load <- function(.look_up,
             ..env[[.derived_global["third"]]] <- ..env[[.derived_global["second"]]]
             ##  Restrict the omega-dimension when required.
             if (length(dimnames(..env[[.derived_local["second"]]])$omega) >
-                length(.restrict_local$third$omega)) {
+                length(.LGS_restrict_local$third$omega)) {
                 ..env[[.derived_global["third"]]] <-
                     restrict_array(
                         .arr = ..env[[.derived_global["second"]]],
-                        .restrict = .restrict_local$third)
+                        .restrict = .LGS_restrict_local$third)
                 ..env[[.derived_local["third"]]] <-
                     restrict_array(
                         .arr = ..env[[.derived_local["second"]]],
-                        .restrict = .restrict_local$third)
+                        .restrict = .LGS_restrict_local$third)
             }
             ##  Adjust the sign when required.
             if (.look_up$adjust_result)
@@ -981,7 +981,7 @@ LG_plot_load <- function(.look_up,
                         -1 * ..env[[.derived_local["third"]]]
                 }
             ##  The limit to be used on the x-axis:
-            ..env$.xlim <- range(
+            ..env$.LGS_xlim <- range(
                 as.numeric(dimnames(..env[[.derived_local["third"]]])$omega))
             ##  The limit to be used on the y-axis, this will give the
             ##  same limit for all truncation levels and all points at
@@ -1025,7 +1025,7 @@ LG_plot_load <- function(.look_up,
             ..env[[.derived_local["third_to_fourth"]]] <-
                 restrict_array(
                     .arr = ..env[[.derived_local["third"]]],
-                    .restrict = .restrict_local$third_to_fourth,
+                    .restrict = .LGS_restrict_local$third_to_fourth,
                     .drop = TRUE,
                     .never_drop = c("content", "cut", "omega"))
 
@@ -1042,24 +1042,24 @@ LG_plot_load <- function(.look_up,
 #####   functionality as before, it seems necessary to use an ad hoc
 #####   solution here.  A revised solution based on 'env_arrays' would
 #####   simplify this mess
-            ..env$.ylim <- range(
+            ..env$.LGS_ylim <- range(
                 if (.look_up$matching_global)
                     restrict_array(
                         .arr = ..env[[.derived_global["third"]]],
                         .restrict = list(
-                            cut = as.character(.restrict_global[["fourth"]]))),
+                            cut = as.character(.LGS_restrict_global[["fourth"]]))),
                 restrict_array(
                     .arr = ..env[[.derived_local["third"]]],
                     .restrict = list(
-                        cut = as.character(.restrict_local[["fourth"]]))))
+                        cut = as.character(.LGS_restrict_local[["fourth"]]))))
             ..env[[.derived_global["fourth"]]] <- local({
                 .select <- ..env[[.derived_global["df"]]]$cut == 
-                    .restrict_local$fourth
+                    .LGS_restrict_local$fourth
                 ..env[[.derived_global["df"]]][.select, ]
             })
             ..env[[.derived_local["fourth"]]] <- local({
                 .select <- ..env[[.derived_local["df"]]]$cut == 
-                    .restrict_local$fourth
+                    .LGS_restrict_local$fourth
                 ..env[[.derived_local["df"]]][.select, ]
             })
             ##  Check if the local Gaussian case of interest has
@@ -1075,14 +1075,14 @@ LG_plot_load <- function(.look_up,
                 .lag = ..env$.selected_lag,
                 .percentile = ..env$.selected_percentile,
                 .select = "all",
-                .xlim = ..env$.xlim,
-                .ylim = ..env$.ylim,
+                .xlim = ..env$.LGS_xlim,
+                .ylim = ..env$.LGS_ylim,
                 .aes_xy = ..env$.aes_xy,
                 .aes_min_max = ..env$.aes_min_max,
                 .sanity_checks = FALSE)
             ##  Add title and 'trustworthiness'.
             ..env$.spectra_plot <- ..env$.spectra_plot +
-                ggplot2::ggtitle(label = ..env$.title) +
+                ggplot2::ggtitle(label = ..env$.LGS_title) +
                 ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
                 annotate(geom = "text",
                          x = -Inf,
@@ -1105,18 +1105,18 @@ LG_plot_load <- function(.look_up,
         if (! .done_before["fifth"]) {
             ##  Find the specified Y-range (as integers that gives
             ##  the lower and uper range of the available values).
-            .Y_range <- .restrict_local$fifth$Y_range
+            .Y_range <- .LGS_restrict_local$fifth$Y_range
             ##  Find the 'lengths of Y and omega', to compare.
             .Y_length <- diff(.Y_range) + 1
-            .omega_length <- length(.restrict_local$third$omega)
+            .omega_length <- length(.LGS_restrict_local$third$omega)
             ##  Reminder: Only necessary to adjust when the length
             ##  of the available omega-vector is larger than the
             ##  length of the desired (zoomed) Y-vector.
             if (.omega_length > .Y_length) {
                 ##  Update '.Y_range' when necessary.
-                if (max(.Y_range) > max(.restrict_local$third$omega))
+                if (max(.Y_range) > max(.LGS_restrict_local$third$omega))
                     .Y_range <- .Y_range - {
-                        max(.Y_range) - max(.restrict_local$third$omega)
+                        max(.Y_range) - max(.LGS_restrict_local$third$omega)
                     }
                 ##  Find the subset of values to be investigated.
                 .local_copy <- apply(
