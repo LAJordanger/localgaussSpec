@@ -23,4 +23,3 @@ If successful, the scripts are moved into \code{target_dir},
 This function extracts the scripts from the internal file hierarchy
 to a target directory selected by the user.
 }
-

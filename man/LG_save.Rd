@@ -5,8 +5,9 @@
 \title{Save function for different Local Gaussian Information}
 \usage{
 LG_save(data, save_file.Rda = NULL, data_type = c("approx_save",
-  "spectra_save"), LG_type = c("par_five", "par_one"), bootstrap = FALSE,
-  part = " ", save_dir = ".", compression_level = 9)
+  "spectra_save"), LG_type = c("par_five", "par_one"),
+  bootstrap = FALSE, part = " ", save_dir = ".",
+  compression_level = 9)
 }
 \arguments{
 \item{data}{The data we want to store.}
@@ -18,11 +19,12 @@ name is computed based on the values given to the arguments
 \code{part}.}
 
 \item{data_type}{One of \code{data_type = c("approx_save",
-"spectra_save")}.  This tells us whether 'data' comes from the
-intermediate step where the Local Gaussian Approximations are
-computed, or if 'data' concerns the estimates of the Local
-Gaussian Spectral Densities.  This argument will be ignored
-when \code{save_file.Rda} is different from \code{NULL}.}
+"spectra_save")}.  This tells us whether \code{data} comes from
+the intermediate step where the Local Gaussian Approximations
+are computed, or if \code{data} concerns the estimates of the
+Local Gaussian Spectral Densities.  This argument will be
+ignored when \code{save_file.Rda} is different from
+\code{NULL}.}
 
 \item{LG_type}{One of \code{c("par_five", "par_one")}, only used
 when \code{data_type="spectra_save"}. This tells us whether the
@@ -67,4 +69,3 @@ wrapper-functions.  It will ensure that the data we want to store
 will be saved with informative names that reveals what part of the
 code the data originates from.
 }
-

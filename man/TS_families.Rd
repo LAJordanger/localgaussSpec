@@ -41,4 +41,3 @@ procedure, such that proper calls can be stored that later on can
 be resurrected if a reproduction of the computation is desired.
 }
 \keyword{internal}
-

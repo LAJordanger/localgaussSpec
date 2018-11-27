@@ -99,7 +99,10 @@ LG_plot_load <- function(.look_up,
     ##  restriction.  A comparison will be made against previously
     ##  stored versions, and then a logical vector will be created to
     ##  decide which parts that has to be done.
-    if (.selected %in% c("Approx", "Boot_Approx")) {
+
+#    capture_env() 
+    
+    if  (.selected %in% c("Approx", "Boot_Approx")) {
         ##  Create restriction-lists that describes how the global and
         ##  local data should be treated.  Note: The solution is a bit
         ##  mezzy due to ad hoc solutions inherited from the initial
@@ -112,7 +115,7 @@ LG_plot_load <- function(.look_up,
                            yes  = "TS_for_analysis",
                            no   = "TS_original")),
                        #####  Reminder: The code above is the result
-                       #####  of ad-hoc solutions earlier on...
+                       #####  of ad hoc solutions earlier on...
             third = list(
                 pairs = unique(c(.look_up$pairs_ViVj, .look_up$pairs_VjVi))))
         .LGC_restrict_local <- list(

@@ -4,8 +4,8 @@
 \alias{TS_spectral}
 \title{Compute old-fashioned spectral estimates}
 \usage{
-TS_spectral(acr_data, omega_vec, window = c("Tukey", "Parzen", "Bartlett"),
-  cut_vec = NULL, .method = c("all", "mean", "median"))
+TS_spectral(acr_data, omega_vec, window = c("Tukey", "Parzen",
+  "Bartlett"), cut_vec = NULL, .method = c("all", "mean", "median"))
 }
 \arguments{
 \item{acr_data}{A list giving the information required in order to
@@ -50,4 +50,3 @@ densities can be compared.  Note that this functions is kind of a
 wrapper around \code{LG_spectra}, where the core of the computation
 is performed.
 }
-

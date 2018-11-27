@@ -8,7 +8,7 @@
 #' case it also will take care of the restrictions in a manner that
 #' attempts to avoid the major restrictions when possible.  The
 #' interactive setting can trigger the creation of code needed in
-#' order to recreate a plot in a non-reactive setting too (e.g. as an
+#' order to re-create a plot in a non-reactive setting too (e.g. as an
 #' example in a paper/presentation), in which case some of the
 #' internal workings of the function will be adjusted to allow for the
 #' function call to work without the \code{shiny}-package being
@@ -115,6 +115,10 @@ LG_plot_helper <- function(
               .input = .input)
     ##  Extract the detail of interest from '.input'.
     look_up <- .input$look_up
+
+
+
+    
 ###-------------------------------------------------------------------
     ##  If the `get_code` check-box has been marked, return code that
     ##  can be used to create the plot in a paper.

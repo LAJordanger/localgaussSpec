@@ -73,7 +73,8 @@ LG_shiny_explain_plots <- function(
     ##  Procedure when no graphical component has been selected.
     if (! any(show_graphical)) {
         .info_vector <- c(
-            .main_header,
+            .main_header
+           ,
             "No plot detected.")
         .result <- HTML(renderMarkdown(
             text = .info_vector,

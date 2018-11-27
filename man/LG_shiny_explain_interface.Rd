@@ -4,8 +4,8 @@
 \alias{LG_shiny_explain_interface}
 \title{Create the instructions for \code{LG_shiny}.}
 \usage{
-LG_shiny_explain_interface(main_dir, input, show_graphical, path_selection_list,
-  .env)
+LG_shiny_explain_interface(main_dir, input, show_graphical,
+  path_selection_list, .env)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the
@@ -38,16 +38,14 @@ still in its infancy, and is at the moment mostly intended as a
 placeholder.
 }
 \details{
-first extracts
-the desired array from file and then creates the plot of interest.
-The function are used as an helper in \code{LG_shiny}, in which
-case it also will take care of the restrictions in a manner that
-attempts to avoid the major restrictions when possible.  The
-interactive setting can trigger the creation of code needed in
-order to recreate a plot in a non-reactive setting too (e.g. as an
-example in a paper/presentation), in which case some of the
-internal workings of the function will be adjusted to allow for the
-function call to work without the \code{shiny}-package being
-loaded.
+first extracts the desired array from file and then creates the
+plot of interest.  The function are used as an helper in
+\code{LG_shiny}, in which case it also will take care of the
+restrictions in a manner that attempts to avoid the major
+restrictions when possible.  The interactive setting can trigger
+the creation of code needed in order to re-create a plot in a
+non-reactive setting too (e.g. as an example in a
+paper/presentation), in which case some of the internal workings of
+the function will be adjusted to allow for the function call to
+work without the \code{shiny}-package being loaded.
 }
-

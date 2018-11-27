@@ -30,7 +30,7 @@
 #'     with information about the sizes (in MB) of the saved objects,
 #'     some excess information will be pruned away, and the revised
 #'     object will then be returned to the workflow (in order for the
-#'     calling function to update the 'info'-object with it).
+#'     calling function to update the \code{info}-object with it).
 #'
 #' @export
         
@@ -48,7 +48,7 @@ LG_merge_files <- function(components,
 ###  array by 'update_array' must be done sequentially.
 #############---------------------------------------------------------
 ###-------------------------------------------------------------------
-    ##  Create an argument-list to use with 'foreach'.
+    ## Create an argument-list to use with 'foreach'.
     loop_arg_list <- list()
     for (content in names(components)) {
         pieces <- length(components[[content]]$combined$file_names)

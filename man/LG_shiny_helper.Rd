@@ -4,8 +4,8 @@
 \alias{LG_shiny_helper}
 \title{Deal with the details that concerns the investigation of the data.}
 \usage{
-LG_shiny_helper(info, input, show_graphical, path_selection_list, default_type,
-  .env, .env2)
+LG_shiny_helper(info, input, show_graphical, path_selection_list,
+  default_type, .env, .env2)
 }
 \arguments{
 \item{info}{The information object containing all the data about
@@ -22,9 +22,8 @@ required to identifying the correct part of \code{info} to work
 upon.}
 
 \item{default_type}{Specifies whether "par_five" (default value) or
-"par_one" (i.e. Local Gaussian auto-correlation or Local
-Gaussian auto-covariance) will be used when both alternatives
-are available in the data.}
+"par_one" will be used when both alternatives are available in
+the data.}
 
 \item{.env}{An environment needed in order to get hold of the
 correct place to read and update some arguments.}
@@ -43,4 +42,3 @@ interactive interface, i.e. the part that gives selectors that
 extracts subsets of the data suited for plotting.  Note that the
 loading of the data is taken care of in other functions.
 }
-

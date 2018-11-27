@@ -34,4 +34,3 @@ want to do, the function should also be able to update the
 corresponding information, such that functions later on can take as
 arguments stuff saved from a previous interactive inspection.
 }
-

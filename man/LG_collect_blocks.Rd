@@ -34,4 +34,3 @@ Based on the \code{data_dir} argument, there will be
     in order for \code{LG_shiny} to find the data (without a major
     rewriting of the code in that function.)
 }
-

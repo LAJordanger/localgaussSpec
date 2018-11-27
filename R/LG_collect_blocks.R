@@ -133,7 +133,7 @@ LG_collect_blocks <- function(
 ###  the analysis based on mean/median of the local Gaussian
 ###  approximations, and those containing information about the
 ###  confidence intervals.  NB: This is at the time of writing an
-###  awful ad-hoc solution, as the names of the directories doesn't
+###  awful ad hoc solution, as the names of the directories doesn't
 ###  match the content.
 #############---------------------------------------------------------
 ###---------------------------------------------------------

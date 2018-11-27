@@ -4,8 +4,8 @@
 \alias{LG_extract_df}
 \title{Final computations of assorted spectra.}
 \usage{
-LG_extract_df(.list_array, .global = TRUE, .diag = c("on_diag", "off_diag"),
-  .spectrum = c("auto", "co", "quad", "phase", "amplitude",
+LG_extract_df(.list_array, .global = TRUE, .diag = c("on_diag",
+  "off_diag"), .spectrum = c("auto", "co", "quad", "phase", "amplitude",
   "squared_coherence"), .adjust_result = FALSE, .branch = list(),
   .Y_range = NULL)
 }
@@ -58,4 +58,3 @@ needed in \code{LG_plot_load} when the list-arrays loaded from
 different files is to be modified to a data frame which can be
 digested by the graphical functions.
 }
-

@@ -28,7 +28,7 @@ The primary goal of this function is to merge the files,
     with information about the sizes (in MB) of the saved objects,
     some excess information will be pruned away, and the revised
     object will then be returned to the workflow (in order for the
-    calling function to update the 'info'-object with it).
+    calling function to update the \code{info}-object with it).
 }
 \description{
 Merge files containing data created by different steps.
@@ -42,4 +42,3 @@ Some plots depends on content from different parts of the
     be an internal function in the package, i.e. that it will not
     be exported.)
 }
-

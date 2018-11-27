@@ -131,4 +131,3 @@ distribution.  In particular, it will perform the computation of
 the Local Gaussian Approximations for each series, and compute
 Local Gaussian Spectral Densities based on these values.
 }
-

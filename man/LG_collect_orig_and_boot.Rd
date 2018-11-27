@@ -38,7 +38,7 @@ This function will, after a sanity-check of the arguments
     the boots_spectra-part.  For each file we will start out by
     creating an array with the desired dimension-properties, and
     then the saved data will be read and included into these.
-    After saving (which might require a minor update of 'LG_save'),
-    the info-object should also be updated and saved.
+    After saving (which might require a minor update of
+    \code{LG_save}), the info-object should also be updated and
+    saved.
 }
-

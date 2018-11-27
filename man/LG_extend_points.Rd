@@ -7,7 +7,7 @@
 LG_extend_points(LG_points)
 }
 \arguments{
-\item{LG_points}{The result of the function 'LG_select_points'.}
+\item{LG_points}{The result of the function \code{LG_select_points}.}
 }
 \value{
 An extended version of the array from \code{LG_points} will
@@ -22,4 +22,3 @@ related points to the computation.  In paticular if a point (v1,v2)
 is present, then this function will add the three points (v1,v1),
 (v2,v2) and (v2,v1).
 }
-

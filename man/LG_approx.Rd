@@ -130,4 +130,3 @@ eflag
 \description{
 Local Gaussian approximations.
 }
-

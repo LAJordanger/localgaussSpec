@@ -53,4 +53,3 @@ e.g. either when performing an analysis based upon a bunch of
 samples from a known distribution, or when bootstrapping is used to
 find confidence intervals.
 }
-

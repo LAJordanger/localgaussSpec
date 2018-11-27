@@ -71,7 +71,6 @@
 #'     skeleton_list split_vector spy this_function update_array
 #'     update_formals
 #' @importFrom localgauss localgauss
-#' @importFrom logspline logspline plogspline
 #' @importFrom magrittr and or divide_by
 #' @importFrom markdown renderMarkdown
 #' @importFrom methods findMethods is

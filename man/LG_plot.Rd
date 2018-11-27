@@ -7,8 +7,8 @@ Spectral Densities.}
 \usage{
 LG_plot(.data, .global = NULL, .lag = NULL, .percentile = NULL,
   .select = c("all", "canvas", "add"), .canvas = NULL, .title = NULL,
-  .xlim = c(0, 0.5), .ylim = NULL, .aes_xy = NULL, .aes_min_max = NULL,
-  .sanity_checks = TRUE)
+  .xlim = c(0, 0.5), .ylim = NULL, .aes_xy = NULL,
+  .aes_min_max = NULL, .sanity_checks = TRUE)
 }
 \arguments{
 \item{.data}{A data-frame containing the desired information needed
@@ -95,4 +95,3 @@ upon.  In this first iteration of the code, I think I will restrict
 attention to the case where we assume the data already has been
 extracted.
 }
-

@@ -25,4 +25,3 @@ will be returned to the calling environment with the name
 \code{TS}, and it's also possible to get information required for
 the saving of the results to be computed from \code{TS}.
 }
-

@@ -42,4 +42,3 @@ Gaussian Spectral Densities.  In order to keep the code later on as
 simple as possible, this function takes care of the extraction of
 the relevant values, i.e. the Local Gaussian Correlations.
 }
-

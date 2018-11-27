@@ -18,7 +18,7 @@ gives the second endpoint.  A single number will be accepted,
 in which case it will be registered as a diagonal point.  The
 values will be converted by \code{qnorm} to get points in the
 plane.  Note that \code{.P2} can coincide with \code{.P1} in
-which case the values given to '.shape' will be ignored.}
+which case the values given to \code{.shape} will be ignored.}
 
 \item{.shape}{A bivariate vector of integers, that describes the
 shape of the resulting "grid".  Note that it is required that
@@ -28,11 +28,11 @@ when \code{.P1} and \code{.P2} are different, either specify a
 rectangular/quadratic with the points \code{.P1} and \code{.P2}
 as opposite corners, or it will specify points upon a line with
 \code{.P1} and \code{.P2} as endpoints if the second component
-is negative.  A single positive integer will be accepted, and
+is zero.  A single positive integer will be accepted, and
 it will be interpreted as if the missing number should be zero.
 This argument will be ignored if \code{.P1} and \code{.P2}
 coincide completely.  If \code{.P1} and \code{.P2} coincide at
-one of the components, and a bivariate vector with to positive
+one of the components, and a bivariate vector with two positive
 integers is given to \code{.shape}, then shape will be adjusted
 to produce a line instead in order to avoid redundant
 computations.  The values given in \code{.P1} and \code{.P2}
@@ -47,8 +47,8 @@ An array containing points computed according to the rules
     specified under the description of the shape-argument.  The
     three arguments \code{.P1}, \code{.P2} and \code{.shape} will
     be stored as attributes, together with three additional
-    attrubes \code{Shape}, \code{Horizontal} and \code{Vertical},
-    of wich the last two will specify the points at the corner of
+    attributes \code{Shape}, \code{Horizontal} and \code{Vertical},
+    of which the last two will specify the points at the corner of
     the grid, whereas \code{Shape} will contain the value "point"
     if \code{.P1} and \code{.P2} are equal, the value "rectangle"
     if \code{.shape} contains two positive integers, or else it
@@ -60,4 +60,3 @@ The purpose of this function is to create the
 "points to inspect"-argument needed for the local Gaussian
 investigation.
 }
-

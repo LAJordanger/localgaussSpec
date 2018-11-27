@@ -106,7 +106,7 @@ LG_plot <- function(
     ##  Perform the overall sanity check that must be satisfied used
     ##  regardless of the value of `.sanity_checks`.
     if (all(is.null(.data),
-              is.null(.global$.data)))
+            is.null(.global$.data)))
         error(.argument = c(".data", ".global"),
               fun_stack = FALSE,
               c("At least one of the arguments must contain",

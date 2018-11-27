@@ -4,8 +4,8 @@
 \alias{LG_shiny_explain_plots}
 \title{Explain details about the plots created by \code{LG_shiny}.}
 \usage{
-LG_shiny_explain_plots(main_dir, input, show_graphical, path_selection_list,
-  .env)
+LG_shiny_explain_plots(main_dir, input, show_graphical,
+  path_selection_list, .env)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the
@@ -36,4 +36,3 @@ This is a helper function for \code{LG_shiny}, which explains the
 content of the plots.  This version is still in its infancy, and is
 at the moment mostly intended as a placeholder.
 }
-

@@ -4,8 +4,8 @@
 \alias{TS_sample}
 \title{Time Series Sample-Generator}
 \usage{
-TS_sample(TS_key = "WNG", N = 500, nr_samples = 1, ..., .seed = NULL,
-  .kind_vstr_list = NULL)
+TS_sample(TS_key = "WNG", N = 500, nr_samples = 1, ...,
+  .seed = NULL, .kind_vstr_list = NULL)
 }
 \arguments{
 \item{TS_key}{A key, i.e. a \code{character}, corresponding to an
@@ -58,7 +58,6 @@ Time Series Sample-Generator
 \details{
 This function will create one or more time series based on
     the "keys" stored in \code{TS_families}, with emphasis on also
-    storing the required arguments needed in order to recreate it
+    storing the required arguments needed in order to re-create it
     later on.
 }
-

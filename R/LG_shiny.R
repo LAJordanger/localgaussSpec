@@ -1169,7 +1169,7 @@ LG_shiny <- function(
                 ##  interface!
 
                 ## ## input$type
-                input$point_type
+##                input$point_type
                 input$Vi
                 input$Vj
                 input$spectrum_variant
@@ -1541,8 +1541,8 @@ LG_shiny <- function(
               
               ## if (! is.null(.input$levels_Horizontal))
               ##     if (.input$levels_Horizontal != .input$levels_Vertical)
-              ##         capture_env() 
-
+              ##         capture_env()
+ 
 ################################################################################
               
               LG_shiny_explain_plots(

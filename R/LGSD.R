@@ -245,6 +245,46 @@ LG_default <-
     )
 
 
+##  Add the names to be used on the the 'actionButtons' that selects
+##  the different types of spectra that can be investigated.
+##  Reminder: "G" and "L" refers respectively to "Global" and "Local",
+##  the "S" represents "Spectrum", "a" and "c" refers to "auto" and
+##  "cross" versions, whereas the last part refers to the different
+##  alternatives.  For the local auto-case, we will actually need (for
+##  off-diagonal points) the versions that investigate the
+##  complex-valued results.
+
+LG_default$spectrum_type_ID <- local({
+    ##  Create the combinations of interest (includes some
+    ##  alternatives that must be pruned away later on). Reminder: The
+    ##  somewhat cranky reordering in the 'paste'-part is obviously
+    ##  not necessary as such, but it makes the manual inspection of
+    ##  things easier whem updating the code.
+    .grid <- expand.grid(
+        GL = paste(c("G", "L"),
+                   "S_",
+                   sep = ""),
+        type = c("", "_amplitude", "_phase", "_Co",  "_Quad"),
+        ac = c("a", "c"),
+        stringsAsFactors = FALSE)
+    ##  Reminder: Some rows are not needed for the inspection of the
+    ##  ordinary global auto-spectrum.
+    unlist(lapply(X = 1:dim(.grid)[1],
+           FUN = function(x) {
+               .row <- .grid[x, ]
+               if (all(.row$GL == "GS_", .row$type != "", .row$ac == "a")) {
+                   NULL
+               } else
+                   paste(.row[c("GL", "ac", "type")], collapse = "")
+           }))
+})
+
+##  Add the 'zero'-value to be used in the initiation phase.
+LG_default$spectrum_type_zero <- structure(
+    .Data = 0L,
+    class = c("integer","shinyActionButtonValue"))
+
+
 ##  Add stuff that use the already defined content as arguments,
 ##  including a simpler structure that doesn't require the 'point'
 ##  since it works upon the original (global) level instead of the
@@ -285,3 +325,5 @@ LG_default$result_orig <- c(
                  stringsAsFactors = FALSE),
              .margins = 1,
              .fun = unlist)))
+
+

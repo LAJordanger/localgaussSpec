@@ -4,8 +4,9 @@
 \alias{LG_spectra}
 \title{Compute the local Gaussian spectral densities}
 \usage{
-LG_spectra(LG_approx_extract_data, omega_vec = NULL, omega_length_out = 2^6,
-  window = c("Tukey", "Parzen", "Bartlett"), cut_vec = NULL)
+LG_spectra(LG_approx_extract_data, omega_vec = NULL,
+  omega_length_out = 2^6, window = c("Tukey", "Parzen", "Bartlett"),
+  cut_vec = NULL)
 }
 \arguments{
 \item{LG_approx_extract_data}{The list created when
@@ -60,4 +61,3 @@ A list containing the information needed for
 \description{
 Compute the local Gaussian spectral densities
 }
-

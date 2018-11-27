@@ -102,4 +102,3 @@ This function records its arguments and compares them to a
     finally the result is added to the file-structure while the
     information-object is updated.
 }
-

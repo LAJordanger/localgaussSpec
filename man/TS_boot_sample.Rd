@@ -53,4 +53,3 @@ needed to shift from estimates of covariances and correlations for
 the lagged pairs to the estimates of autocovariances and
 autocorrelations.
 }
-

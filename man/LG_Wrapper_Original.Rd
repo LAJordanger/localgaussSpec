@@ -134,4 +134,3 @@ This function will take care of the pesky details when it
     computing a bunch of local Gaussian approximations for the lags
     and then use these to create local Gaussian spectra.
 }
-

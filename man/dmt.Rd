@@ -4,8 +4,9 @@
 \alias{dmt}
 \title{Samples built upon cosine.}
 \usage{
-dmt(n, A, delta, delta_range = NULL, alpha, theta = NULL, wn = list(type =
-  "rnorm", args = list(mean = 0, sd = 1), adjust = 0), seed = NULL)
+dmt(n, A, delta, delta_range = NULL, alpha, theta = NULL,
+  wn = list(type = "rnorm", args = list(mean = 0, sd = 1), adjust = 0),
+  seed = NULL)
 }
 \arguments{
 \item{n}{The number of samples to create.}
@@ -58,4 +59,3 @@ at the moment rather simplistic, as its main intention is to just
 create an example for ISNPS-2016 (and I'm running low on time)
 }
 \keyword{internal}
-

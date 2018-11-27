@@ -16,11 +16,12 @@
 #'     \code{part}.
 #'  
 #' @param data_type One of \code{data_type = c("approx_save",
-#'     "spectra_save")}.  This tells us whether 'data' comes from the
-#'     intermediate step where the Local Gaussian Approximations are
-#'     computed, or if 'data' concerns the estimates of the Local
-#'     Gaussian Spectral Densities.  This argument will be ignored
-#'     when \code{save_file.Rda} is different from \code{NULL}.
+#'     "spectra_save")}.  This tells us whether \code{data} comes from
+#'     the intermediate step where the Local Gaussian Approximations
+#'     are computed, or if \code{data} concerns the estimates of the
+#'     Local Gaussian Spectral Densities.  This argument will be
+#'     ignored when \code{save_file.Rda} is different from
+#'     \code{NULL}.
 #' 
 #' @param LG_type One of \code{c("par_five", "par_one")}, only used
 #'     when \code{data_type="spectra_save"}. This tells us whether the

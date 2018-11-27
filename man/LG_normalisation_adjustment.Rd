@@ -4,7 +4,8 @@
 \alias{LG_normalisation_adjustment}
 \title{Create a normalised time series from the original ones.}
 \usage{
-LG_normalisation_adjustment(TS, .adjustment_rule = 0, .remove_ties = TRUE)
+LG_normalisation_adjustment(TS, .adjustment_rule = 0,
+  .remove_ties = TRUE)
 }
 \arguments{
 \item{TS}{The time series object to normalise.  It's assumed that
@@ -42,4 +43,3 @@ A normalisation of the time series under consideration is
     adjustments to be used when computing the local Gaussian
     autocorrelations.
 }
-

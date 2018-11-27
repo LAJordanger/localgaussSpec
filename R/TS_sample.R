@@ -5,7 +5,7 @@
 #'
 #' @details This function will create one or more time series based on
 #'     the "keys" stored in \code{TS_families}, with emphasis on also
-#'     storing the required arguments needed in order to recreate it
+#'     storing the required arguments needed in order to re-create it
 #'     later on.
 #'
 #' @param TS_key A key, i.e. a \code{character}, corresponding to an
@@ -120,9 +120,6 @@ TS_sample <- function (
     ##  Update the formals of the function with the value 'N'
     formals(TS_data$fun)[[TS_data$fun_data$size_name]] <- N
     ##  Generate the required time series sample(s).
-
-    ## capture_env(global_name = ".captured_environment_of___TS_sample") 
-
     ## TS <- if (TS_key %in% c("sample_rmgarch", "sample_dccgarch")) {
     TS <- if (TS_key == "sample_rmgarch") {
               ##  Generate the desired sample in a reproducible way:

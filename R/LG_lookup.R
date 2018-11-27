@@ -229,7 +229,7 @@ LG_lookup <- function(.info,
         look_up$point_type <- "on_diag"
     ##  Some data must be extracted from the values used for the
     ##  function-calls.  Note that this solution is a bit muddled due
-    ##  to the ad-hoc solutions that was used in the development of
+    ##  to the ad hoc solutions that was used in the development of
     ##  the file-hierarchy.
     .envir_bookmark <- c(look_up$path_all[{
         c(if (look_up$.block) {
@@ -713,8 +713,8 @@ LG_lookup <- function(.info,
     ##  the estimated local Gaussian correlations stems from a
     ##  one- or five-parameter approximation.
     details$type <- gsub(pattern = "par_",
-                                replacement = "",
-                                look_up$type[1])
+                         replacement = "",
+                         look_up$type[1])
     ##  Add information about the variables, and if it is an auto- or
     ##  cross-case that is under investigation.  Note that the
     ##  'auto_cross' in this case should be anew, since the

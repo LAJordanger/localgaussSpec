@@ -26,4 +26,3 @@ This helper function that takes care of some details related to the
 loading of files, i.e. with regard to the interactive inspection
 required by \code{shiny}.
 }
-

@@ -5,8 +5,9 @@
 \title{Local Gaussian spectra, scribe-function.}
 \usage{
 LG_spectra_scribe(main_dir, data_dir, LG_type = c("par_five", "par_one"),
-  omega_vec = NULL, omega_length_out = 2^6, window = c("Tukey", "Parzen",
-  "Bartlett"), cut_vec = NULL, .method = c("all", "mean", "median"))
+  omega_vec = NULL, omega_length_out = 2^6, window = c("Tukey",
+  "Parzen", "Bartlett"), cut_vec = NULL, .method = c("all", "mean",
+  "median"))
 }
 \arguments{
 \item{main_dir}{The path to the main directory, that contains the
@@ -84,4 +85,3 @@ This function records its arguments and compares them to a
     the result is added to the file-structure while the
     information-object is updated.
 }
-

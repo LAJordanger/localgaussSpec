@@ -5,12 +5,13 @@
 \title{Wrapper-function for the bootstrap part of local Gaussian
 inspection of a time series.}
 \usage{
-LG_Wrapper_Bootstrap(main_dir, spectra_dir, nb = NULL, boot_type = NULL,
-  block_length = NULL, boot_seed = NULL, all_statistics = FALSE,
-  log_ = FALSE, lag_max = NULL, LG_points = NULL, .bws_mixture = NULL,
-  bw_points = NULL, .bws_fixed = NULL, .bws_fixed_only = NULL,
-  content_details = NULL, LG_type = NULL, omega_vec = NULL,
-  window = NULL, cut_vec = NULL, threshold = 500)
+LG_Wrapper_Bootstrap(main_dir, spectra_dir, nb = NULL,
+  boot_type = NULL, block_length = NULL, boot_seed = NULL,
+  all_statistics = FALSE, log_ = FALSE, lag_max = NULL,
+  LG_points = NULL, .bws_mixture = NULL, bw_points = NULL,
+  .bws_fixed = NULL, .bws_fixed_only = NULL, content_details = NULL,
+  LG_type = NULL, omega_vec = NULL, window = NULL, cut_vec = NULL,
+  threshold = 500)
 }
 \arguments{
 \item{main_dir}{The path to the main directory, that contains the
@@ -61,7 +62,7 @@ to \code{FALSE}.}
 
 \item{lag_max}{The maximal number of lags we want to include in our
 analysis.  This number will also affect the
-'adjustment'-attribute on the bootstrapped time series.}
+\code{adjustment}-attribute on the bootstrapped time series.}
 
 \item{LG_points}{An array that specifies the point at which it is
 desired to compute the local Gaussian estimates.  The default
@@ -151,4 +152,3 @@ This function will compute local Gaussian approximations
 Wrapper-function for the bootstrap part of local Gaussian
 inspection of a time series.
 }
-

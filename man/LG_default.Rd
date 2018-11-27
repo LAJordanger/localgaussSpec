@@ -4,7 +4,7 @@
 \name{LG_default}
 \alias{LG_default}
 \title{Internal default values.}
-\format{An object of class \code{list} of length 32.}
+\format{An object of class \code{list} of length 34.}
 \usage{
 LG_default
 }
@@ -60,4 +60,3 @@ storing the derived data based on the data from
 \code{LG_boot_approx}.
 }
 \keyword{internal}
-

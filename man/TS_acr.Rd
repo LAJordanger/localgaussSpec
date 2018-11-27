@@ -30,4 +30,3 @@ transform approach used by \code{acf}, but it seems more natural to
 use this when computing the ordinary spectral density in the old
 fashioned way (using window-functions instead of periodograms).
 }
-

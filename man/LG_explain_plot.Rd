@@ -45,4 +45,3 @@ saved plot-object has in the attribute named \code{details}, and it
 is thus of course possible to create customised presentations
 directly based on the information found there.
 }
-

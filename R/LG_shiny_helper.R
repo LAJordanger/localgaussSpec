@@ -22,9 +22,8 @@
 #'     upon.
 #'
 #' @param default_type Specifies whether "par_five" (default value) or
-#'     "par_one" (i.e. Local Gaussian auto-correlation or Local
-#'     Gaussian auto-covariance) will be used when both alternatives
-#'     are available in the data.
+#'     "par_one" will be used when both alternatives are available in
+#'     the data.
 #' 
 #' @param .env An environment needed in order to get hold of the
 #'     correct place to read and update some arguments.

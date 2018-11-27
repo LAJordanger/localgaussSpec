@@ -5,8 +5,8 @@
 \title{Find bandwidths to use for the local Gaussian estimates}
 \usage{
 LG_bandwidths_advanced(save_dir = NULL, TS, lag_max,
-  .bws_mixture = c("mixture", "local", "global"), bw_points = c(25, 35),
-  levels)
+  .bws_mixture = c("mixture", "local", "global"), bw_points = c(25,
+  35), levels)
 }
 \arguments{
 \item{save_dir}{A specification of the directory to be used when
@@ -72,4 +72,3 @@ percentage of the total number of lagged points should be contained
 inside the region specified by a central point and a
 bandwidth-square.
 }
-

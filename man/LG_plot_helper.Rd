@@ -37,10 +37,9 @@ The function are used as an helper in \code{LG_shiny}, in which
 case it also will take care of the restrictions in a manner that
 attempts to avoid the major restrictions when possible.  The
 interactive setting can trigger the creation of code needed in
-order to recreate a plot in a non-reactive setting too (e.g. as an
+order to re-create a plot in a non-reactive setting too (e.g. as an
 example in a paper/presentation), in which case some of the
 internal workings of the function will be adjusted to allow for the
 function call to work without the \code{shiny}-package being
 loaded.
 }
-

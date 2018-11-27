@@ -4,9 +4,9 @@
 \alias{LG_auto_cross_computations}
 \title{Compute values based on the cross- and auto-spectra.}
 \usage{
-LG_auto_cross_computations(.list_array, .branch = c("on_diag", "off_diag"),
-  .type = c("auto", "cross"), .spectrum = c("phase", "amplitude",
-  "squared_coherence"))
+LG_auto_cross_computations(.list_array, .branch = c("on_diag",
+  "off_diag"), .type = c("auto", "cross"), .spectrum = c("phase",
+  "amplitude", "squared_coherence"))
 }
 \arguments{
 \item{.list_array}{The list whose nodes contains the arrays of
@@ -49,4 +49,3 @@ assumed that "i" is smaller than "j".  Finally, since this function
 works as an internal helper in \code{LG_spectra}, it will also be
 asumed that the list contains information about the variable pairs.
 }
-

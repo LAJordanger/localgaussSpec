@@ -7,7 +7,7 @@
 #' is present, then this function will add the three points (v1,v1),
 #' (v2,v2) and (v2,v1). 
 #' 
-#' @param LG_points The result of the function 'LG_select_points'.
+#' @param LG_points The result of the function \code{LG_select_points}.
 #'
 #' @return An extended version of the array from \code{LG_points} will
 #'     be returned, with column names "v1" and "v2" and row names

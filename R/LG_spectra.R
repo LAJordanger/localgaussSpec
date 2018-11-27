@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 #####  2016-02-11
 
 #' Compute the local Gaussian spectral densities
@@ -136,7 +136,7 @@ LG_spectra <- function(
     lag_vec <- 0:lag_max
     kill(lag_max)
 ###-------------------------------------------------------------------
-    ##  Compute a list of windown-weight-vectors (stored as three
+    ##  Compute a list of window-weight-vectors (stored as three
     ##  dimensional arrays).  Copies of this list will later on be
     ##  updated with the estimated values, before the nodes are
     ##  collected back into an array.

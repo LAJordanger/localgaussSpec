@@ -45,4 +45,3 @@ confidence intervals for the global spectral densities.  This is
 done in order to create a global reference which the local Gaussian
 spectral densities can be compared against.
 }
-

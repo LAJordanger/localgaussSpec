@@ -43,4 +43,3 @@ This function looks up details that is needed in several functions
 related to the interactive investigation, and was thus created to
 avoid the duplication of code.
 }
-

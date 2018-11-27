@@ -4,8 +4,9 @@
 \alias{LG_boot_approx}
 \title{Local Gaussian approximations for bootstrapped replicates}
 \usage{
-LG_boot_approx(save_dir = NULL, TS_boot, lag_max, LG_points, .bws_mixture,
-  bw_points, .bws_fixed, .bws_fixed_only, content_details, LG_type)
+LG_boot_approx(save_dir = NULL, TS_boot, lag_max, LG_points,
+  .bws_mixture, bw_points, .bws_fixed, .bws_fixed_only, content_details,
+  LG_type)
 }
 \arguments{
 \item{save_dir}{A specification of the directory to be used when
@@ -133,4 +134,3 @@ This function can be called manually from the work-space,
     calling this (often quite time consuming) function directly, no
     default values have been specified for the arguments.
 }
-

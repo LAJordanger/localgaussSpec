@@ -188,7 +188,7 @@ LG_boot_spectra_scribe <- function(
             ##  Record if additional restrictions are required.
             restrict_more <- loop_list[[part]]$restrict_ingoing_necessary
 
-##### 2017-04-04: Horrible ad-hoc solution that might not work in
+##### 2017-04-04: Horrible ad hoc solution that might not work in
 ##### general.  Point, there is a need for a revision of the way the
 ##### approx-information is saved into the info-object (today only the
 ##### on-diagonal part seems to be present), and that is no good.

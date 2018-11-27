@@ -46,7 +46,7 @@ LG_sanity_checks <- function(
         "LG_Wrapper_Original", "LG_Wrapper_Bootstrap",
         "LG_Wrapper_Blocks", "LG_collect_orig_and_boot",
         "LG_merge_files_scribe",
-        "LG_collect_blocks", "LG_shiny")
+        "LG_collect_blocks", "LG_shiny", "NEW_shiny")
     ##---
     if (! target_fun %in% valid_fun)
         error(.argument = "spy_report",
@@ -100,6 +100,19 @@ LG_sanity_checks <- function(
         if (is.null(spy_report$envir$data_dir))
             return(invisible(NULL))
     }
+    ##  If `target_fun` is "NEW_shiny", then load `TS_content` into its
+    ##  environment, and split `main_dir` into a vector.  Return at
+    ##  this stage if `data_dir` is `NULL`.
+    if (target_fun == "NEW_shiny") {
+        gramps <- sys.frame(which = -2)
+        load(file = TS_content_file,
+             envir = gramps)
+        gramps$main_dir <- unlist(strsplit(
+            x = spy_report$envir$main_dir,
+            split = .Platform$file.sep))
+        if (is.null(spy_report$envir$data_dir))
+            return(invisible(NULL))
+    }
 ###-------------------------------------------------------------------
     ##  Check the validity of the directory-argument, i.e. extract
     ##  either `data_dir` or `spectra_dir`.
@@ -142,6 +155,9 @@ LG_sanity_checks <- function(
 ###-------------------------------------------------------------------
     ##  Return here if `target_fun` is "LG_shiny".
     if (target_fun == "LG_shiny") 
+        return(invisible(NULL))
+    ##  Return here if `target_fun` is "NEW_shiny".
+    if (target_fun == "NEW_shiny") 
         return(invisible(NULL))
 ###-------------------------------------------------------------------
     ##  Load the info-file to get access to 'info'.
@@ -275,7 +291,7 @@ LG_sanity_checks <- function(
 #####  being.  I suppose the structure of this function might benefit
 #####  from a little bit more planning with regard to when different
 #####  stuff is performed, and it would be nice to have everything
-#####  going in the flow without any such ad-hoc parts like this...
+#####  going in the flow without any such ad hoc parts like this...
 ###-------------------------------------------------------------------
         ##  Some ad hoc adjustments:
         if (target_fun == "LG_collect_blocks") {
@@ -983,7 +999,7 @@ LG_sanity_checks <- function(
 ## ## #####  being.  I suppose the structure of this function might benefit
 ## ## #####  from a little bit more planning with regard to when different
 ## ## #####  stuff is performed, and it would be nice to have everything
-## ## #####  going in the flow without any such ad-hoc parts like this...
+## ## #####  going in the flow without any such ad hoc parts like this...
 ## ## ###-------------------------------------------------------------------
 ## ##         ##  Some ad hoc adjustments:
 ## ##         if (target_fun == "LG_collect_blocks") {

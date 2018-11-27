@@ -174,16 +174,6 @@ TS_spectral <- function(acr_data,
     kill(.bootstrap)
 ###-------------------------------------------------------------------
     ##  Estimate the spectral densities.
-
-    ## LG_spectra_call <- create_call(
-    ##     .cc_fun = LG_spectra,
-    ##     LG_approx_extract_data = list(
-    ##         on_diag = list(pos_lag = acr,
-    ##                        info = list(lag_max = max(as.integer(dimnames(acr)$lag))))),
-    ##     omega_vec = omega_vec,
-    ##     window = window,
-    ##     cut_vec = cut_vec)
-    ## capture_env() 
     .spectra <- LG_spectra(
         LG_approx_extract_data = list(
             on_diag = list(pos_lag = acr,

@@ -38,4 +38,3 @@ Given a key for a time series in \code{TS_families}, and
 }
 \keyword{series}
 \keyword{time}
-

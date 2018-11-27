@@ -20,7 +20,7 @@
 
 
 #####  2016-02-01
-##  An ad-hoc function to investigate a simple ARCH-model
+##  An ad hoc function to investigate a simple ARCH-model
 
 .ARCH <- function(N,
                   error_type = "rnorm",
@@ -117,8 +117,8 @@
 ## #' Working upon fitted models from \code{rugarch}.
 ## #'
 ## #' This is a function that is intented to simplify the code in this
-## #' package, so I can focus solely on using 'ugarchpath' and not
-## #' 'ugarchsim'
+## #' package, so I can focus solely on using \code{ugarchpath} and not
+## #' \code{ugarchsim}.
 ## #'
 ## #' @param fit The result of the function \code{ugarchfit}.
 ## #'

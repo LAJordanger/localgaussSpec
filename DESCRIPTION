@@ -10,7 +10,7 @@ Remotes: github::LAJordanger/leanRcoding
 Depends:
     R (>= 3.3.3)
 License: file LICENSE
-Imports:	    
+Imports: 
     abind,
     dfoptim,
     digest,
@@ -18,7 +18,6 @@ Imports:
     ggplot2,
     leanRcoding,
     localgauss,
-    logspline,
     magrittr,
     markdown,
     mvtnorm,
@@ -41,4 +40,4 @@ Suggests:
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.0

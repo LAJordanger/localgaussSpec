@@ -17,7 +17,7 @@
 ##### Arguments that goes to 'LG_boot_approx_scribe'.
 #' @param lag_max The maximal number of lags we want to include in our
 #'     analysis.  This number will also affect the
-#'     'adjustment'-attribute on the bootstrapped time series.
+#'     \code{adjustment}-attribute on the bootstrapped time series.
 #'
 #' @template LG_points_boot
 #' 

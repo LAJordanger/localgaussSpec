@@ -48,4 +48,3 @@ formulas of the covariances and correlation of the corresponding
 lagged pairs.  This function computes the scaling and adjustments
 components that we need in other functions later on.
 }
-

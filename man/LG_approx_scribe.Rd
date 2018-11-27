@@ -7,8 +7,8 @@
 LG_approx_scribe(main_dir, data_dir, TS, lag_max = ceiling(3 *
   sqrt(length(TS))), LG_points, .bws_mixture = c("mixture", "local",
   "global"), bw_points = c(25, 35), .bws_fixed = NULL,
-  .bws_fixed_only = FALSE, content_details = c("rho_only", "rho_log.fun",
-  "rho_all"), LG_type = c("par_five", "par_one"))
+  .bws_fixed_only = FALSE, content_details = c("rho_only",
+  "rho_log.fun", "rho_all"), LG_type = c("par_five", "par_one"))
 }
 \arguments{
 \item{main_dir}{The path to the main directory, that contains the
@@ -129,4 +129,3 @@ This function records its arguments and compares them to a
     file-structure.  Finally the information-object will be updated
     and a two component value is returned to the work-flow.
 }
-
