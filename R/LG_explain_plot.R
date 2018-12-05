@@ -66,21 +66,14 @@ LG_explain_plot <- function(.plot_details,
                   "The mode must be one of: NULL, markdown, latex.")
     }
     kill(.plot_argument)
-###-------------------------------------------------------------------
-    ##  Extract the 'selected'-information to get more compact code
-    ##  later on.  The result will depend on this.
-    .selected <- details$.selected
 ######################################################################
-    ##  Reminder of temporary solution for the cases not implemented
-    if (.selected %in% c("TS"))
+    ##  Reminder of temporary solution for the case not implemented
+    if (details$TCS_type == "T")
         return("Sorry: This has not been implemented yet")
 ######################################################################
 ###-------------------------------------------------------------------
     ##  Create helper functions to take care of the selected values.
     ##  These must be adjusted depending on the mode.
-
-    ## ## ## capture_env() 
-    
     if (.mode == "markdown") {
         ##  Helper functions for the markdown-syntax.
         .italics <- function(.text)
@@ -192,12 +185,6 @@ LG_explain_plot <- function(.plot_details,
         coordinates = as.character(
             round(x = details$.point_coord,
                   digits = .digits_for_points)),
-        ## ## ## ## ## percentiles = paste(
-        ## ## ## ## ##     round(x = pnorm(q = details$.point_coord) * 100,
-        ## ## ## ## ##           digits = .digits_for_percentiles),
-        ## ## ## ## ##     ifelse(test = {.mode == "markdown"},
-        ## ## ## ## ##            yes  = "%",
-        ## ## ## ## ##            no   = "\\%%"),
         percentiles = paste(
             .percent(round(
                 x = pnorm(q = details$.point_coord) * 100,
@@ -217,7 +204,7 @@ LG_explain_plot <- function(.plot_details,
     ##  selected.)
     plot_info <- list()
     plot_info$Source <- paste(
-        ifelse(test = details$block,
+        ifelse(test = details$is_block,
                yes  = paste(details$nr_simulated_samples,
                             " independent ",
                             .italics(.text_adjust(details$TS_key)),
@@ -248,86 +235,88 @@ LG_explain_plot <- function(.plot_details,
     ##  Information about the content, with details about variables
     ##  and the point, and a comment that states that only the
     ##  positive lags are needed.
+
+    ## capture_env() 
+
+    ## toTitleCase
+
     plot_info$Content <-  paste(
-        c("A plot of the ",
-          if (.selected %in% c("Spectra", "Boot_Spectra"))
-              c(" lag ",
+        c("A ",
+          ifelse(test = all(details$TCS_type == "C",
+                            any(details$is_block,
+                                details$is_bootstrap )),
+                 yes  = "boxplot",
+                 no   = "plot"),
+          " of the ",
+          if  (details$TCS_type == "S")
+              c("lag ",
                 details$truncation_level,
                 " truncated (smoothed with the ",
                 details$window,
                 " lag-window kernel) "),
           .italics(details$text$plot_type),
           details$text$plot_type_YiYj,
-          " at the point (",
-          paste(.points$coordinates,
-                collapse = ", "),
-          ").  The coefficients of this point corresponds respectively to the",
-          " standard-normal percentiles ",
-          paste(.points$percentiles,
-                collapse = " and "),
-          ".",
-          if (.selected %in% c("Approx", "Boot_Approx")) 
-              c(if (! details$lag_zero_needed)
+          if (details$is_local) {
+              c(" at the point (",
+                paste(.points$coordinates,
+                      collapse = ", "),
+                ").",
+                "  The coefficients of this point corresponds respectively to the",
+                " standard-normal percentiles ",
+                paste(.points$percentiles,
+                      collapse = " and "),
+                ".")
+          } else
+              ".",
+          if (details$TCS_type == "C")
+              c(if (! details$is_lag_zero_needed)
                     c("  Note that the lag zero component always is one",
                       " in this case, and it has thus been dropped from the plot."),
-                if (! details$negative_lags_needed)
-                    c("  The local ",
+                if (! details$is_negative_lags_needed)
+                    c("  The ",
+                      if (details$is_local)
+                          "local ",
                       details$auto_cross, 
                       "-correlations are even in the lag-argument",
-                      " (since the point lies on the diagonal),",
+                      if (details$is_local)
+                          " (since the point lies on the diagonal),",
                       " so only positive lags are shown in the plot.")),
-          if (.selected %in% c("Spectra", "Boot_Spectra"))
-              c("  Note that the spectrum is even in the",
-                " frequency-argument, so only positve frequencies are ploted.")),
+          if (details$TCS_type == "S")
+              c("  Note that the spectrum is ",
+                ifelse(test = details$is_even_spectrum,
+                       yes  = "even",
+                       no   = "odd"),
+                " in the",
+                " frequency-argument.")),
         collapse = "")
     ##  Add description for the spectra (becomes 'NULL' when not
     ##  relevant.)
-    plot_info$Explain_spectra <-
-        if (.selected %in% c("Spectra", "Boot_Spectra"))
-            if (any(details$auto_cross == "cross",
-                    all(details$auto_cross == "auto",
-                        ! details$.on_diagonal)))
-                paste(c("The ",
-                        details$text$plot_type,
-                        " is the ",
-                        switch(EXPR = details$spectrum_variant,
-                               auto = "",
-                               co   = "real part",
-                               quad = "negative of the imaginary part",
-                               amplitude = "amplitude ",
-                               phase = "phase ",
-                               "  **NO DESCRIPTION** "),
-                        " of the complex-valued local Gaussian ",
-                        details$auto_cross,
-                        "-spectrum.",
-                        if (details$auto_cross == "auto")
-                            paste("  Note that the local Gaussian",
-                                  " auto-spectrum is complex valued in this",
-                                  " case since the point lies off the diagonal",
-                                  sep = "")),
-                      collapse = "")
+    plot_info$Explain_spectra <- details$spectrum_variant_cross_details
 ###-------------------------------------------------------------------
     ##  A description of the computations, i.e. bandwidth and type of
     ##  local Gaussian approximation.
-    plot_info$Computations <- paste(
-        c("The computations are based on the estimated correlations from",
-          " a local fitting, at the point (",
-          paste(.points$coordinates,
-                collapse = ", "),
-          "), of a ",
-          details$type,
-          "-parameter Gaussian approximation to the probability",
-          " density functions of the lagged pairs",
-          " (of pseudo-normalised observations).",
-          "  The product-normal kernel was used in the",
-          " estimation algorithm, with the bandwidth ",
-          details$bandwidth,
-          " (for all the lags)."),
-        collapse = "")
+    plot_info$Computations <-
+        if (details$is_local)
+            paste(
+                c("The computations are based on the estimated correlations from",
+                  " a local fitting, at the point (",
+                  paste(.points$coordinates,
+                        collapse = ", "),
+                  "), of a ",
+                  details$type,
+                  "-parameter Gaussian approximation to the probability",
+                  " density functions of the lagged pairs",
+                  " (of pseudo-normalised observations).",
+                  "  The product-normal kernel was used in the",
+                  " estimation algorithm, with the bandwidth ",
+                  details$bandwidth,
+                  " (for all the lags)."),
+                collapse = "")
 ###-------------------------------------------------------------------
     ##  Add warning if the one-parameter local Gaussian approximation
     ##  has been used (this will be 'NULL' when not relevant).
-    if (details$type == "one")
+    if (all(details$type == "one",
+            details$is_local))
         plot_info$Warning_one_parameter <- paste(
             "The one-parameter local Gaussian approximation will",
             " in general fail to capture the local properties",
@@ -335,29 +324,29 @@ LG_explain_plot <- function(.plot_details,
             sep = "")
 ###-------------------------------------------------------------------
     ##  Add CI-text (when relevant, will be 'NULL' when not present).
-    if (.selected %in% c("Boot_Approx", "Boot_Spectra"))
-        if (details$confidence_interval) {
-            plot_info$CI <- paste(
-                if (details$CI_percentage == "min_max") {
-                    "Pointwise max and min values based on "
-                } else
-                    paste(.percent(details$CI_percentage),
-                          " pointwise confidence interval based on ",
-                          sep = ""),
-                if (details$block) {
-                    paste(details$nr_simulated_samples,
-                          " independent samples.",
-                          sep = "")
-                } else
-                    paste(details$nb,
-                          " ",
-                          details$boot_type,
-                          "-bootstrap replicates, having block-length ",
-                          details$block_length,
-                          ".",
-                          sep = ""),
-                sep = "")
-        }
+    if (all(details$is_CI_needed,
+            details$TCS_type == "S")) {
+        plot_info$CI <- paste(
+            if (details$CI_percentage == "min_max") {
+                "Pointwise max and min values based on "
+            } else
+                paste(.percent(details$CI_percentage),
+                      " pointwise confidence interval based on ",
+                      sep = ""),
+            if (details$is_block) {
+                paste(details$nr_simulated_samples,
+                      " independent samples.",
+                      sep = "")
+            } else
+                paste(details$nb,
+                      " ",
+                      details$boot_type,
+                      "-bootstrap replicates, having block-length ",
+                      details$block_length,
+                      ".",
+                      sep = ""),
+            sep = "")
+    }
 ###-------------------------------------------------------------------
     ##  Add information about 'trustworthiness', i.e. if numerical
     ##  convergence for the five parameter local Gaussian approach was
@@ -368,44 +357,63 @@ LG_explain_plot <- function(.plot_details,
 #####  can be properly presented.
 ###-------------------------------------------------------------------
     ##  A description of the colours/graphical cues.
-    if (.selected %in% c("Spectra", "Boot_Spectra")) {
+    if (details$TCS_type == "S") {
         ##  Information about colours
         plot_info$Colours <- paste(
-            "The ",
+            c("The ",
             details$text$global_colour,
             " part is the estimate of the ordinary global ",
             details$auto_cross,
-            "-spectrum (included for comparison)",
-            " whereas the ",
-            details$text$local_colour,
-            " part shows the estimate of the spectra computed from the local Gaussian ",
-            details$auto_cross,
-            "-correlations.",
-            sep  = "")
+            "-spectrum",
+            if (details$is_local) {
+                c(" (included for comparison)",
+                  " whereas the ",
+                  details$text$local_colour,
+                  " part shows the estimate of the spectra computed from the local Gaussian ",
+                  details$auto_cross,
+                  "-correlations.")
+            } else
+                "."),
+            collapse  = "")
         ##  Information about lines
         plot_info$Lines <- paste(
             c("The ",
-              details$text$local_colour,
-              "/",
+              if (details$is_local)
+                  c(details$text$local_colour,
+                    "/"),
               details$text$global_colour,
               " ",
-              if (details$block) {
-                  c(details$text$simulated_data__lty,
-                    "s are the pointwise estimates of the lag ",
+              if (details$is_block) {
+                  c(details$text$simulated_data_lty,
+                    ifelse(test = details$is_local,
+                           yes  = "s are ",
+                           no   = " is "),
+                    "the pointwise estimates of the lag ",
                     details$truncation_level,
-                    " truncated local/global spectra",
-                    ", based on the median of the individual local/global",
-                    " spectra for each of the ",
+                    ifelse(test = details$is_local,
+                           yes  = " truncated local/global spectra,",
+                           no   = " truncated global spectrum,"),
+                    " based on the median of the individual ",
+                    ifelse(test = details$is_local,
+                           yes  = "local/",
+                           no   = ""),
+                    "global spectra for each of the ",
                     details$nr_simulated_samples,
                     " independent samples (all of length ",
                     details$N,
                     ").")
               } else
-                  c(details$text$real_data__lty,
-                    "s are the lag ",
+                  c(details$text$real_data_lty,
+                    ifelse(test = details$is_local,
+                           yes  = "s are ",
+                           no   = " is "),
+                    "the lag ",
                     details$truncation_level,
-                    " truncated local/global spectra ",
-                    ", based on the available data (of length",
+                    " truncated ",
+                    ifelse(test = details$is_local,
+                           yes  = "local/global spectra",
+                           no   = "global spectrum"),
+                    ", based on the available data (of length ",
                     details$N,
                     ").")),
             collapse  = "")

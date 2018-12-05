@@ -1,7 +1,7 @@
 Type: Package
 Package: localgaussSpec
 Title: Local Gaussian Spectral Analysis
-Version: 0.0.0.9000
+Version: 0.0.0.9100
 Author: Lars Arne Jordanger
 Maintainer: Lars Arne Jordanger <lars.jordanger@gmail.com>
 Description: A package for the estimation and visualisation of local Gaussian

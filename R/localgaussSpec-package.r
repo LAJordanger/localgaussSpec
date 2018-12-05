@@ -61,7 +61,7 @@
 #' @importFrom digest digest
 #' @importFrom ggplot2 ggplot coord_cartesian geom_hline geom_vline
 #'     labs geom_line aes annotate theme geom_ribbon geom_boxplot
-#'     cut_width
+#'     cut_width element_blank xlab ylab
 #' @importFrom graphics plot
 #' @importFrom leanRcoding add_arrays append_dimensions
 #'     array_to_list_array compare_spy_reports create_call
@@ -83,6 +83,7 @@
 #'     str_replace_all str_split str_sub
 #' @importFrom timeDate kurtosis skewness
 #' @importFrom tseries tsbootstrap
+#' @importFrom tools toTitleCase
 #' @importFrom utils capture.output combn head object.size str tail
 
 

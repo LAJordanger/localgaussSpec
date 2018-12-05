@@ -58,8 +58,7 @@ LG_bookkeeping <- function(spy_report) {
     if (spy_report$fun %in% c("LG_collect_orig_and_boot",
                               "LG_collect_blocks",
                               "LG_merge_files_scribe",
-                              "LG_shiny",
-                              "NEW_shiny"))
+                              "LG_shiny"))
         return(invisible(NULL))
 ###-------------------------------------------------------------------
     ##  Identify what kind of new stuff that will be created.
