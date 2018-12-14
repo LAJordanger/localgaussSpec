@@ -49,9 +49,7 @@ LG_splitting <- function(books) {
 ###-------------------------------------------------------------------
     ##  Check that 'books' commes from a function that 'LG_splitting'
     ##  knows how to handle.
-    valid_fun <- c(
-        "LG_approx_scribe", "LG_spectra_scribe",
-        "LG_boot_approx_scribe", "LG_boot_spectra_scribe")
+    valid_fun <- c("LG_approx_scribe", "LG_boot_approx_scribe")
     ##---
     if (! target_fun %in% valid_fun)
         error(.argument = "books",
@@ -67,33 +65,27 @@ LG_splitting <- function(books) {
         books$info[[books$bookmark]]$spy_report$envir,
         all.names = TRUE)
 ###-------------------------------------------------------------------
-    ##  For the boot_approx and boot_spectra cases, we need some of
-    ##  the arguments from the original computation.
-    if (target_fun %in% c("LG_boot_approx_scribe",
-                          "LG_boot_spectra_scribe")) {
+    ##  For the boot_approx case, we need some of the arguments from
+    ##  the original computation.
+    if (target_fun == "LG_boot_approx_scribe") {
         orig_arg_list <- as.list(
             books$info[[head(books$bookmark, -1)]]$spy_report$envir,
             all.names = TRUE)
         ##---
-        if (target_fun == "LG_boot_approx_scribe")
-            orig_arg_list <-
-                orig_arg_list[setdiff(
-                    x = intersect(
-                        x = names(orig_arg_list),
-                        y = names(arg_list)),
-                    y = "data_dir")]
-    }    
+        orig_arg_list <-
+            orig_arg_list[setdiff(
+                x = intersect(
+                    x = names(orig_arg_list),
+                    y = names(arg_list)),
+                y = "data_dir")]
+    }
 ###-------------------------------------------------------------------
 #############---------------------------------------------------------
 ###  Use 'target_fun' to figure out the type of, and the size of,
 ###  ingoing files, i.e. for 'LG_approx_scribe' the size will depend
 ###  on the original time series 'TS', whereas 'LG_boot_approx_scribe'
 ###  also need to take into account the number 'nb' of
-###  bootstrap-replicates that we want to investigate.  For
-###  'LG_spectra_scribe' and 'LG_boot_spectra_scribe' the data comes
-###  from files, and since the previous code (depending on the value
-###  of 'threshold') could have divided the result into several files,
-###  each file must be investigated separately.
+###  bootstrap-replicates that we want to investigate.
 #############---------------------------------------------------------
 ###-------------------------------------------------------------------
     if (target_fun %in% c("LG_approx_scribe", "LG_boot_approx_scribe")) {
@@ -166,7 +158,6 @@ LG_splitting <- function(books) {
                 ##---
                 ##  Multiply with 'nb' and adjust for the dropping of
                 ##  'eflag' from the 'variable'-dimension.
-##### TASK 2015-12-15: This detail with regard to 
                 adjust_common <-
                     adjust_final <- prod(
                         adjust_restricted_args,
@@ -174,32 +165,6 @@ LG_splitting <- function(books) {
                         divide_by(
                             e1 = length(ingoing_dimnames$variable) - 1,
                             e2 = length(ingoing_dimnames$variable)))
-            } else {
-                ##  The two spectra-cases (ordinary and boot).
-                adjust_common <- divide_by(
-                    prod(length(arg_list$omega_vec),
-                         length(arg_list$cut_vec),
-                         length(arg_list$window)),
-                    length(ingoing_dimnames$variable))
-###  Note: For "LG_spectra_scribe" this will be the adjustment factor
-###  to the final object, whereas it will be the adjustment to the
-###  intermediate object in "LG_boot_spectra_scribe"
-###  -------------------------------------------------------------------
-                ##  Adjustment-factor for final result.
-                adjust_final <- {
-                    if (target_fun == "LG_spectra_scribe") {
-                        adjust_common
-                    } else {
-                        divide_by(
-                            prod(adjust_common,
-                                 ifelse(test = identical(arg_list$all_statistics, FALSE),
-#####  TASK: Make this more robust, but how?
-                                        yes = 9,
-                                        no = 14)),
-                            prod(length(ingoing_dimnames$content),
-                                 length(ingoing_dimnames$lag)))
-                    }
-                }
             }
 ####  End of the computation of adjustment-factors.
 ###-------------------------------------------------------------------
@@ -221,100 +186,6 @@ LG_splitting <- function(books) {
 ###  this number likely will be smaller than the actuall number we end
 ###  out with, due to the need for 'allow_extra_pieces=TRUE' in
 ###  'split_vector' -- which ensures that no files are to big.
-###  Moreover, in the boot_spectra-case, we might (depending on the
-###  number of bootstrap-replicates) need to chop the ingoing data
-###  into much smaller chunks in order to avoid memory-problems when
-###  we deal with the intermediate objects.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
-            ##  Adjusted number for 'final_pieces' for the
-            ##  boot_spectra case.
-
-#####  2017-04-30: I have not checked it properly, but I think the
-#####  revised solution for the treatment of 'window' and 'cut' might
-#####  make the next part mostly obsolete.  I think some solution will
-#####  be needed here, but for the moment I think the base code might
-#####  be sufficient...
-            
-## ## ## ##             if (target_fun == "LG_boot_spectra_scribe") {
-## ## ## ##                 ##  Register the limits one how much we can divide.
-## ## ## ##                 divide_limit_out <- prod(
-## ## ## ##                     unlist(
-## ## ## ##                         lapply(X = arg_list[c("omega_vec", "window")],
-## ## ## ##                                FUN = length)))
-## ## ## ##                 ##---
-## ## ## ##                 divide_limit_in <- prod(local({
-## ## ## ##                     .bws <- if (orig_arg_list$.bws_fixed_only) {
-## ## ## ##                                 ".bws_fixed"
-## ## ## ##                             } else
-## ## ## ##                                 c("bw_points",
-## ## ## ##                                   ".bws_fixed")
-## ## ## ##                     #####  REMINDER: The above solution not complete
-## ## ## ##                     #####  with regard to the threatment of
-## ## ## ##                     #####  '.bws_mixture' and the possibility that
-## ## ## ##                     #####  '.bws_fixed' might be 'NULL'
-## ## ## ##                     unlist(
-## ## ## ##                         lapply(X = orig_arg_list[c("LG_points", .bws)],
-## ## ## ##                                FUN = length))
-## ## ## ##                 }))
-## ## ## ##                 ##---
-## ## ## ##                 max_divide <- prod(divide_limit_in,
-## ## ## ##                                    divide_limit_out)
-## ## ## ## #####  TASK: These three divide values seems to be common for the
-## ## ## ## #####  spectra cases, and as such I guess they might just as well be
-## ## ## ## #####  defined outside of this if-statement.
-## ## ## ## ###-------------------------------------------------------------------
-## ## ## ##                 ##  Investigate the effect of cutting along 'cut_vec'.
-## ## ## ##                 cut_vec_split <- LG_cut_vec_splitter(
-## ## ## ##                     cut_vec = arg_list$cut_vec,
-## ## ## ##                     ingoing_size = prod(
-## ## ## ##                         ingoing_size,
-## ## ## ##                         adjust_common),
-## ## ## ##                     lag_max = orig_arg_list$lag_max,
-## ## ## ##                     threshold = arg_list$threshold)
-## ## ## ## ###-------------------------------------------------------------------
-## ## ## ##                 ##  The highest 'threshold_ratio' from 'cut_vec_split'
-## ## ## ##                 ##  will inform us what we need to do.
-## ## ## ##                 worst_case <- max(cut_vec_split$threshold_ratio)
-## ## ## ## #####  Reminder, 2017-04-30: Deactivated the test below for the time
-## ## ## ## #####  being.  Most likely necessary to find another approach for the
-## ## ## ## #####  general case in order to avoid these problems.
-## ## ## ## ## ## ## ## ## #############---------------------------------------------------------
-## ## ## ## ## ## ## ## ## ####  If 'worst_case' exceeds 'max_divide', then this approach will
-## ## ## ## ## ## ## ## ## ####  not work (will require a combination of a high value for the
-## ## ## ## ## ## ## ## ## ####  truncation point, a huge value for the number of
-## ## ## ## ## ## ## ## ## ####  bootstrap-replicates and a "low" memory threshold).
-## ## ## ## ## ## ## ## ## #############---------------------------------------------------------
-## ## ## ## ## ## ## ## ## ###-------------------------------------------------------------------
-## ## ## ## ## ## ## ## ##                 if (worst_case > max_divide)
-## ## ## ## ## ## ## ## ##                     stop("\t",
-## ## ## ## ## ## ## ## ##                          "The present combination of highest truncation point, ",
-## ## ## ## ## ## ## ## ##                          max(arg_list$cut_vec),
-## ## ## ## ## ## ## ## ##                          ",\n\t",
-## ## ## ## ## ## ## ## ##                          "and number of bootstrap-replicates, ",
-## ## ## ## ## ## ## ## ##                          orig_arg_list$nb,
-## ## ## ## ## ## ## ## ##                          ",\n\t",
-## ## ## ## ## ## ## ## ##                          "requires more memory than the present threshold of ",
-## ## ## ## ## ## ## ## ##                          arg_list$threshold,
-## ## ## ## ## ## ## ## ##                          " MB.",
-## ## ## ## ## ## ## ## ##                          call. = FALSE)
-## ## ## ## #############---------------------------------------------------------
-## ## ## ## ####  If 'worst_case' is between 'max_divide' and 'divide_limit_out',
-## ## ## ## ####  then the ingoing data must be divided.
-## ## ## ## #############---------------------------------------------------------
-## ## ## ## ###-------------------------------------------------------------------
-## ## ## ##                 if (worst_case > divide_limit_out) {
-## ## ## ##                     ##  Compute the required division of ingoing data.
-## ## ## ##                     final_pieces <- ceiling(
-## ## ## ##                         divide_by(e1 = worst_case,
-## ## ## ##                                   e2 = divide_limit_out))
-## ## ## ##                 }
-## ## ## ##             }
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-####  With the possible modification of 'ingoing_pieces' due to the
-####  above 'if'-statement for the boot_spectra case, the stage is set
-####  for a computation of our 'restrict_list'
 #############---------------------------------------------------------
 ###-------------------------------------------------------------------
             ## Initiate a restrict list for 'aa_restrict'.
@@ -370,29 +241,6 @@ LG_splitting <- function(books) {
                                          length(ingoing_split$subset[[i]]$levels),
                                          length(ingoing_dimnames$levels))),
                                 arg_list$threshold))) )
-####  Note: It's the sizes after 'ingoing_split' that must be taken
-####  into account with regard to the need for a splitting of the
-####  intermediate computation in "LG_boot_spectra_scribe".  The part
-####  'intermediate_pieces' should be 1 for the other cases.
-###-------------------------------------------------------------------
-            ##  Based on 'intermediate_pieces', investigate if a
-            ##  further splitting is necessary.  (This should only be
-            ##  the case for "LG_boot_spectra_scribe".)
-#######################-----------------------------------------------
-#####  TASK: The idea of splitting along cut_vec_once more might not
-#####  reduce the size as much as I anticipated - or perhaps I have
-#####  messed up something with regard to the selected size of the
-#####  intermediate object?  However, in as far as it seems to be
-#####  enough to split along 'omega_vec', its more tempting to let it
-#####  stay at that.
-            ## capture_env()
-            ## 
-            ##     ##  Investigate the effect of cutting along 'cut_vec'.
-            ## cut_vec_split <- LG_cut_vec_splitter(
-            ##     cut_vec = arg_list$cut_vec,
-            ##     ingoing_size = add_to_loop[[i]]$new_intermediate_size,
-            ##     lag_max = orig_arg_list$lag_max,
-            ##     threshold = arg_list$threshold)
 #######################-----------------------------------------------
             for (i in seq_along(add_to_loop)) {
                 add_to_loop[[i]]$arg_list <- {
@@ -406,31 +254,6 @@ LG_splitting <- function(books) {
                             compute_name = "LG_points",
                             subset_name = "LG_points",
                             add_to_compute = arg_list[names(arg_list) != "LG_points"])
-                    } else {
-###-------------------------------------------------------------------
-                        ##  The two spectra cases: Take into account
-                        ##  the number of available cores in order to
-                        ##  do stuff in parallel.  Round up
-                        ##  'intermediate_pieces' to the closest
-                        ##  multiplum of available cores in the
-                        ##  backend, minus one (due to the use of
-                        ##  'allow_extra_pieces' in 'split_vector').
-                        ##  More is not always better, should a
-                        ##  maximum number of cores be used?
-                        p <- add_to_loop[[i]]$intermediate_pieces 
-                        c <- getDoParWorkers()
-                        ##---
-                        add_to_loop[[i]]$intermediate_pieces <-
-                            c * {p %/% c + 1} - 1
-                        ##---
-                        ##  Use split_vector to find 'arg_list'.
-                        split_vector(
-                            vec = arg_list$omega_vec,
-                            pieces = add_to_loop[[i]]$intermediate_pieces,
-                            allow_extra_pieces = TRUE,
-                            compute_name = "omega_vec",
-                            subset_name = "omega",
-                            add_to_compute = arg_list[names(arg_list) != "omega_vec"])
                     }
                     ##  End of computation of 'arg_list'.
                 }
@@ -448,8 +271,6 @@ LG_splitting <- function(books) {
         }
 #####  End of loop: 'part in seq_along(ingoing_files)'
     }
-#####  End of 'if'-statement 'target_fun %in% c("LG_spectra_scribe",
-#####  "LG_boot_spectra_scribe")'
 ###-------------------------------------------------------------------
     ##  Add names to loop list.
     if (length(loop_list) == 1) {
@@ -463,29 +284,27 @@ LG_splitting <- function(books) {
             sep = "")
     }
 ###-------------------------------------------------------------------
-    if (target_fun %in% c("LG_approx_scribe", "LG_boot_approx_scribe")) {
-        ##  Replace indices for the rows of 'LG_point' with the
-        ##  required array.
-        for (i in seq_along(loop_list)) {
-            .tmp_c <- loop_list[[i]]$arg_list$compute
-            .tmp_s <- loop_list[[i]]$arg_list$subset
-            for (j in seq_along(.tmp_c)) {
-                .vec <- .tmp_c[[j]]$LG_points
-                .tmp_c[[j]]$LG_points <- local({
-                    .tmp <- LG_points[.vec, , drop = FALSE]
-                    attributes(.tmp) <- c(
-                        attributes(.tmp),
-                        .attributes_LG_points)
-                    .tmp
-                })
-                .tmp_s[[j]]$LG_points <- 
-                    rownames(LG_points)[.vec]
-            }
-            loop_list[[i]]$arg_list$compute <- .tmp_c
-            loop_list[[i]]$arg_list$subset <- .tmp_c
+    ##  Replace indices for the rows of 'LG_point' with the required
+    ##  array.
+    for (i in seq_along(loop_list)) {
+        .tmp_c <- loop_list[[i]]$arg_list$compute
+        .tmp_s <- loop_list[[i]]$arg_list$subset
+        for (j in seq_along(.tmp_c)) {
+            .vec <- .tmp_c[[j]]$LG_points
+            .tmp_c[[j]]$LG_points <- local({
+                .tmp <- LG_points[.vec, , drop = FALSE]
+                attributes(.tmp) <- c(
+                    attributes(.tmp),
+                    .attributes_LG_points)
+                .tmp
+            })
+            .tmp_s[[j]]$LG_points <- 
+                rownames(LG_points)[.vec]
         }
-        loop_list[[1]]$arg_list$compute[[1]]$LG_points
-    }    
+        loop_list[[i]]$arg_list$compute <- .tmp_c
+        loop_list[[i]]$arg_list$subset <- .tmp_c
+    }
+    loop_list[[1]]$arg_list$compute[[1]]$LG_points
 ###-------------------------------------------------------------------
     ##  Return 'loop_list' to the work-flow.
     return(loop_list)

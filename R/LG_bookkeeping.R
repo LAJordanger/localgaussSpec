@@ -4,10 +4,9 @@
 #' Keep the records up to date
 #'
 #' This is an internal function that works upon the \code{spy}-report
-#' from the targeted function, that should be one of the six functions
-#' \code{LG_approx_scribe}, \code{LG_spectra_scribe},
-#' \code{LG_boot_approx_scribe}, \code{LG_boot_spectra_scribe},
-#' \code{LG_Wrapper_Original} and \code{LG_Wrapper_Bootstrap}.
+#' from the targeted function, that should be one of the functions
+#' \code{LG_approx_scribe}, \code{LG_boot_approx_scribe}, and
+#' \code{LG_shiny}.
 #'
 #' @details This function starts out by calling
 #'     \code{LG_sanity_checks} that investigates if the arguments
@@ -47,18 +46,11 @@ LG_bookkeeping <- function(spy_report) {
     ## ##     spy_report = spy_report)
     ## ## capture_env() 
     
-    ## if (spy_report$fun == "LG_spectra_scribe")
-        ## capture_env() 
-    
     LG_sanity_checks(spy_report = spy_report)
 ###-------------------------------------------------------------------
-    ##  For 'LG_merge_files_scribe", ... and 'LG_shiny', all the work
-    ##  has been done by 'LG_sanity_checks', only need to quit this
-    ##  program.
-    if (spy_report$fun %in% c("LG_collect_orig_and_boot",
-                              "LG_collect_blocks",
-                              "LG_merge_files_scribe",
-                              "LG_shiny"))
+    ##  For the 'LG_shiny'-case, all the work has been done by
+    ##  'LG_sanity_checks', so quit this program.
+    if (spy_report$fun == "LG_shiny")
         return(invisible(NULL))
 ###-------------------------------------------------------------------
     ##  Identify what kind of new stuff that will be created.
@@ -169,36 +161,17 @@ LG_bookkeeping <- function(spy_report) {
         },
         FUN.VALUE = character(1))
     kill(old_data_dir)
-    ##  NOTE: 'data_files_df' will be empty when 'LG_approx_scribe',
-    ##  'LG_Wrapper_Original' and 'LG_Wrapper_Blocks' calls this
-    ##  function, but that doesn't matter since it is not used by
-    ##  those function.
+    ##  NOTE: 'data_files_df' will be empty when 'LG_approx_scribe'
+    ##  calls this function, but that does not matter since it is not
+    ##  used by that function.
 ###-------------------------------------------------------------------
-    ##  Compute additional arguments to be used when working upon the
-    ##  ordinary (global) autocorrelations.  Reminder: The result
-    ##  becomes `NULL` for the cases not specified here.
-    additional_args <- switch(
-        EXPR = spy_report$fun,
-        "LG_approx_scribe" = list(
-            .TS_info = list(
-                main_dir = spy_report$envir$main_dir,
-                TS = info$TS_info$TS,
-                save_dir = data_dir)),
-        "LG_spectra_scribe" = list(
-            .acr_data = list(
-                main_dir = spy_report$envir$main_dir,
-                acr = info[[c(head(x = bookmark, n = -1),
-                              "acr")]],
-                save_dir = save_dir)),
-        "LG_boot_spectra_scribe" = list(
-            .acr_data = list(
-                main_dir = spy_report$envir$main_dir,
-                acr = info[[c(head(x = bookmark, n = -1),
-                              ifelse(
-                                  test = info$TS_info$block,
-                                  yes  = "acr",
-                                  no   = "acr_boot"))]],
-                save_dir = save_dir)))
+    ##  Add additional arguments to be used when working upon the
+    ##  ordinary (global) autocorrelations.
+    additional_args <- list(
+        .TS_info = list(
+            main_dir = spy_report$envir$main_dir,
+            TS = info$TS_info$TS,
+            save_dir = data_dir))
 ###-------------------------------------------------------------------
     ##  Return the answer.  The format depends on the value of
     ##  'done_before_boolean'.  The first time a computation is

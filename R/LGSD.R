@@ -183,17 +183,13 @@ LG_default <-
         folder_defaults =
             c(ts.dir= "TS",
               approx.dir = "Approx",
-              spectra.dir = "Spectra",
-              boot.approx.dir = "Boot_Approx",
-              boot.spectra.dir = "Boot_Spectra"),
+              boot.approx.dir = "Boot_Approx"),
 ###-------------------------------------------------------------------
         ##  Defaults for 'ignore_these' in comparison of spy-reports.
 
         ignore_these = list(
             approx.dir = c("main_dir", "save_dir"),
-            spectra.dir = c("main_dir", "save_dir", "omega_length_out"),
-            boot.approx.dir = c("main_dir", "save_dir", "threshold"),
-            boot.spectra.dir = c("main_dir", "save_dir", "threshold")),
+            boot.approx.dir = c("main_dir", "save_dir", "threshold")),
 #####  TASK: Recheck this when the code has settled, and create a tiny
 #####  sanity-check to see if the argument of the functions are like
 #####  we want them to be.

@@ -29,10 +29,9 @@ The result will be a list with either three or six
 }
 \description{
 This is an internal function that works upon the \code{spy}-report
-from the targeted function, that should be one of the six functions
-\code{LG_approx_scribe}, \code{LG_spectra_scribe},
-\code{LG_boot_approx_scribe}, \code{LG_boot_spectra_scribe},
-\code{LG_Wrapper_Original} and \code{LG_Wrapper_Bootstrap}.
+from the targeted function, that should be one of the functions
+\code{LG_approx_scribe}, \code{LG_boot_approx_scribe}, and
+\code{LG_shiny}.
 }
 \details{
 This function starts out by calling
