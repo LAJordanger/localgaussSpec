@@ -130,18 +130,9 @@ lag_max <- 200
 ##  points having coefficients in the tails of the margins.
 .b <- 0.6
 
-##  Some input parameters that gives the frequencies to be
-##  investigated and the smoothing to be applied when the estimates of
-##  the local Gaussian spectra are computed.  NOTE: As the purpose of
-##  this particular script is to inspect the estimated
-##  autocorrelations, the number of frequencies to investigate has
-##  been selected to be a rather low number.
-
-omega_length_out <- 3
-window <- "Tukey"
 
 ##  Do the main computation on the sample at hand.
-LG_WO <- LG_Wrapper_Original(
+LG_AS <- LG_approx_scribe(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
@@ -149,10 +140,8 @@ LG_WO <- LG_Wrapper_Original(
     LG_points = .LG_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
-    omega_length_out = omega_length_out,
-    window = window,
     LG_type = .LG_type)
-rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type)
+rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 
 ##  Inspect the result using the shiny-application.  Note that no
 ##  bootstrap based computation of pointwise confidence intervals are
@@ -162,8 +151,8 @@ rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type
 ##  of these estimates, see the discussion in "Nonlinear spectral
 ##  analysis via the local Gaussian correlation" for details.)
 
-data_dir_for_LG_shiny <- LG_WO$spectra_note$data_dir
-rm(LG_WB)
+data_dir_for_LG_shiny <- LG_AS$data_dir
+rm(LG_AS)
 
 ##  And start the shiny application for an interactive inspection of
 ##  the result.
@@ -171,7 +160,6 @@ rm(LG_WB)
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
     data_dir = data_dir_for_LG_shiny))
-
 
 ################################################################################
 ###### NOTE:
@@ -188,13 +176,10 @@ shiny::runApp(LG_shiny(
 ###  this script is used after the script
 ###  'EuStockMarkets_logreturns.R').
 
-
-##  dump("data_dir_for_LG_shiny", stdout())
-## data_dir_for_LG_shiny <-
-## structure(c("38ea1450589cb6a6759f085b0947f016", "Approx__2", 
-## "Spectra__1"), .Names = c("ts.dir", "approx.dir", "spectra.dir"
-## ))
-
+## dump("data_dir_for_LG_shiny", stdout())
+## data_dir_for_LG_shiny <- c(
+##     ts.dir = "38ea1450589cb6a6759f085b0947f016",
+##     approx.dir = "Approx__2" )
 
 #####
 ## Note that 'data_dir' only contains the specification of the

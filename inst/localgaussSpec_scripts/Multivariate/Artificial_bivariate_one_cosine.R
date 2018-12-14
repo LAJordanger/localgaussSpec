@@ -54,7 +54,6 @@ rm(.required_packages, .successful)
 ##  for the operative system.
 ###############
 
-
 ###############
 ##  Specify the directory in which the resulting file-hierarchy will
 ##  be stored. The default directory "LG_DATA" will be created if it
@@ -96,7 +95,7 @@ set.seed(.seed_for_sample)
                   adjust = 0)),
     phase_adjustment = pi/3,
     .seed = NULL)
-rm(.rho, nr_samples, N, .seed_for_sample, .mean, sigma)
+rm(nr_samples, N, .seed_for_sample)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
 ##  file-hierarchy.  (Note: )
 save_dir <- paste(TS_key,
@@ -114,11 +113,9 @@ rm(TS_key, .TS_sample, save_dir)
 ##############################
 
 ###############
-##  Compute the local Gaussian spectral densities.  This requires
-##  first that the local Gaussian correlations of interest must be
-##  computed, which implies that the points of interest must be
-##  selected together with information about the bandwidth and the
-##  number of lags. WARNING: The type of approximation must also be
+##  Compute the local Gaussian correlations.  This requires a
+##  specification of the desired points, the bandwidth and the number
+##  of lags. WARNING: The type of approximation must also be
 ##  specified, i.e. the argument 'LG_type', where the options are
 ##  "par_five" and "par_one".  The "five" and "one" refers to the
 ##  number of free parameters used in the approximating bivariate
@@ -144,15 +141,8 @@ lag_max <- 15
 ##  points having coefficients in the tails of the margins.
 .b <- 0.6
         
-##  Some input parameters that gives the frequencies to be
-##  investigated and the smoothing to be applied when the estimates of
-##  the local Gaussian spectra are computed.
-
-omega_length_out <- 2^6
-window <- "Tukey"
-
 ##  Do the main computation.  
-.tmp_uc_LG_Wrapper_Blocks <- LG_Wrapper_Blocks(
+.tmp_LG_approx_scribe <- LG_approx_scribe(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
@@ -160,24 +150,16 @@ window <- "Tukey"
     LG_points = .LG_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
-    omega_length_out = omega_length_out,
-    window = window,
     LG_type = .LG_type)
-rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type)
+rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 ###############
 
-##############################
+##  Extract the directory information needed for 'LG_shiny'.
+data_dir_for_LG_shiny <- .tmp_LG_approx_scribe$data_dir
+rm(.tmp_LG_approx_scribe)
 
-###############
-##  Collect the required pieces
-
-data_dir_for_LG_shiny <- LG_collect_blocks(
-    main_dir = main_dir,
-    data_dir = .tmp_uc_LG_Wrapper_Blocks$CI_spectra_note$data_dir)
-rm(.tmp_uc_LG_Wrapper_Blocks)
-
-##  And start the shiny application for an interactive inspection of
-##  the result.
+##  Start the shiny application for an interactive inspection of the
+##  result.
 
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
@@ -196,14 +178,10 @@ shiny::runApp(LG_shiny(
 ###  directly.  The result for the present script (based on the
 ###  original input parameters) are given below.
 
-
-##  dump("data_dir_for_LG_shiny", stdout())
+## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## structure(c("dmt_bivariate_39736813d9ee9e640c0b6195e86e5cc5", 
-## "Approx__1", "Boot_Approx__1", "Boot_Spectra"), .Names = c("ts.dir", 
-## "approx.dir", "boot.approx.dir", "boot.spectra.dir"))
-
-
+## c(ts.dir = "dmt_bivariate_39736813d9ee9e640c0b6195e86e5cc5", 
+## approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the

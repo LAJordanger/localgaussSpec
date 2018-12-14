@@ -69,7 +69,6 @@ main_dir <- "~/LG_DATA"
 ##  Extract the desired time series needed for the present
 ##  investigation from 'dmbp', and save it into the file-hierarchy.
 
-
 .TS <- localgaussSpec::dmbp[, "V1"]
 ##  (The 'dmbp' in the 'localgaussSpec'-package is a copy of the one
 ##  from the 'rugarch'-package.  It has been copied in order for this
@@ -110,16 +109,8 @@ lag_max <- 20
 ##  alternatives.  
 .b <- c(0.5, 0.75, 1)
 
-
-##  Some input parameters that gives the frequencies to be
-##  investigated and the smoothing to be applied when the estimates of
-##  the local Gaussian spectra are computed.
-
-omega_length_out <- 2^6
-window <- "Tukey"
-
 ##  Do the main computation on the sample at hand.
-LG_WO <- LG_Wrapper_Original(
+LG_AS <- LG_approx_scribe(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
@@ -127,11 +118,8 @@ LG_WO <- LG_Wrapper_Original(
     LG_points = .LG_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
-    omega_length_out = omega_length_out,
-    window = window,
     LG_type = .LG_type)
-rm(tmp_TS_LG_object, lag_max, .LG_points, .b, omega_length_out, window, .LG_type)
-
+rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 
 ##  Specify the details needed for the construction of the bootstrapped
 ##  pointwise confidence intervals, and do the computations.
@@ -139,15 +127,13 @@ nb <- 100
 block_length <- 100
 
 set.seed(1421236)
-LG_WB <- LG_Wrapper_Bootstrap(
+LG_BS <- LG_boot_approx_scribe(
     main_dir        = main_dir,
-    spectra_dir     = LG_WO$spectra_note$data_dir,
+    data_dir         = LG_AS$data_dir,
     nb              = nb,
     boot_type       = NULL,
     block_length    = block_length,
     boot_seed       = NULL,
-    all_statistics  = FALSE,
-    log_            = FALSE,
     lag_max         = NULL,
     LG_points       = NULL,
     .bws_mixture    = NULL,
@@ -156,32 +142,27 @@ LG_WB <- LG_Wrapper_Bootstrap(
     .bws_fixed_only = NULL,
     content_details = NULL,
     LG_type         = NULL,
-    omega_vec       = NULL,
-    window          = NULL,
-    cut_vec         = NULL,
     threshold       = 100)
-rm(nb, block_length, LG_WO)
+rm(nb, block_length, LG_AS)
 
-##  Note: The 'NULL'-arguments ensures that the same values are used
-##  as in the computation based on the sample itself.  It is possible
-##  to restrict the arguments to a subset if that is desirable.  In
-##  particular: It might not be to costly to compute the local
+##  The 'NULL'-arguments ensures that the same values are used as in
+##  the computation based on the original sample. (These 'NULL'-values
+##  are the default values for these arguments, and it is thus not
+##  necessary to specify them.)  It is possible to restrict these
+##  arguments to a subset (of the original one) if that is desirable.
+##  In particular: It might not be too costly to compute the local
 ##  Gaussian spectral density for a wide range of input parameters
 ##  when only the original sample is considered, and it could thus be
 ##  of interest to first investigate that result before deciding upon
-##  which subsets of the selected parameter-space that is worthwhile
-##  to look closer upon.
+##  which subsets of the selected parameter-space that it could be
+##  worthwhile to look closer upon.
 ###############
 
 ##############################
 
-###############
-##  Collect the required pieces
-
-data_dir_for_LG_shiny <- LG_collect_orig_and_boot(
-    main_dir = main_dir,
-    data_dir = LG_WB$boot_spectra_note$data_dir)
-rm(LG_WB)
+##  Extract the directory information needed for 'LG_shiny'.
+data_dir_for_LG_shiny <- LG_BS$data_dir
+rm(LG_BS)
 
 ##  And start the shiny application for an interactive inspection of
 ##  the result.
@@ -189,7 +170,6 @@ rm(LG_WB)
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
     data_dir = data_dir_for_LG_shiny))
-
 
 ################################################################################
 ###### NOTE:
@@ -205,13 +185,11 @@ shiny::runApp(LG_shiny(
 ###  original input parameters) are given below (in the case where
 ###  this script is used before the script 'dmbp_200_lags.R').
 
-
-##  dump("data_dir_for_LG_shiny", stdout())
+## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## structure(c("234f779b58b1cf8aee6ebcdb5d6853e0", "Approx__1", 
-## "Boot_Approx__1", "Boot_Spectra__1"), .Names = c("ts.dir", "approx.dir", 
-## "boot.approx.dir", "boot.spectra.dir"))
-
+##     c(ts.dir = "234f779b58b1cf8aee6ebcdb5d6853e0",
+##       approx.dir = "Approx__1",
+##       boot.approx.dir = "Boot_Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the
