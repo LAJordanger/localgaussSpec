@@ -146,14 +146,8 @@ LG_lookup <- function(input,
     ##  For the plots of the estimated local Gaussian auto- and
     ##  cross-correlations: Check if lag zero is needed (it will
     ##  always be one when univariate, and the value can then be
-    ##  excluded from the plot), and check if negative_lags must be
-    ##  included in the plot (find out if the correlation function is
-    ##  even in the lag-argument, if so only plot the positive lags-
-    ##  this is only relevant when univariate and on the diagonal).
+    ##  excluded from the plot).
     look_up$is_lag_zero_needed <- {! look_up$pairs_ViVj == look_up$pairs_VjVi}
-    look_up$is_negative_lags_needed <- {
-        ! all(look_up$levels_point == look_up$levels_point_reflected,
-              ! look_up$is_lag_zero_needed)}
     look_up$is_only_diagonal <- .AB_env$details$is_only_diagonal
     ###-------------------------------------------------------------------
     ##  Create logical values for the selection of relevant components
@@ -172,34 +166,17 @@ LG_lookup <- function(input,
     look_up$is_global_only <- {input$global_local == "global"}
     look_up$is_local <- {input$global_local == "local"}
     ###-------------------------------------------------------------------
-    ##  Update 'point_type' to ensure that it shows on-diagonal when
-    ##  the combination of other input-arguments implies that the
-    ##  point of interest is a diagonal point.  Furthermore, adjust
-    ##  the value of 'levels' so the correct point can be extracted
-    ##  when the call to the function is created.
-    if (look_up$is_on_diagonal) {
-        if (look_up$point_type != "on_diag")
-            look_up$levels_Diagonal <- which(
-                sort(union(look_up$.Horizontal, look_up$.Vertical)) %in%
-                look_up$.Horizontal[look_up$levels_Horizontal])
-        look_up$point_type <- "on_diag"
-    }
-    ###-------------------------------------------------------------------
     ##  Create information needed for the selection of the correct
     ##  point of investigation, by computing them from '.Horizontal'
     ##  and '.Vertical', taking '.Shape' into account.
     look_up$.point_coord <- 
-        if (look_up$is_on_diagonal) {
-            if (length(union(x = look_up$.Horizontal,
-                             y = look_up$.Vertical)) == 1) {
-                c(look_up$.Horizontal, look_up$.Vertical)
-            } else 
-                local({
-                    .i <- input$levels_Diagonal
-                    .x <- sort(union(x = look_up$.Horizontal,
-                                     y = look_up$.Vertical))[.i]
-                    c(.x, .x)
-                })
+        if (look_up$point_type == "on_diag") {
+            local({
+                .i <- input$levels_Diagonal
+                .x <- sort(union(x = look_up$.Horizontal,
+                                 y = look_up$.Vertical))[.i]
+                c(.x, .x)
+            })
         } else {
             switch(EXPR = look_up$.Shape,
                    points = c(look_up$.Horizontal, look_up$.Vertical),
@@ -226,6 +203,25 @@ LG_lookup <- function(input,
     look_up$levels_point_reflected <- paste(
         look_up$.point_coord[2:1],
         collapse = "_")
+    ##  Compare 'levels_point' and 'levels_point_reflected' to see if it is
+    ##  necessary to include negative lags.
+    look_up$is_negative_lags_needed <- {
+        ! all(look_up$levels_point == look_up$levels_point_reflected,
+              ! look_up$is_lag_zero_needed)}
+    ###-------------------------------------------------------------------
+    ##  It is necessary to derive a 'point_type_branch' from 'point_type' in
+    ##  order for the correct data to be loaded.
+    if (look_up$is_on_diagonal) {
+        if (look_up$point_type != "on_diag")
+            look_up$levels_Diagonal <- which(
+                sort(union(look_up$.Horizontal, look_up$.Vertical)) %in%
+                look_up$.Horizontal[look_up$levels_Horizontal])
+        look_up$point_type_branch <- "on_diag"
+    } else
+        look_up$point_type_branch <- "off_diag"
+    ##  Create a bookmark needed for the inspection of the spectra.
+    look_up$.bm_CI_local_spectra <-
+        c(look_up$point_type_branch, look_up$cut, "spec")
     ###-------------------------------------------------------------------    
     ##  Create a cache-list to be used when loading and tweaking data,
     ##  so computations does not need to be done more than once.
@@ -265,7 +261,7 @@ LG_lookup <- function(input,
     ##  local Gaussian correlations is the target.
     look_up$.LGC_restrict_local <- list(
         branch = c(
-            point_type = look_up$point_type,
+            point_type = look_up$point_type_branch,
             bw_points = look_up$bw_points),
         pairs = list(
             pairs = unique(c(look_up$pairs_ViVj, look_up$pairs_VjVi))),

@@ -826,7 +826,7 @@ LG_shiny_spectra  <- function(.look_up,
         .change_sign(cache$.CI_global)
     }
     if (!exists(x = cache$.CI_local, where = ..env)) {
-        .bm <- c(.look_up$point_type, .look_up$cut, "spec")
+        .bm <- .look_up$.bm_CI_local_spectra
         ## .restrict <- list(S_type = .look_up$spectra_type,
         ##                   levels = .look_up$levels_point)
         .restrict <- list(S_type = .look_up$spectra_type,
