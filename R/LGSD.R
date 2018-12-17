@@ -106,8 +106,7 @@ LG_default <-
         global = c(TS = "TS.Rda",
                    TS_boot = "TS_boot.Rda",
                    acr = "acr.Rda",
-                   acr_boot = "acr_boot.Rda",
-                   adjustment = "adjustment.Rda"),
+                   acr_boot = "acr_boot.Rda"),
 ###-------------------------------------------------------------------
         ##  Name to be used when saving the "global bandwidths".
         bws_file = "bws_global.Rda",
@@ -142,7 +141,7 @@ LG_default <-
                 integer_length_one =
                     c("block_length", "boot_seed", "lag_max",
                       "nb", "threshold"),
-                dir = c("data_dir", "spectra_dir"))),
+                dir = "data_dir")),
         ##  Reminder: 'TS' will be checked with regard to having been
         ##  adjusted by 'TS_LG_object'.
 ###-------------------------------------------------------------------
