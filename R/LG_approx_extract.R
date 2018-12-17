@@ -1,6 +1,3 @@
-################################################################################
-#####  Last revised 2015-12-18
-
 #' Extract data needed for Local Gaussian Spectral Densities.
 #'
 #' The estimated Local Gaussian Approximations, created by
@@ -99,76 +96,6 @@ LG_approx_extract <- function(
     .keep <- ! names(attributes(pos_lag)) %in% c("dim", "dimnames")
     .attr_for_pos_lag <- attributes(pos_lag)[.keep]
     kill(.keep)
-###-------------------------------------------------------------------
-    ##  Extract the '.adjustment_rule', and use it for finite-samples
-    ##  adjustments.  That is: Do nothing if the value is '0',
-    ##  otherwise extract relevant parts and do adjustments.
-    .adjustment_rule <- attributes(
-        approx_data$adjustment)$.adjustment_rule
-    ##  Figure out if an extraction is required.
-    .extract <- .adjustment_rule != 0
-    ##  Do adjustments for the relevant cases.
-    if (.extract) {
-        ##  In the numerical case: Modify format to simplify code.
-        if (is.numeric(.adjustment_rule))
-            approx_data$adjustment <- array(
-                data = approx_data$adjustment,
-                dim = c(length(approx_data$adjustment), 1, 1),
-                dimnames = list(
-                    lag = names(approx_data$adjustment),
-                    type = "rho",
-                    estimates = "scale"))
-        ##  Extract the required scale-information, and fine-tune it.
-        scale <- restrict_array(
-            .arr = approx_data$adjustment,
-            .restrict = list(
-                lag = dimnames(pos_lag)$lag,
-                type = "rho",
-                estimates = "scale"))
-        ##  Identify the dimension to drop when fine-tuning.
-        .drop_dim <-
-            seq_along(dimnames(scale))[
-                         names(dimnames(scale)) %in% c("estimates")]
-        ##  Fine-tune 'scale' to enable use of 'multiply_arrays'.
-        scale <- adrop(
-            x = scale,
-            drop = .drop_dim)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  Reminder: The '.drop' argument of 'restrict_array' can be set to
-###  'TRUE', and in most cases that would avoid the need for 'adrop'.
-###  However, if another dimension also should happen to contain only
-###  one element, then the code later on might return an error that
-###  would be mighty hard to track down.  That's not desirable.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
-        ##  Adjust 'pos_lag' with 'scale'.
-        pos_lag <- multiply_arrays(
-            .arr1 = pos_lag,
-            .arr2 = scale,
-            keep_shape = TRUE)
-        ##  For the "data"-case of '.adjust_rule', do additive
-        ##  modification too.
-        if (.adjustment_rule == "data") {
-            add <- restrict_array(
-                .arr = approx_data$adjustment,
-                .restrict = list(
-                    lag = dimnames(pos_lag)$lag,
-                    type = "rho",
-                    estimates = "adjust"))
-            ##  Fine-tune 'add' to enable use of 'add_arrays'.
-            add <- adrop(
-                x = add,
-                drop = .drop_dim)
-            ##  Adjust 'pos_lag' with 'scale'.
-            pos_lag <- add_arrays(
-                .arr1 = pos_lag,
-                .arr2 = add,
-                keep_shape = TRUE)
-        }
-        kill(approx_data, .drop_dim, scale, add)
-    }
-    kill(.extract, .adjustment_rule)
 ###-------------------------------------------------------------------
     ##  If only one time-series is present, set '.method' to "all".
     if (length(dimnames(pos_lag)$content) == 1)

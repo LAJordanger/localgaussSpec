@@ -78,14 +78,11 @@
 #' 
 #' @export
 
-
-
 TS_LG_object <- function (
     TS_data,
     details = NULL,
     main_dir = "~/LG_DATA",  # The value from 'LG_default'
     save_dir = NULL,
-    .adjustment_rule = 0,
     .remove_ties = TRUE) {
 ###-------------------------------------------------------------------
     ##  A sanity check to see if multivariate 'TS_data' given as an
@@ -420,9 +417,8 @@ TS_LG_object <- function (
         ##  Create a normalised version 'TS_for_analysis'.
         TS_for_analysis <- LG_normalisation_adjustment(
             TS = TS,
-            .adjustment_rule = .adjustment_rule,
             .remove_ties = .remove_ties)
-        kill(.adjustment_rule, .remove_ties)
+        kill(.remove_ties)
         ##  Add 'OK_attribute'
         attr(TS_for_analysis, which = "OK_attribute") <-
             LG_default$OK_attribute

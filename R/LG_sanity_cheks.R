@@ -338,14 +338,6 @@ LG_sanity_checks <- function(
                 FALSE,
             all(arg_env[[arg]] > 0))
 ###-------------------------------------------------------------------
-    ##  Check validity of 'numeric' length one arguments in (0, 1).
-    for (arg in intersect(arg_names, check_list$numeric_length_one))
-        valid_args[[arg]] <- all(
-            length(arg_env[[arg]]) == 1, 
-            is.numeric(arg_env[[arg]]),
-            arg_env[[arg]] < 1,
-            arg_env[[arg]] > 0)
-###-------------------------------------------------------------------
     ##  Check validity of 'numeric' length two arguments in [0, 1].
     for (arg in intersect(arg_names, check_list$numeric_length_two))
         valid_args[[arg]] <- as.logical(
@@ -353,14 +345,6 @@ LG_sanity_checks <- function(
                  is.numeric(arg_env[[arg]]),
                  arg_env[[arg]] <= 1,
                  arg_env[[arg]] >= 0))
-###-------------------------------------------------------------------
-    ##  Check validity of 'numeric' "no ties" vectors,  
-    for (arg in intersect(arg_names, check_list$numeric_vec)) 
-        valid_args[[arg]] <- as.logical(
-            prod(is.numeric(arg_env[[arg]]),
-                 identical(
-                     x = length(unique(arg_env[[arg]])),
-                     y = length(arg_env[[arg]]))))
 ###-------------------------------------------------------------------
     ##  Check validity of 'positive' 'numeric' "no ties"  vectors,
     for (arg in intersect(arg_names, check_list$numeric_vec_positive_or_NULL))
@@ -428,10 +412,6 @@ LG_sanity_checks <- function(
             arg_env[[arg]] <- default_list[[arg]]
             valid_args[[arg]] <- TRUE
         }
-###-------------------------------------------------------------------
-        ##  Add '.adjustment_rule' to the argument-environment
-        arg_env$.adjustment_rule <- attributes(attributes(
-            info$TS_info$TS)$TS_for_analysis)$.adjustment_rule
     }
 ###-------------------------------------------------------------------
 #############---------------------------------------------------------

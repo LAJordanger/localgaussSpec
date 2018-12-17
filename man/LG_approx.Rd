@@ -93,12 +93,11 @@ parameter.  The default choice is \code{"par_five"}.}
 \value{
 The result of this function will depend upon the value of
     \code{bootstrap}.  The default case, \code{bootstrap=FALSE},
-    will create a list with four components, \code{LG_type},
-    \code{par_one_data}, \code{par_five_data} and
-    \code{.adjustment}, see details below.  When
-    \code{bootstrap=FALSE}, i.e. when this function is called by
-    \code{LG_boot_approx}, then the specified data will be
-    delivered directly to that function -- which then bundles
+    will create a list with three components, \code{LG_type},
+    \code{par_one_data} and \code{par_five_data}, see details
+    below.  When \code{bootstrap=FALSE}, i.e. when this function is
+    called by \code{LG_boot_approx}, then the specified data will
+    be delivered directly to that function -- which then bundles
     together all the parts into one larger object.
 
 LG_type This is simply the value of the argument
@@ -119,11 +118,6 @@ par_five_data This will be null if \code{LG_type} doesn't
     \code{localgauss} was successful.  It's important that the code
     later on checks that this attribute is TRUE, since the
     numerical values otherwise might be erroneous.
-
-adjustment An array containing information needed for the
-    (small) sample adjustment when the estimates of the Local
-    Gaussian Correlations will be used as estimates of the Local
-    Gaussian Autocorrelations.
 
 eflag
 }

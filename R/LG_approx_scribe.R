@@ -221,16 +221,6 @@ LG_approx_scribe <- function(
             names(convergence)[length(convergence)] <- save_files.par_five
         } 
 ###-------------------------------------------------------------------
-        ##  Save 'adjustment', in the correct folder.
-        adjustment <- result$adjustment
-        save(adjustment,
-             file = file.path(
-                 books$save_dir,
-                 LG_default$global["adjustment"]))
-        kill(adjustment)
-#####  TASK: Not optimal to save 'adjustment' inside of this loop, but
-#####  it hardly matters with regard to the total computational time.
-###-------------------------------------------------------------------
         ##  Update 'row_nr' for next loop.
         row_nr <- row_nr + L ##  length(result$LG_type)
     } ##  The end of the loop over 'loop_list'

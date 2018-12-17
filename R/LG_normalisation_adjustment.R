@@ -15,14 +15,6 @@
 #'     this is structured in an array, with one dimension-name being
 #'     "content".
 #' 
-#' @param .adjustment_rule A non-negative number that will be stored
-#'     as an attribute that later on can be used in order to add some
-#'     additional scaling (in addition to the one from the windows
-#'     function) when the estimated local Gaussian auto- and
-#'     cross-correlations are used for the computation of the local
-#'     Gaussian spectra.  The default value \code{0} ensures that only
-#'     the scaling from the window-function is used.
-#'
 #' @param .remove_ties A logical value, default \code{TRUE}, in which
 #'     case the presence of ties will trigger a minor perturbation of
 #'     the data.  Note: Whenever this happens, \code{set.seed(1)}
@@ -35,7 +27,6 @@
 
 LG_normalisation_adjustment <- function(
              TS,
-             .adjustment_rule = 0,
              .remove_ties = TRUE) {
     ##  Perform the desired normalisation for each combination of
     ##  variable and content.
@@ -80,13 +71,10 @@ LG_normalisation_adjustment <- function(
         ## .restrict = dimnames(TS_new)[c("observations", "variables", "content")],
     .permute = TRUE)
 ###-------------------------------------------------------------------
-    ##  Add additional attributes to 'TS_new', i.e. the
-    ##  '.adjustment_rule' that later on will decide if/how
-    ##  finite-samples effects should be accounted for.
+    ##  Add additional attributes to 'TS_new'.
     attributes(TS_new) <- c(
         attributes(TS_new),
-        list(.adjustment_rule = .adjustment_rule,
-             .remove_ties = .remove_ties,
+        list(.remove_ties = .remove_ties,
              class = LG_default$class$array))
     ##  Return the result to the workflow.
     TS_new

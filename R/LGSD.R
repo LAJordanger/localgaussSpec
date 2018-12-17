@@ -107,15 +107,7 @@ LG_default <-
                    TS_boot = "TS_boot.Rda",
                    acr = "acr.Rda",
                    acr_boot = "acr_boot.Rda",
-                   spectral = "spectral.Rda",
-                   spectral_boot = "spectral_boot.Rda",
-                   spectral_CI = "spectral_CI.Rda",
-                   spectral_collected = "spectral_collected.Rda",
                    adjustment = "adjustment.Rda"),
-###-------------------------------------------------------------------
-        ##  Name to be used when saving autocorrelations.
-        acr_file = "acr.Rda",
-#####  TASK: Obsolete, get rid of this one.
 ###-------------------------------------------------------------------
         ##  Name to be used when saving the "global bandwidths".
         bws_file = "bws_global.Rda",
@@ -132,28 +124,20 @@ LG_default <-
         ##  Prefix to be used in the contiguous-context.
         contiguous.prefix = "block",
 ###-------------------------------------------------------------------
-        ##  Internal name to be used in info-object to show files that
-        ##  contain collected data from original computations and data
-        ##  based on bootstrap-replicates.
-        collected_data = "collected_data",
-###-------------------------------------------------------------------
         ##  Check-list to be used when sanity-checking arguments.
         check = list(
             original = list(
-                subset = c("LG_type", "window", ".bws_mixture",
+                subset = c("LG_type", ".bws_mixture",
                            "content_details", ".method"),
                 logic = c(".bws_fixed_only"),
-                integer_length_one = c("lag_max", "omega_length_out"),
+                integer_length_one = c("lag_max"),
                 integer_vec = c("bw_points", "cut_vec"),
-                numeric_length_one = "", ##  "marg"),  # obsolete.
-                numeric_vec = c("omega_vec"),
                 numeric_vec_positive_or_NULL = ".bws_fixed"),
             ##---
             bootstrap = list(
                 subset =
-                    c("boot_type", "bw_points", "cut_vec", "LG_type",
-                      "omega_vec", "window", ".bws_mixture",
-                      ".bws_fixed", "content_details"),
+                    c("boot_type", "bw_points", "LG_type",
+                      ".bws_mixture", ".bws_fixed", "content_details"),
                 logic = c("all_statistics", "log_", ".bws_fixed_only"),
                 integer_length_one =
                     c("block_length", "boot_seed", "lag_max",
@@ -166,7 +150,6 @@ LG_default <-
 ###  At the highest level, overview of the time series that has been
 ###  generated, i.e. type, paramaters, length, seed.
         main_dir = "~/LG_DATA",
-        main_dir_contiguous = "~/LG_DATA_CONTIGUOUS",
         other_TS_dir_prefix = "other",
         content_file_name = "TS_content.Rda",
 ###  At the second highest level, i.e. within each folder
@@ -186,7 +169,6 @@ LG_default <-
               boot.approx.dir = "Boot_Approx"),
 ###-------------------------------------------------------------------
         ##  Defaults for 'ignore_these' in comparison of spy-reports.
-
         ignore_these = list(
             approx.dir = c("main_dir", "save_dir"),
             boot.approx.dir = c("main_dir", "save_dir", "threshold")),
@@ -321,5 +303,3 @@ LG_default$result_orig <- c(
                  stringsAsFactors = FALSE),
              .margins = 1,
              .fun = unlist)))
-
-

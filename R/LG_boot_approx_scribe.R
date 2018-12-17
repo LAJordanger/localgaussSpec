@@ -127,14 +127,11 @@ LG_boot_approx_scribe <- function(
     ##  will be done first.
     spy_report$envir$save_dir <- books$save_dir
 
-
     ## TS_boot_sample_call <- create_call(
     ##     .cc_fun = TS_boot_sample,
     ##     spy_report$envir,
     ##     .cc_list = TRUE)
 
-    ## capture_env() 
-    
     TS_boot <- eval(create_call(
         .cc_fun = TS_boot_sample,
         spy_report$envir,
@@ -143,25 +140,17 @@ LG_boot_approx_scribe <- function(
     books$info[[books$bookmark]][["TS_boot"]] <- TS_boot$TS
 ###-------------------------------------------------------------------
     ##  Compute the auto-correlations.
-
-    
-
     TS_acr_call <- create_call(
         .cc_fun = TS_acr,
         .TS_info = TS_boot,
         lag_max = spy_report$envir$lag_max)
-
-    
-    ## capture_env() 
-
-
     .TS_acr <- TS_acr(
         .TS_info = TS_boot,
         lag_max = spy_report$envir$lag_max)
     ##  Add information to the `info`-object.
     books$info[[books$bookmark]][[.TS_acr$.acr_type]] <-
         .TS_acr$.acr_content
-    kill(.TS_acr, spy_report)
+    kill(.TS_acr)
 ###-------------------------------------------------------------------
     ##  Create a 'loop_list' to govern the computations, this will
     ##  decrease the chance for memory-related problems.
@@ -176,6 +165,7 @@ LG_boot_approx_scribe <- function(
 ###-------------------------------------------------------------------
     ##  Create a template for the data-frame needed for information
     ##  about file-names and memory-size (in MB) for the objects.
+    LG_type <- spy_report$envir$LG_type
     L <- length(loop_list) * length(LG_type)
     data_files_df <- LG_default$file_info_df(L = L)
     ##  Reminder: 'L' is also needed later on in the code.
@@ -199,7 +189,6 @@ LG_boot_approx_scribe <- function(
             c(list(TS_boot = TS_boot),
               loop_list[[part]]$arg_list$compute[[1]]),
             .cc_list = TRUE)
-        ## capture_env() 
         result <- eval(LG_boot_approx_call)
         kill(LG_boot_approx_call)
         ##  When required, do the 'par_one' case.
@@ -272,16 +261,6 @@ LG_boot_approx_scribe <- function(
                    FUN.VALUE = logical(1))))
             names(convergence)[length(convergence)] <- save_files.par_five
         }
-###-------------------------------------------------------------------
-        ##  Save 'adjustment', in the correct folder.
-        adjustment <- result$adjustment
-        save(adjustment,
-             file = file.path(
-                 books$save_dir,
-                 LG_default$global["adjustment"]))
-        kill(adjustment)
-#####  TASK: Not optimal to save 'adjustment' inside of this loop, but
-#####  it hardly matters with regard to the total computational time.
 ###-------------------------------------------------------------------
         ##  Update 'row_nr' for next loop.
         row_nr <- row_nr + L ##  length(result$LG_type)

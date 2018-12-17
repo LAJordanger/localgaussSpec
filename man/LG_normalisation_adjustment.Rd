@@ -4,21 +4,12 @@
 \alias{LG_normalisation_adjustment}
 \title{Create a normalised time series from the original ones.}
 \usage{
-LG_normalisation_adjustment(TS, .adjustment_rule = 0,
-  .remove_ties = TRUE)
+LG_normalisation_adjustment(TS, .remove_ties = TRUE)
 }
 \arguments{
 \item{TS}{The time series object to normalise.  It's assumed that
 this is structured in an array, with one dimension-name being
 "content".}
-
-\item{.adjustment_rule}{A non-negative number that will be stored
-as an attribute that later on can be used in order to add some
-additional scaling (in addition to the one from the windows
-function) when the estimated local Gaussian auto- and
-cross-correlations are used for the computation of the local
-Gaussian spectra.  The default value \code{0} ensures that only
-the scaling from the window-function is used.}
 
 \item{.remove_ties}{A logical value, default \code{TRUE}, in which
 case the presence of ties will trigger a minor perturbation of

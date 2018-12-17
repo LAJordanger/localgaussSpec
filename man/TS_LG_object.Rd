@@ -5,7 +5,7 @@
 \title{Prepare a time series for a local Gaussian inspection}
 \usage{
 TS_LG_object(TS_data, details = NULL, main_dir = "~/LG_DATA",
-  save_dir = NULL, .adjustment_rule = 0, .remove_ties = TRUE)
+  save_dir = NULL, .remove_ties = TRUE)
 }
 \arguments{
 \item{TS_data}{The time series data we will work upon.  This can
@@ -48,14 +48,6 @@ originating from \code{TS_sample}), then that name will be
 used, but only if no previous directories happens to have that
 name too -- if that should be the case, the program will
 terminate and inform the user about it.}
-
-\item{.adjustment_rule}{A non-negative number that will be stored
-as an attribute that later on can be used in order to add some
-additional scaling (in addition to the one from the windows
-function) when the estimated local Gaussian auto- and
-cross-correlations are used for the computation of the local
-Gaussian spectra.  The default value \code{0} ensures that only
-the scaling from the window-function is used.}
 
 \item{.remove_ties}{A logical value, default \code{TRUE}, in which
 case the presence of ties will trigger a minor perturbation of

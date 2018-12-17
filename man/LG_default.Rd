@@ -4,7 +4,7 @@
 \name{LG_default}
 \alias{LG_default}
 \title{Internal default values.}
-\format{An object of class \code{list} of length 34.}
+\format{An object of class \code{list} of length 31.}
 \usage{
 LG_default
 }

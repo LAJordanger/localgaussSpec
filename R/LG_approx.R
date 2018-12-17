@@ -13,12 +13,11 @@
 #' 
 #' @return The result of this function will depend upon the value of
 #'     \code{bootstrap}.  The default case, \code{bootstrap=FALSE},
-#'     will create a list with four components, \code{LG_type},
-#'     \code{par_one_data}, \code{par_five_data} and
-#'     \code{.adjustment}, see details below.  When
-#'     \code{bootstrap=FALSE}, i.e. when this function is called by
-#'     \code{LG_boot_approx}, then the specified data will be
-#'     delivered directly to that function -- which then bundles
+#'     will create a list with three components, \code{LG_type},
+#'     \code{par_one_data} and \code{par_five_data}, see details
+#'     below.  When \code{bootstrap=FALSE}, i.e. when this function is
+#'     called by \code{LG_boot_approx}, then the specified data will
+#'     be delivered directly to that function -- which then bundles
 #'     together all the parts into one larger object.
 #'
 #' @return LG_type This is simply the value of the argument
@@ -39,11 +38,6 @@
 #'     \code{localgauss} was successful.  It's important that the code
 #'     later on checks that this attribute is TRUE, since the
 #'     numerical values otherwise might be erroneous.
-#'
-#' @return adjustment An array containing information needed for the
-#'     (small) sample adjustment when the estimates of the Local
-#'     Gaussian Correlations will be used as estimates of the Local
-#'     Gaussian Autocorrelations.
 #'
 #####  TASK: Keep the text below as a reminder until I've figured out
 #####  how to adjust this function with regard to the level of the
@@ -136,16 +130,6 @@ LG_approx <- function(
         .keep <- ! names(attributes(TS)) %in% .ignore
         attributes(TS)[.keep]
     })
-###-------------------------------------------------------------------
-    ##  Compute the desired adjustment information.  (This contains
-    ##  '.adjustment_rule' as an attribute.)
-    .adjustment <- TS_adjust_gamma_rho(
-        TS = TS,
-        lag_max = lag_max,
-        type = "rho",
-        .adjustment_rule = .attr_from_TS$.adjustment_rule,
-        all_details = FALSE)
-    kill(lag_max)
 ###-------------------------------------------------------------------
     ##  Create the full set of points to be investigated, i.e. add the
     ##  diagonally related points when required.
@@ -738,17 +722,16 @@ LG_approx <- function(
 ###-------------------------------------------------------------------
     ##  Collect the pieces to return to the work-flow, i.e. 'LG_type',
     ##  '.bws_mixture', 'content_details', 'par_one_data',
-    ##  'par_five_data', 'adjustment' and 'level_points'.  Note:
-    ##  Depending on the arguments to this function, some of these
-    ##  returned values might be 'NULL', but that will be revealed by
-    ##  the information in 'LG_type'.
+    ##  'par_five_data' and 'level_points'.  Note: Depending on the
+    ##  arguments to this function, some of these returned values
+    ##  might be 'NULL', but that will be revealed by the information
+    ##  in 'LG_type'.
     .result <- list(
         LG_type = LG_type,
         .bws_mixture = .bws_mixture,
         content_details = content_details,
         par_one_data = par_one_data,
         par_five_data = par_five_data,
-        adjustment = .adjustment,
         level_points = attributes(.level_points))
 ###-------------------------------------------------------------------
     ##  Return '.result' to the work-flow.
