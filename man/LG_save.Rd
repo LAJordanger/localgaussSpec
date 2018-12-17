@@ -69,3 +69,4 @@ wrapper-functions.  It will ensure that the data we want to store
 will be saved with informative names that reveals what part of the
 code the data originates from.
 }
+\keyword{internal}

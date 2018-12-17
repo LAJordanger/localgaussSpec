@@ -53,3 +53,4 @@ with an emphasis on getting "good enough" values within a shortest
 possible computational time.  Keep in mind that the \code{data}
 must have normalised marginals.
 }
+\keyword{internal}

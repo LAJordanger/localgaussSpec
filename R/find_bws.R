@@ -43,7 +43,7 @@
 #' \code{0} if the numerical combination of the bandwidths succeeded
 #' without any problems.
 #' 
-#' @export
+#' @keywords internal
 
 find_bws <- function(
     data,

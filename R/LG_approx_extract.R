@@ -26,7 +26,7 @@
 #'     reproducibility, whereas the array \code{pos_lag} contains the
 #'     required Local Gaussian Autocorrelations.
 #'
-#' @export
+#' @keywords internal
 
 
 LG_approx_extract <- function(

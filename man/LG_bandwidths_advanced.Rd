@@ -72,3 +72,4 @@ percentage of the total number of lagged points should be contained
 inside the region specified by a central point and a
 bandwidth-square.
 }
+\keyword{internal}

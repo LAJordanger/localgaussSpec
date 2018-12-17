@@ -71,3 +71,4 @@ this function is not as such intended to be written out by the user
 when the function is used in a static setting, instead they are
 supposed to be given from the \code{LG_shiny}-interface.
 }
+\keyword{internal}

@@ -59,7 +59,7 @@
 #'     name in a corresponding named file.  The file-name will be
 #'     returned to the workspace/parent function.
 #'
-#' @export
+#' @keywords internal
 
 LG_save <- function(
     data,

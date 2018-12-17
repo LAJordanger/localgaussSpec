@@ -34,3 +34,4 @@ This function loads a file into an environment, and gives the
 content the specified name.  It's required that the file only
 contains one single object.
 }
+\keyword{internal}

@@ -124,7 +124,7 @@
 ## #'
 ## #' @return A specification that can be used by \code{ugarchpath}.
 ## #'
-## #' @export
+## #' @keywords internal
 
 ## LG_rucharch_fitting <- function(fit) {
 ##     ##  Extract specification used when 'fit' was created.
@@ -331,7 +331,7 @@ TS_families <- c(
 #'     that can be used in the file-name for the data-file generated
 #'     from the time series.
 #' 
-#' @export
+#' @keywords internal
 
 ##  Note: The function contains a couple of sanity-checks, i.e. it
 ##  checks that we have a valid TS_key and a check of the names of

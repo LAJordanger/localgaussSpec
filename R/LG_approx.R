@@ -81,7 +81,7 @@
 #'
 #' @return eflag 
 #' 
-#' @export
+#' @keywords internal
 
 
 LG_approx <- function(

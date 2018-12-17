@@ -26,7 +26,7 @@
 #'     \code{.file} to \code{.env}, with the possible extension of
 #'     attributes as given to \code{.attributes_extra}.
 #'
-#' @export
+#' @keywords internal
 
 LG_load <- function(.file,
                     .env = parent.frame(), 

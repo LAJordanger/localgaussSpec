@@ -34,7 +34,7 @@
 #'     saved file will be used in order to avoid redoing previous
 #'     computations.
 #'
-#' @export
+#' @keywords internal
 
 
 ##  TASK, 2015-12-18: This function should have an argument 'length-of-

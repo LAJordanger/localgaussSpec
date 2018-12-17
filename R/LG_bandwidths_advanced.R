@@ -61,7 +61,7 @@
 #'     numerical convergence of the bandwidths returned from the
 #'     global algorithm.
 #'
-#' @export
+#' @keywords internal
 
 LG_bandwidths_advanced <- function(
     save_dir = NULL,

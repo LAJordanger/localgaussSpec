@@ -55,7 +55,7 @@
 #' arguments \code{data}, \code{grid} and \code{b} will also be
 #' included.
 #' 
-#' @export
+#' @keywords internal
 
 
 #####  2015-06-12: TODO:

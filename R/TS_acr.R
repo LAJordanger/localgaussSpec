@@ -19,7 +19,7 @@
 #'     is \code{NULL}, then the array will be returned to the workflow
 #'     directly, otherwise it will be saved to disk.
 #' 
-#' @export 
+#' @keywords internal
 
 
 #####  2017-01-05, Reminder: The code for this setup might most likely

@@ -34,3 +34,4 @@ A normalisation of the time series under consideration is
     adjustments to be used when computing the local Gaussian
     autocorrelations.
 }
+\keyword{internal}

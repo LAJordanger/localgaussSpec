@@ -40,3 +40,4 @@ This function starts out by calling
     its name suggests, i.e. it takes care of the bookkeeping of the
     information stored in the info-file.
 }
+\keyword{internal}

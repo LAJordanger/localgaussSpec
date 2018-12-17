@@ -31,7 +31,7 @@
 #'     chosen solution then requires that we need to create the matrix
 #'     the resulting pieces should be inserted into.
 #'
-#' @export
+#' @keywords internal
 
 
 LG_boot_statistics <- function(x,

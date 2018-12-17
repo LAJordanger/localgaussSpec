@@ -18,7 +18,7 @@
 #'
 #' @return This function will add objects to the calling environment.
 #' 
-#' @export
+#' @keywords internal
 
 
 TS_load <- function(.TS_info,

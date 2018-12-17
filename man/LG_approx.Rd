@@ -124,3 +124,4 @@ eflag
 \description{
 Local Gaussian approximations.
 }
+\keyword{internal}

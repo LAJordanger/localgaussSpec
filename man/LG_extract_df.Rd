@@ -58,3 +58,4 @@ needed in \code{LG_plot_load} when the list-arrays loaded from
 different files is to be modified to a data frame which can be
 digested by the graphical functions.
 }
+\keyword{internal}

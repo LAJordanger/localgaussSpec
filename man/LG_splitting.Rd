@@ -48,3 +48,4 @@ The argument and value of this function reflects that it
     this is to "split" the array by chopping up some of the
     dimensions.
 }
+\keyword{internal}

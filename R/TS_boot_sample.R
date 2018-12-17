@@ -23,7 +23,7 @@
 #'     rows and \code{length(TS)} columns, i.e.  each row is a
 #'     bootstrapped replicate of \code{TS}.
 #'
-#' @export
+#' @keywords internal
 
 
 #######  TASK: This code resamples from the normalised version, and
@@ -45,7 +45,6 @@ TS_boot_sample <- function(
     ##  Update `TS` with the object from file
     load(file = paste(c(main_dir, TS),
                       collapse = .Platform$file.sep))
-    kill(main_dir)
     ##  If 'TS' originates from 'TS_LG_object', it should have an
     ##  attribute 'TS_for_analysis' that should be used instead of TS.
     if (! identical(x = attributes(TS)$TS_for_analysis,

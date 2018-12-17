@@ -32,7 +32,7 @@
 #'     the info-file _after_ the computation has been successfully
 #'     performed and saved.
 #' 
-#' @export 
+#' @keywords internal 
 
 
 LG_bookkeeping <- function(spy_report) {

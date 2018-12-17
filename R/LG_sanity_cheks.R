@@ -28,7 +28,7 @@
 #'     will have been registered in the \code{spy_report} in the
 #'     calling function.
 #'
-#' @export
+#' @keywords internal
 
 
 LG_sanity_checks <- function(

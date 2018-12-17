@@ -49,7 +49,7 @@
 #'     be a list with two nodes, one node being the full range and the
 #'     other node a data-frame (to be used for the plot-functions).
 #' 
-#' @export
+#' @keywords internal
 
 LG_extract_df <- function(.list_array,
                      .global = TRUE,

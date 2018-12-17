@@ -60,3 +60,4 @@ Hjort, N. L., and Jones, M. C.: "Locally parametric
 nonparametric density estimation.", The Annals of Statistics
 (1996): 1619-1647.
 }
+\keyword{internal}

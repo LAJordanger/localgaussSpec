@@ -24,3 +24,4 @@ This function checks that the arguments are valid, and it might
 also add values to the environment of the function under
 investigation.
 }
+\keyword{internal}

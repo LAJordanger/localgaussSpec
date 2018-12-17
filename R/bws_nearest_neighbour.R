@@ -43,7 +43,7 @@
 #'     saved file will be used in order to avoid redoing previous
 #'     computations.
 #'
-#' @export
+#' @keywords internal
 
 #####  2017-01-04: The default value for 'lag_min' adjusted from '1'
 #####  to '0', to get everything in one array.  This implies that some

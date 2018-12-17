@@ -22,3 +22,4 @@ related points to the computation.  In paticular if a point (v1,v2)
 is present, then this function will add the three points (v1,v1),
 (v2,v2) and (v2,v1).
 }
+\keyword{internal}

@@ -36,5 +36,6 @@ Given a key for a time series in \code{TS_families}, and
     function that will be used in \code{myTS.sample} to generate
     the desired sample from the specified time series.
 }
+\keyword{internal}
 \keyword{series}
 \keyword{time}

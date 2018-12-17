@@ -59,7 +59,7 @@
 #'     \code{TS.object} based on it, then run \code{LG_approx} on that
 #'     object.)
 #' 
-#' @export
+#' @keywords internal
 
 LG_boot_approx <- function(
     save_dir = NULL,

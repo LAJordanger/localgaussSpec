@@ -15,7 +15,7 @@
 #'     argument grids).  The returned array has been screened for
 #'     duplicates, and only contains unique points.
 #'
-#' @export
+#' @keywords internal
 
 LG_extend_points <- function(LG_points) {
     ##  Sanity check the argument.

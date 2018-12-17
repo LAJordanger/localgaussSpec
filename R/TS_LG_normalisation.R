@@ -22,7 +22,7 @@
 #'
 #' @return A normalised version of the time series of interest.
 #'
-#' @export
+#' @keywords internal
 
 TS_LG_normalisation <- function(
              TS,

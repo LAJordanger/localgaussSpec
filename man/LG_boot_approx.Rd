@@ -134,3 +134,4 @@ This function can be called manually from the work-space,
     calling this (often quite time consuming) function directly, no
     default values have been specified for the arguments.
 }
+\keyword{internal}

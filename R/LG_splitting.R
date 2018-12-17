@@ -40,7 +40,7 @@
 #'     a computation must be split into smaller chunks due to large
 #'     intermediate objects.
 #'
-#' @export
+#' @keywords internal
 
 LG_splitting <- function(books) {
 ###-------------------------------------------------------------------

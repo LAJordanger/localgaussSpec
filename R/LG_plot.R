@@ -60,7 +60,7 @@
 #'     the bootstrap based confidence intervals.  Other plots will
 #'     probably be added later on.
 #'
-#' @export
+#' @keywords internal
 
 LG_plot <- function(.data_list,
                     .lag = NULL,
