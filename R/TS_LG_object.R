@@ -58,7 +58,7 @@
 #'     name too -- if that should be the case, the program will
 #'     terminate and inform the user about it.
 #' 
-#' @inheritParams LG_normalisation_adjustment
+#' @inheritParams TS_LG_normalisation
 #' 
 #' @return This function will take care of some file-handling before
 #'     it returns a two-component list to the work-flow.  The first
@@ -152,7 +152,7 @@ TS_LG_object <- function (
 ###-------------------------------------------------------------------
     ##  Collect the arguments related to the adjustment.
     .comp_arg_names <- setdiff(
-        x = names(formals(LG_normalisation_adjustment)),
+        x = names(formals(TS_LG_normalisation)),
         y = "TS")
     .comp_arg <- structure(
         .Data = lapply(X = .comp_arg_names,
@@ -415,7 +415,7 @@ TS_LG_object <- function (
             .Names = "ts.dir")
 ###-------------------------------------------------------------------
         ##  Create a normalised version 'TS_for_analysis'.
-        TS_for_analysis <- LG_normalisation_adjustment(
+        TS_for_analysis <- TS_LG_normalisation(
             TS = TS,
             .remove_ties = .remove_ties)
         kill(.remove_ties)

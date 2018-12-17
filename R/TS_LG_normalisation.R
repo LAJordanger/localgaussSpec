@@ -24,8 +24,7 @@
 #'
 #' @export
 
-
-LG_normalisation_adjustment <- function(
+TS_LG_normalisation <- function(
              TS,
              .remove_ties = TRUE) {
     ##  Perform the desired normalisation for each combination of
@@ -79,4 +78,3 @@ LG_normalisation_adjustment <- function(
     ##  Return the result to the workflow.
     TS_new
 }
-
