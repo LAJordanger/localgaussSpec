@@ -152,8 +152,8 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
     ##  information for the cases were a simplification is present.
     .simplify_text <- list()
     if (.simplify_logical$Vi) {
-        .simplify_text$Vi <- "Univariate time series<br>"
-        .simplify_text$Vi <- "Univariate time series<br>"
+        .simplify_text$Vi <- "Univariate time series"
+        .simplify_text$Vi <- "Univariate time series"
     }
     if (.simplify_logical$type)
         .simplify_text$type <-
@@ -366,16 +366,8 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
     if (!.res$details$block) {
         ##  Find the bootstrapped nodes, if any are present.
         .res$names <- names(.info_part)[stringr::str_detect(
-                                                     string = names(.info_part),                     
-                                                     pattern =  LG_default$folder_defaults["boot.approx.dir"])]
-
-################################################################################
-        
-        ##  Detect the relevant names of any "Boot_Approx"-nodes.
-        .res$names <- names(.info_part)[stringr::str_detect(
-                                                     string = names(.info_part),                     
-                                                     pattern =  LG_default$folder_defaults["boot.approx.dir"])]
-
+                               string = names(.info_part),
+                               pattern =  LG_default$folder_defaults["boot.approx.dir"])]
         ##  Add information for 'label', 'header' and 'last'.
         ##  Reminder: The present setup differs from those at the
         ##  higher nodes since we do not want to auto select any

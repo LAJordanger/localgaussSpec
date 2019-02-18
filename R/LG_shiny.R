@@ -101,10 +101,10 @@ LG_shiny <- function(
               ###-------------------------------------------------------------------
               ##  Additional buttons.
               wellPanel(
-                  ##  Explain details about the interface.
-                  checkboxInput(inputId = "explain_interface",
-                                label = "Explanation interface",
-                                value = FALSE),
+                  ## ##  Explain details about the interface.
+                  ## checkboxInput(inputId = "explain_interface",
+                  ##               label = "Explanation interface",
+                  ##               value = FALSE),
                   ##  Explain details about the plots.
                   checkboxInput(inputId = "explain_plot",
                                 label = "Explanation plot",
@@ -112,15 +112,16 @@ LG_shiny <- function(
                   ##  Get the code for the plots.
                   checkboxInput(inputId = "get_code",
                                 label = " Show code for plot",
-                                value = FALSE)),
-              ##  A "show the innards of shiny"-marker.
-              wellPanel(
-                  checkboxInput(inputId = "show_shiny",
-                                label = " Show shiny innards",
-                                ## value = FALSE)),
-                                value = TRUE)),
+                                value = FALSE),
+              ## ),
+              ## ##  A "show the innards of shiny"-marker.
+              ## wellPanel(
+              ##     checkboxInput(inputId = "show_shiny",
+              ##                   label = " Show shiny innards",
+              ##                   ## value = FALSE)),
+              ##                   value = TRUE)),
               ##  Termination of application.
-              wellPanel(
+              ## wellPanel(
                   checkboxInput(inputId = "quit",
                                 label = "Quit",
                                 value = FALSE),
