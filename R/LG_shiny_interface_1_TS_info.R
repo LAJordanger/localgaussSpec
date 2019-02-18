@@ -84,8 +84,8 @@ LG_shiny_interface_1_TS_info <- function(
         ##  the row to work properly (buttons on one line instead of three
         ##  lines), it had to be defined as a quote in this function.
         .row_quote <- bquote(fluidRow(
-            ##  Add actionButton for 'TS_graphic'.
-            .(.result$TS_graphic), 
+            ## ##  Add actionButton for 'TS_graphic'.
+            ## .(.result$TS_graphic), 
             ##  Add actionButton for 'Approx_graphic'.
             .(.result$Approx_graphic),
             ##  Add actionButton for 'Spectra_graphic'.
