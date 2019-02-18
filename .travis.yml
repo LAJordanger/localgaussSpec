@@ -1,3 +1,10 @@
+# 2018-12-17: This approach fails now (worked before).  Can not find
+# any particular issues mentioned when searching for the error
+# message.  Think I need to play around a bit with the setup in this
+# file.  Better read the documentation to see what can be done.
+# https://docs.travis-ci.com/user/languages/r
+# https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/script/r.rb
+
 language: r
 sudo: required
 cache: packages
