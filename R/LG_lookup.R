@@ -54,6 +54,9 @@ LG_lookup <- function(input,
     ##  Initiate 'look_up' as a copy of 'input'. extract information
     ##  from '.AB_env', and compute ingredients needed later on.
     look_up <- input
+    ##  Adjust for the 'cut' vs. 'm_selected' values
+    look_up$m_selected <- look_up$cut
+    look_up$cut <- look_up$cut + 1
     ###-------------------------------------------------------------------
     ##  Add the paths to the files of interest, i.e. those containing
     ##  the global and local values of the estimated correlations.

@@ -258,9 +258,9 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
            ##  first part that will have the weight zero, i.e. the
            ##  smallest value 'cut' can have is 1 - in which case only
            ##  the lag 0 component will be included.
-            label = "Select truncation level",
-            min = 1L,
-            max = length(details$.dimnames$lag),
+            label = "Select m-truncation",
+            min = 0L,
+            max = length(details$.dimnames$lag) - 1,
             value = min(10, .center(details$.dimnames$lag))),
         frequency_range = list(
             ##  Reminder: The range is based on a rescaling, thus from
