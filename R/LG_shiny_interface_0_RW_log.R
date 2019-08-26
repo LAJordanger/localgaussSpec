@@ -96,8 +96,11 @@ LG_shiny_interface_0_RW_log <- function(.env, .env2,
             .Names = names(..env$.sliderInputs))
         ##  Loop over '.targets' and update the content in the
         ##  'input_triggers'.
+    
         for (.t in .targets) {
-            for (.n in names(.input_triggers[[.t]])) 
+            for (.n in names(.input_triggers[[.t]])) {
+                if (.n == "get_code")
+                    next
                 .input_triggers[[.t]][[.n]] <-
                     if (.n %in% names(.from_radioButtons)) {
                         .from_radioButtons[[.n]]
@@ -107,6 +110,7 @@ LG_shiny_interface_0_RW_log <- function(.env, .env2,
                         } else
                             .from_sliderInputs[[.n]]
                     }
+            }
         }
         kill(.targets, .from_radioButtons, .from_sliderInputs, .t, .n)
         ##  Update the 'input'-lists too.

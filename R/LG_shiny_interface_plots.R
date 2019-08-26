@@ -20,13 +20,12 @@ LG_shiny_interface_plots <- function(
     ##  a plot or the code to create the plot outside of shiny.
     .result  <- LG_plot_helper(
         input = .env$input,
-        .env = .env,
-        .env2 = .env2)
+        .env = .env)
     ##  Use the 'eval'+ 'bquote' + '.()' construction to update the
     ##  relevant part of the 'output'-list in '.env2'.  Reminder:
-    ##  There are to cases, either we want the plot itself, or we want
-    ##  the code needed in order to recreate the plot (e.g. if it is
-    ##  to be used in a paper).
+    ##  There are two cases, either we want the plot itself, or we
+    ##  want the code needed in order to recreate the plot (e.g. if it
+    ##  is to be used in a paper).
     if (.env$input$get_code) {
         eval(bquote(output$graphs_call  <- renderPrint(cat(.(.result),
                                                            sep = "\n"))),

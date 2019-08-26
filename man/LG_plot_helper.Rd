@@ -4,24 +4,27 @@
 \alias{LG_plot_helper}
 \title{Helper-function for \code{LG_plot}.}
 \usage{
-LG_plot_helper(main_dir, input, .env, .env2)
+LG_plot_helper(main_dir, input, .env)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the
 calling function \code{LG_shiny}, that specifies the main path
-to where the information is stored.}
+to where the information is stored.  Note that this argument
+only is required when the function is called outside of the
+shiny application.  (Inside of the shiny-application, the
+relevant information will be extracted from \code{.env}.)}
 
-\item{input}{A list containing the arguments needed in order to
-perform the extraction.}
+\item{input}{A list with the arguments needed in order to extract
+the desired data for the plot of interest.}
 
 \item{.env}{An environment in which \code{.arr} will be updated.
 This argument can be skipped when called in a non-interactive
 setting.}
-
-\item{.env2}{Another environment...}
 }
 \value{
-A plot will be returned.
+A plot-object will be returned, with attributes describing
+    the content. The information can be extracted from the
+    plot-object by the help of \code{LG_explain_plot}.
 }
 \description{
 This is a helper function for \code{LG_plot}, that first extracts
@@ -35,4 +38,13 @@ example in a paper/presentation), in which case some of the
 internal workings of the function will be adjusted to allow for the
 function call to work without the \code{shiny}-package being
 loaded.
+}
+\details{
+NOTE: This function is exported in order for interesting plots to
+be recreated outside of the shiny-application, in which case the
+returned plot-objects also will contain attributes needed for the
+proper identification of the content of the plots.  The idea is
+that the required parameters of this function will be filled in by
+the shiny-application, and even though it is possible to adjust the
+input parameters manually, it is not recommended.
 }
