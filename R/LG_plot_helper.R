@@ -85,10 +85,12 @@ LG_plot_helper <- function(
     ##  can be used to create the plot in a paper.
     if  (input$get_code) {
         ##  Create the code required for this function to work outside
-        ##  of the shiny-application.  Strategy: Extract the desired
-        ##  arguments from '.env' and 'input', and return those
-        ##  toghether with a suitable call.
-        ..main_dir <- .env$main_dir
+        ##  of the shiny-application.  Strategy: Create some quotes
+        ##  that specifies the desired arguments (from '.env' and
+        ##  'input') and the functions of interest (i.e.
+        ##  'LG_plot_helper' and 'LG_explain_plot').  The
+        ##  'digest'-function is applied in order to ensure that
+        ##  unique names are used.
         ##  Reminder, 2019-08-26: The selection below is not optimal.
         .controls <- c("TCS_type", "window", "Boot_Approx", "TS_key",
                        "confidence_interval", "levels_Diagonal",
@@ -97,19 +99,27 @@ LG_plot_helper <- function(
                        "levels_Line", "point_type", "Approx", "Vi",
                        "Vj", "levels_Vertical", "global_local")
         ..input <- input[.controls]
-        ##  Create the call of interest.
-        .call <- create_call(
-            .cc_fun  = LG_plot_helper,
-            main_dir = ..main_dir,
-            input    = ..input)
-        ##  Discard the '.env'-argument.
-        .call[[".env"]] <- NULL
-        ##  Return the desired code-chunk.
-        return(c(capture.output(dump(list = c("..main_dir",
-                                              "..input"),
-                                     file = stdout())),
-                 "",
-                 deparse(.call)))
+        .digest_value <- digest::digest(..input)
+        ..input_name <- as.name(sprintf("input_%s", .digest_value))
+        ..plot_name <-  as.name(sprintf("plot_%s", .digest_value))
+        ..explanation_name <- as.name(sprintf("explanation_%s", .digest_value))
+        main_dir_quote <- bquote(..main_dir <- .(.env$main_dir))
+        input_quote <- bquote(.(..input_name) <- .(..input))
+        LG_plot_helper_quote <- bquote(
+            .(..plot_name) <- LG_plot_helper(
+                main_dir = ..main_dir,
+                input = .(..input_name)))
+        LG_explain_plot_quote <- bquote(
+            .(..explanation_name) <- LG_explain_plot(
+                .plot_details = .(..plot_name)))
+        ##  Return the code needed for the creation of the plot and
+        ##  for the investigation of the content of the plot.
+        return(c(deparse(main_dir_quote),
+          deparse(input_quote),
+          "",
+          deparse(LG_plot_helper_quote),
+          "",
+          deparse(LG_explain_plot_quote)))
     }
     kill(.name)
 ###-------------------------------------------------------------------
