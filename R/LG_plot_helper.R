@@ -12,46 +12,66 @@
 #' function call to work without the \code{shiny}-package being
 #' loaded.
 #'
+#' NOTE: This function is exported in order for interesting plots to
+#' be recreated outside of the shiny-application, in which case the
+#' returned plot-objects also will contain attributes needed for the
+#' proper identification of the content of the plots.  The idea is
+#' that the required parameters of this function will be filled in by
+#' the shiny-application, and even though it is possible to adjust the
+#' input parameters manually, it is not recommended.
+#'
 #' @param main_dir The part of the \code{data_dir}-argument from the
 #'     calling function \code{LG_shiny}, that specifies the main path
-#'     to where the information is stored.
+#'     to where the information is stored.  Note that this argument
+#'     only is required when the function is called outside of the
+#'     shiny application.  (Inside of the shiny-application, the
+#'     relevant information will be extracted from \code{.env}.)
 #'
-#' @param input A list containing the arguments needed in order to
-#'     perform the extraction.
+#' @param input A list with the arguments needed in order to extract
+#'     the desired data for the plot of interest.
 #'
 #' @param .env An environment in which \code{.arr} will be updated.
 #'     This argument can be skipped when called in a non-interactive
 #'     setting.
 #'
-#' @param .env2 Another environment...
-#' 
-#' @return A plot will be returned.
+#' @return A plot-object will be returned, with attributes describing
+#'     the content. The information can be extracted from the
+#'     plot-object by the help of \code{LG_explain_plot}.
 #' 
 #' @export
 
 LG_plot_helper <- function(
     main_dir,
     input,
-    .env,
-    .env2) {
+    .env) {
 ###-------------------------------------------------------------------
     ##  A minor adjustment to deal with the case when this function is
     ##  called outside of the interactive shiny-setup.
     if (missing(.env)) {
+        ##  Update 'input' with 'get_code' in order for correct path
+        ##  to be selected later on.
+        input$get_code <- FALSE
         .env <- new.env()
         .env$main_dir <- main_dir
         .env$input <- input
         ##  Need to load the 'info'-file from the desired node
         load(file = file.path(
                  paste(c(main_dir,
-                         unlist(input[c("TS_key", "TS")]),
-                         collapse = .Platform$file.sep),
-                       LG_default$info_file_name),
-                 envir = .env))
+                         input$TS,
+                         LG_default$info_file_name),
+                       collapse = .Platform$file.sep)),
+             envir = .env)
         ##  Create the 'Approx'-level environment.
         .AB_env <- LG_shiny_interface_1_helper(
             .env = .env,
             .approx = input$Approx)
+        ##  REMINDER, 2019-08-23: The result of the above function
+        ##  turned out to be a list. It is used other places to, so I
+        ##  guess I for the time being will use this approach as a
+        ##  workaround. Perhaps add an additional argument to deal
+        ##  with this case?
+        if (is.list(.AB_env))
+            .AB_env <- .AB_env[[1]]
     } else {
         ##  Create a link to the 'Approx'-level environment.
         .AB_env <- .env$TS_logging[[unlist(.env$input[c("TS_key", "TS", "Approx")])]]
@@ -61,103 +81,35 @@ LG_plot_helper <- function(
     if (is.na(input$TCS_type))
         return()
 ###-------------------------------------------------------------------
-    ##  Get hold of `info`.  Ensure that we use a non-reactive version
-    ##  (when this function is called from `LG_shiny`) or load it from
-    ##  file in the non-reactive case.  Note: The present construction
-    ##  extracts `NULL` from `.env` in the non-reactive case.
-    .info <- .env[["info"]]  
-    if (is.reactive(.info)) {
-        .info <- isolate(.info())
-    } else {
-        ##  Load from file in the non-interactive case, using the name
-        ##  `.info` to match the interactive case.
-        LG_load(.file = file.path(
-                    paste(.env$main_dir,
-                          collapse = .Platform$file.sep),
-                    input$TS,
-                    LG_default$info_file_name),
-                .name = ".info")
-    }
-###-------------------------------------------------------------------
-    ##  Use 'LG_lookup' to create the lookup-information.
-    look_up <- LG_lookup(input = input,
-                         .AB_env = .AB_env)
-###-------------------------------------------------------------------
     ##  If the `get_code` check-box has been marked, return code that
     ##  can be used to create the plot in a paper.
     if  (input$get_code) {
-        ##  This part must be updated based on the new approach, for
-        ##  the time being simply inform about that.
-        return("This part must be updated relative the new approach!")
-        
-        ##  Create code that can be used to call this function with
-        ##  non-interactive values.  Strategy, capture and revise the
-        ##  present call, then include the bare minimum of details
-        ##  needed in order to get this up and running.
-        .test <- match.call()
-        ##  Get rid of redundant parts.
-        .test[[".env"]] <- NULL
-###-------------------------------------------------------------------
-        
-        ##  Extract/create logical values for the selection of those
-        ##  components from '.input' that extract the parts of
-        ##  '.input' that is required for `LG_plot_load`,
-        ##  i.e. those with the following names (based on a similar
-        ##  setup from 'LG_shiny_helper').
-        .window <- ! is.null(look_up$window)
-        .Horizontal <- look_up$.Horizontal
-        .Vertical <- look_up$.Vertical
-        .Shape <- look_up$.Shape
-###-------------------------------------------------------------------    
-        ##  Select the parts (and orders of) 'interface' needed for
-        ##  the computation.  NB: This is a similar setup to the one
-        ##  used in 'LG_shiny_helper', but with all tests collected at
-        ##  the initiation of the names.
-        .controls <- c(
-            "type",
-            if (! look_up$is_only_diagonal)
-                "point_type",
-            if (look_up$is_multivariate) 
-                c("Vi",
-                  "Vj"),
-            if (.window)
-                "window",
-            "confidence_interval",
-            "bw_points",
-            "cut",
-            if (look_up$is_on_diagonal) {
-                if (length(union(x = .Horizontal,
-                                 y = .Vertical)) > 1)
-                    "levels_Diagonal"
-            } else {
-                switch(EXPR = .Shape,
-                       points = NULL,
-                       line = "levels_Line",
-                       rectangle = c("levels_Horizontal",
-                                     "levels_Vertical"))
-            },
-            "omega_range",
-            "Y_range")
-        ##  Read the desired arguments from 'look_up'.
-        input <- look_up[.controls]
-        ##  There might still be some redundancy in the returned
-        ##  result, so a further restriction might be needed.
-        if (input$TCS_type == "C") {
-            .Approx_input <-
-                c("type", "point_type", "Vi", "Vj", "bw_points",
-                  "levels", "levels_Line", "Levels_Horizontal",
-                  "Leveles_Vertical")
-            .Approx_restriction <- intersect(
-                x = names(input),
-                y = .Approx_input)
-            input <- input[.Approx_restriction]
-        }
-        ##  Return the desired code to be returned.
-        return(c(capture.output(dump(list = c("main_dir",
-                                              "input"),
+        ##  Create the code required for this function to work outside
+        ##  of the shiny-application.  Strategy: Extract the desired
+        ##  arguments from '.env' and 'input', and return those
+        ##  toghether with a suitable call.
+        ..main_dir <- .env$main_dir
+        ##  Reminder, 2019-08-26: The selection below is not optimal.
+        .controls <- c("TCS_type", "window", "Boot_Approx", "TS_key",
+                       "confidence_interval", "levels_Diagonal",
+                       "bw_points", "cut", "frequency_range", "type",
+                       "levels_Horizontal", "TS", "TS_lags", "S_type",
+                       "levels_Line", "point_type", "Approx", "Vi",
+                       "Vj", "levels_Vertical", "global_local")
+        ..input <- input[.controls]
+        ##  Create the call of interest.
+        .call <- create_call(
+            .cc_fun  = LG_plot_helper,
+            main_dir = ..main_dir,
+            input    = ..input)
+        ##  Discard the '.env'-argument.
+        .call[[".env"]] <- NULL
+        ##  Return the desired code-chunk.
+        return(c(capture.output(dump(list = c("..main_dir",
+                                              "..input"),
                                      file = stdout())),
                  "",
-                 deparse(.test)))
+                 deparse(.call)))
     }
     kill(.name)
 ###-------------------------------------------------------------------
@@ -169,7 +121,12 @@ LG_plot_helper <- function(
     }
 ###-------------------------------------------------------------------
     ##  The function 'LG_plot_load' takes care of the loading and
-    ##  computations required for the desired plots to be computed.
+    ##  computations required for the desired plots to be computed, we
+    ##  need to extract the desired 'look_up'-information first.
+###-------------------------------------------------------------------
+    ##  Use 'LG_lookup' to create the lookup-information.
+    look_up <- LG_lookup(input = input,
+                         .AB_env = .AB_env)
     LG_plot_load(.look_up = look_up,
                  .env = .env)
 }
