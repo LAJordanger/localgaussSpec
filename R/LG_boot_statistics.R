@@ -60,11 +60,11 @@ LG_boot_statistics <- function(x,
                         "high_90",
                         "high_95",
                         "high_99",
-                        "max")
+                        "max",
+                        "mean")
         if (all_statistics) 
             stat_names <- c(stat_names,
-                            c("mean",
-                              "sd",
+                            c("sd",
                               "skewness",
                               "kurtosis",
                               "mad"))
@@ -84,12 +84,12 @@ LG_boot_statistics <- function(x,
         result <-
             c(quantile(x = x,
                        probs=c(0, 0.005, 0.025, 0.05, 0.5, 0.95, 0.975, 0.995, 1),
-                       names = FALSE))
+                       names = FALSE),
+              mean(x))
         if (all_statistics) 
             result  <-
                 c(result, 
-                  c(mean(x),
-                    sd(x),
+                  c(sd(x),
                     skewness(x),
                     kurtosis(x),
                     mad(x)) )

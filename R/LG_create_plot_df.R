@@ -136,7 +136,7 @@ LG_create_plot_df <- function(.look_up,
             .extract_these <- c(if (.look_up$is_bootstrap)
                                     "orig",
                                 ifelse(test = .look_up$is_CI_needed,
-                                       yes  = "median",
+                                       yes  = "mean",
                                        no   = "orig"),
                                 if (.look_up$is_CI_needed)
                                     .CI_low_high)
@@ -209,7 +209,7 @@ LG_create_plot_df <- function(.look_up,
             xy = 
                 if (.look_up$is_block) {
                     aes(x = omega,
-                        y = median)
+                        y = mean)
                 } else
                     aes(x = omega,
                         y = orig),
@@ -236,7 +236,7 @@ LG_create_plot_df <- function(.look_up,
                 aes(x = omega, y = orig)
         .aes_list$.geom_line_global_me <-
             if (.look_up$is_block)
-                aes(x = omega, y = median)
+                aes(x = omega, y = mean)
         .aes_list$.geom_ribbon_global <-
             if (.look_up$is_CI_needed)
                 .aes_list$min_max
