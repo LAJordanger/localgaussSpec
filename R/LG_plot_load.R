@@ -12,6 +12,12 @@
 #' @param .env The environment in which the loaded stuff should be
 #'     stored.
 #'
+#' @param .extract_LG_data_only Logical argument, inherited from
+#'     \code{LG_plot_helper}.  The value \code{FALSE} will ensure that
+#'     a plot is created, whereas the value \code{TRUE} is used when
+#'     the desired outcome is an object containing the estimated local
+#'     Gaussian values.
+#' 
 #' @return The required data will be loaded from files into
 #'     \code{.env}, but only if it hasn't been done before.  The
 #'     resulting array will then be assigned to the environment of the
@@ -20,7 +26,8 @@
 #' @keywords internal
 
 LG_plot_load <- function(.look_up,
-                         .env) {
+                         .env,
+                         .extract_LG_data_only) {
     ##  Some shortcuts to make the code slightly easier to read.
     cache <- .look_up$cache
     .env_name <- cache$.env_name
@@ -78,6 +85,8 @@ LG_plot_load <- function(.look_up,
             ##  bootstrap-part is allowed to restrict the attention to
             ##  a subset of those used in the computation of original.
             for (.part in names(.temp)) {
+                if (is.null(.temp[[.part]]))
+                    next
                 .the_dimnames <- dimnames(.env[[.env_name]][[.local_name]][[.part]])
                 ##  Remove "content"-part
                 .the_dimnames <- .the_dimnames[! names(.the_dimnames) %in% "content"]
@@ -112,6 +121,25 @@ LG_plot_load <- function(.look_up,
         ##  care of here, and the results are stored in '..env'.
         LG_shiny_correlation(.look_up = .look_up, ..env = ..env)
     }
+    if (.extract_LG_data_only) {
+        ##  Rename the content of '..env', so it becomes easier to
+        ##  inspect during development/updates.
+        for (i in seq_along(cache)) {
+            .name  <- cache[[i]]
+            if (exists(x = .name, envir = ..env)) {
+                .new_name <- names(cache)[i]
+                assign(x = .new_name,
+                       value = ..env[[.name]],
+                       envir = ..env)
+                eval(bquote(rm(.(.name),
+                               envir = ..env)))
+            }
+        }
+        return(list(..env = ..env,
+                    .look_up = .look_up))
+    }
+    
+    
     ##  Create a list in '..env' with the required plot-arguments, and
     ##  return the name needed to extract it.
     .plot_list  <- LG_create_plot_df(.look_up = .look_up,
