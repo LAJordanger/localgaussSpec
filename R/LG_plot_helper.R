@@ -34,16 +34,28 @@
 #'     This argument can be skipped when called in a non-interactive
 #'     setting.
 #'
-#' @return A plot-object will be returned, with attributes describing
-#'     the content. The information can be extracted from the
-#'     plot-object by the help of \code{LG_explain_plot}.
+#' @param .extract_LG_data_only Logical argument, default
+#'     \code{FALSE}.  The default value ensures that a plot is
+#'     created, whereas the value \code{TRUE} is used when the desired
+#'     outcome is an object containing the estimated local Gaussian
+#'     values.
+#' 
+#' @return The default behaviour is that a plot-object will be
+#'     returned, with attributes describing the content. The
+#'     information can be extracted from the plot-object by the help
+#'     of \code{LG_explain_plot}.  When \code{.extract_LG_data_only}
+#'     is \code{TRUE}, the result will be an object containing the
+#'     estimated local Gaussian values.
 #' 
 #' @export
+
+
 
 LG_plot_helper <- function(
     main_dir,
     input,
-    .env) {
+    .env,
+    .extract_LG_data_only = FALSE) {
 ###-------------------------------------------------------------------
     ##  A minor adjustment to deal with the case when this function is
     ##  called outside of the interactive shiny-setup.
@@ -138,5 +150,6 @@ LG_plot_helper <- function(
     look_up <- LG_lookup(input = input,
                          .AB_env = .AB_env)
     LG_plot_load(.look_up = look_up,
-                 .env = .env)
+                 .env = .env,
+                 .extract_LG_data_only = .extract_LG_data_only)
 }
