@@ -60,8 +60,8 @@ LG_shiny_spectra  <- function(.look_up,
                                    cut = .cut),
                               dimnames(x)))
             ##  Return the array together with information about
-            ##  the range of it (to be used when creating) the
-            ##  ylim-value for the plot function.
+            ##  the range of it (to be used when creating the
+            ##  ylim-value for the plot function).
             list(.arr = .arr,
                  .range = structure(
                      .Data = range(.arr),
@@ -166,25 +166,32 @@ LG_shiny_spectra  <- function(.look_up,
     ##  later on in order to avoid glitches during the interactive
     ##  investigation.
     if (!exists(x = cache$.weights, envir = ..env)) {
-        ..env[[cache$.weights]]  <- list()
+        ..env[[cache$.weights]] <- list()
         for (.cut in .look_up$lag_vec)
             ..env[[cache$.weights]][[as.character(.cut+1)]] <-
                 myWindows[[.look_up$window]](.cut = .cut + 1) 
+    }
+    ##  Add the weight-version needed when we want to integrate the
+    ##  spectral density function.
+    if (!exists(x = cache$.weights_integral, envir = ..env)) {
+        ..env[[cache$.weights_integral]] <- list()
+        for (.cut in names(..env[[cache$.weights]])) {
+            ..env[[cache$.weights_integral]][[.cut]] <-
+                1i/(2*pi) * ..env[[cache$.weights]][[.cut]] /
+                seq_along(..env[[cache$.weights]][[.cut]])
+        }
     }
     ###-------------------------------------------------------------------
     ##  Compute the unweighted product of the '.exp'-array and the
     ##  estimated ordinary (global) correlations.
     if (!exists(x = cache$.spectra_summands_global, envir = ..env)) {
         .result <- list()
-        for (.node in names(..env[[.global_name]])) {
+        for (.node in dimnames(..env[[.global_name]])$TS) {
             .result[[.node]] <- list()
-            ##  Reminder: The messy code below is the consequence of
-            ##  several ad hoc solutions at other parts of the code...
-            .dn <- attributes(..env[[.global_name]])$original_dimnames
-            .dn$TS <- NULL
-            .corr <- structure(
-                .Data = ..env[[.global_name]][[.node]],
-                .Dimnames = .dn)
+            .corr <- restrict_array(
+                .arr = ..env[[.global_name]],
+                .restrict = list(TS = .node))
+            .dn <- dimnames(.corr)
             ##  Extract the lag-zero component when required.
             ##  Reminder: In order for the addition of the arrays
             ##  to work properly later on, the "lag"-dimension
@@ -401,17 +408,10 @@ LG_shiny_spectra  <- function(.look_up,
             if (is.null(..env[[.local_name]][[.node]]))
                 next
             .result[[.node]] <- list()
-            .bm <- c(.node, .look_up$bw_points)
-            ##  Reminder: The messy code below is the consequence of
-            ##  several ad hoc solutions at other parts of the code...
-            .dn <- attributes(..env[[.local_name]][[.node]])$original_dimnames
-            .dn$bw_points <- NULL
-            .corr <- structure(
-                .Data = ..env[[.local_name]][[.bm]],
-                .Dimnames = .dn)
             .corr <- restrict_array(
-                .arr = .corr,
-                .restrict = list(variable = "rho"))
+                .arr = ..env[[.local_name]][[.node]],
+                .restrict = list(bw_points = .look_up$bw_points,
+                                 variable = "rho"))
             ##  Extract the lag-zero component when required.
             ##  Reminder: In order for the addition of the arrays
             ##  to work properly later on, the "lag"-dimension
@@ -442,7 +442,7 @@ LG_shiny_spectra  <- function(.look_up,
                     .arr2 = ..env[[cache$.exp]])
         }
         ..env[[cache$.spectra_summands_local]]  <- .result
-        kill(.result, .node, .dn, .corr, .bm)
+        kill(.result, .node, .dn, .corr)
     }
     kill(.local_name)
     ###-------------------------------------------------------------------
@@ -717,7 +717,7 @@ LG_shiny_spectra  <- function(.look_up,
         ##  Reminder: More statistics could be computed from this,
         ##  but the present interface does not deal with that yet
         ##  (and most likely never will).
-        newnames <-LG_boot_statistics(names_only = TRUE)$content
+        newnames <- LG_boot_statistics(names_only = TRUE)$content
         my_abind(
             .arr_original,
             plyr::aaply(

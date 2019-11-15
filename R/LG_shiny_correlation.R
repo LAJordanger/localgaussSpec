@@ -90,12 +90,9 @@ LG_shiny_correlation <- function(.look_up,
         ##  Extract the desired branch of the global correlations.
         ..env[[cache$.G_branch]] <- local({
             .global_name <- .look_up$.global_name
-            .bm <- .look_up$.LGC_restrict_global$branch
-            .dn <- attributes(..env[[.global_name]])$original_dimnames
-            .sub_dim <- attributes(..env[[.global_name]])$.sub_dim
-            .data <- structure(
-                .Data = ..env[[.global_name]][[.bm]],
-                .Dimnames = .dn[.sub_dim])
+            .data <- restrict_array(
+                .arr = ..env[[.global_name]],
+                .restrict = list(TS = .look_up$.LGC_restrict_global$branch))
             ##  Return data with information about lags.
             list(
                 .data = .data,
@@ -108,16 +105,15 @@ LG_shiny_correlation <- function(.look_up,
     }
     if (!exists(x = cache$.L_branch, envir = ..env)) {
         ##  Extract the desired branch of the local Gaussian
-        ##  correlations, based on point type (on or off diagonal )and bandwidth,
-        ##  i.e. whether the point lies on or off the diagonal.
+        ##  correlations, based on point type (on or off diagonal) and
+        ##  bandwidth, i.e. whether the point lies on or off the
+        ##  diagonal.
         ..env[[cache$.L_branch]] <- local({
             .local_name <- .look_up$.local_name
             .bm <- .look_up$.LGC_restrict_local$branch
-            .dn <- attributes(..env[[.local_name]][[.bm[1]]])$original_dimnames
-            .sub_dim <- attributes(..env[[.local_name]][[.bm[1]]])$.sub_dim
-            .data <- structure(
-                .Data = ..env[[.local_name]][[.bm]],
-                .Dimnames = .dn[.sub_dim])
+            .data  <- restrict_array(
+                .arr = ..env[[.local_name]][[.bm[1]]],
+                .restrict = as.list(.bm[-1]))
             ##  Return together with information about the lags needed
             ##  for the unfolding.
             list(

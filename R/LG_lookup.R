@@ -236,8 +236,8 @@ LG_lookup <- function(input,
     cache$.env_name <-
         digest::digest(input[c("TS_key", "TS", "Approx", "Boot_Approx", "type")])
     ##  Add the names to be used for the loaded files.
-    look_up$.global_name <- ".LGC_list_array_global"
-    look_up$.local_name <- ".LGC_list_array_local"
+    look_up$.global_name <- ".LGC_array_global"
+    look_up$.local_name <- ".LGC_array_local"
     ##  Specify the restrictions to be used when an inspection of the
     ##  global correlations is the target.
     look_up$.LGC_restrict_global <- list(

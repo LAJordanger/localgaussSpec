@@ -94,14 +94,6 @@ LG_plot_load <- function(.look_up,
             }
             kill(.temp, .the_dimnames, .part)
         }
-        ###-----------------------------------------------
-        ##  Adjust global and local values to list-array format.
-        .env[[.env_name]][[.global_name]] <- array_to_list_array(
-            .arr = .env[[.env_name]][[.global_name]],
-            .array_nodes = c("TS"))
-        .env[[.env_name]][[.local_name]] <- array_to_list_array(
-            .arr = .env[[.env_name]][[.local_name]],
-            .array_nodes = c("bw_points"))
     }
     ##  To make the code later on more compact, create a pointer to
     ##  the environment that we want to update.
