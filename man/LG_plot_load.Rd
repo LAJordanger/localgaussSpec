@@ -4,7 +4,7 @@
 \alias{LG_plot_load}
 \title{Load files to be used during the interactive inspection.}
 \usage{
-LG_plot_load(.look_up, .env)
+LG_plot_load(.look_up, .env, .extract_LG_data_only)
 }
 \arguments{
 \item{.look_up}{A list created by \code{LG_lookup} (in the function
@@ -14,6 +14,12 @@ values defined by the \code{shiny}-interface.}
 
 \item{.env}{The environment in which the loaded stuff should be
 stored.}
+
+\item{.extract_LG_data_only}{Logical argument, inherited from
+\code{LG_plot_helper}.  The value \code{FALSE} will ensure that
+a plot is created, whereas the value \code{TRUE} is used when
+the desired outcome is an object containing the estimated local
+Gaussian values.}
 }
 \value{
 The required data will be loaded from files into

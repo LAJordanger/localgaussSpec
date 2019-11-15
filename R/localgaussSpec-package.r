@@ -23,53 +23,20 @@
 #' 
 ###############
 ## Add details here with regard to packages/functions to import.
-## #' @import foreach
-## #' @import shiny
-## #' @import stringr
-## #' @importFrom abind abind adrop
-## #' @importFrom alabama auglag
-## #' @importFrom ggplot2 ggplot coord_cartesian geom_hline geom_vline
-## #'     labs geom_line aes annotate theme geom_ribbon geom_boxplot
-## #'     cut_width
-## #' @importFrom graphics hist plot
-## #' @importFrom localgauss localgauss
-## #' @importFrom logspline logspline dlogspline plogspline
-## #' @importFrom mvtnorm dmvnorm pmvnorm
-## #' @importFrom magrittr and or divide_by
-## #' @importFrom markdown renderMarkdown
-## #' @importFrom methods findMethods is
-## #' @importFrom plyr aaply
-## #' @importFrom pryr where dots
-## #' @importFrom stats dnorm pnorm qnorm rnorm acf as.ts coef kernel lag
-## #'     mad median optim optimise optimize pacf quantile runif sd
-## #'     spec.pgram var
-## #' @importFrom timeDate kurtosis skewness
-## #' @importFrom tseries tsbootstrap
-## #' @importFrom ToolBox spy create_call restrict_array
-## #'     append_dimensions split_vector my_apply my_abind aa_restrict
-## #'     multiply_arrays add_arrays append_dimensions
-## #'     compare_spy_reports update_formals dimnames_union
-## #'     dimnames_intersect update_array nested_if skeleton_list
-## #'     aa_where_and_who my_aaply file_created array_from_files
-## #'     set_seed error kill this_function list_array_join
-## #'     list_array_dims array_to_list_array
-## #' @importFrom utils capture.output combn head object.size str tail
-
 #' @import shiny
 #' @importFrom abind abind adrop
 #' @importFrom foreach %do% %dopar% foreach getDoParWorkers
 #' @importFrom digest digest
-#' @importFrom ggplot2 ggplot coord_cartesian geom_hline geom_vline
-#'     labs geom_line aes annotate theme geom_ribbon geom_boxplot
-#'     cut_width element_blank xlab ylab
+#' @importFrom ggplot2 ggplot coord_cartesian labs geom_line
+#'     geom_hline geom_vline geom_boxplot geom_contour geom_tile
+#'     geom_ribbon aes annotate theme cut_width element_blank xlab
+#'     ylab scale_fill_gradient2 element_text ggtitle ylim
 #' @importFrom graphics plot
 #' @importFrom leanRcoding add_arrays append_dimensions
-#'     array_to_list_array compare_spy_reports create_call
-#'     dimnames_intersect dimnames_union error file_created
-#'     list_array_dims list_array_join kill multiply_arrays my_aaply
+#'     compare_spy_reports create_call dimnames_intersect
+#'     dimnames_union error file_created kill multiply_arrays my_aaply
 #'     my_abind my_apply nested_if restrict_array set_seed
 #'     skeleton_list split_vector spy this_function update_array
-#'     update_formals
 #' @importFrom localgauss localgauss
 #' @importFrom magrittr and or divide_by
 #' @importFrom markdown renderMarkdown

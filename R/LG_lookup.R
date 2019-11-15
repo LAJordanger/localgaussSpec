@@ -1,4 +1,4 @@
-#'  Extract details from the logged information.
+#' Extract details from the logged information.
 #'
 #' This function creates a list that contains different values from
 #' the logged structure.  The purpose of this is to collect most of
@@ -108,13 +108,17 @@ LG_lookup <- function(input,
         ifelse(test = nchar(.key) == 1,
                yes  = "Co",
                no   = .key)
-    })    ###-------------------------------------------------------------------
+    })
+    ###-------------------------------------------------------------------
     ##  Create vectors needed for the investigation of the local
     ##  Gaussian spectra, i.e. compute the frequency vector based on
     ##  the 'input'-values, and extract information about the lags.
     look_up$omega_vec <- seq(from = input$frequency_range[1],
                              to   = input$frequency_range[2],
                              length.out = 64)
+    ### REMINDER: Include argument that changes the default to
+    ### e.g. 200 when heatmaps are to be investigated.
+    ##                             length.out = 200)
     look_up$lag_vec <-
         seq_len(max(as.numeric(.AB_env$details$.dimnames$lag)))
     ##  Add a logical value needed in some tests.
@@ -163,7 +167,7 @@ LG_lookup <- function(input,
                 look_up$.Vertical[look_up$levels_Vertical]
         } else
             TRUE
-    look_up$is_off_diagonal <- look_up$is_on_diagonal
+    look_up$is_off_diagonal <- ! look_up$is_on_diagonal
     ##  Create logical values to reveal if global or local data should be
     ##  presented in the plot.
     look_up$is_global_only <- {input$global_local == "global"}
@@ -298,6 +302,10 @@ LG_lookup <- function(input,
     ##  The weights to be used, depending on the window function.
     cache$.weights <-
         digest::digest(input$window)
+    ##  The weights to be used when we consider the integral of the
+    ##  spectral density.
+    cache$.weights_integral <-
+        digest::digest(c(input$window, "integral"))
     ##  The storage of the global and local spectra-summands (i.e. the
     ##  unweighted components of the sums that must be taken later
     ##  on), which both must take into account the desired
@@ -660,10 +668,6 @@ LG_lookup <- function(input,
                 "-")
           } else {
               c(if (look_up$is_auto_pair)
-                    "auto-",
-                if (any(look_up$is_cross_pair,
-                        all(details$is_off_diagonal,
-                            look_up$is_auto_pair)))
                     switch(EXPR = details$spectrum_variant,
                            auto = "",
                            Co   = "co",
@@ -702,7 +706,7 @@ LG_lookup <- function(input,
     if (look_up$TCS_type == "S") {
         details$.selected_lag <- sprintf(
             "m = %s",
-            as.numeric(look_up$cut))
+            as.numeric(look_up$m_selected))
     }
     ##  The label to be used for the plots.
     details$.plot_label  <-  paste(

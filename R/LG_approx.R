@@ -81,8 +81,10 @@
 #'
 #' @return eflag 
 #' 
-#' @keywords internal
-
+## #' @keywords internal
+#' @export
+## REMINDER: The use of 'spy' inside of this function seems to crash
+## if the function is not exported...
 
 LG_approx <- function(
     save_dir = NULL,

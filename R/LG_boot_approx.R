@@ -59,7 +59,10 @@
 #'     \code{TS.object} based on it, then run \code{LG_approx} on that
 #'     object.)
 #' 
-#' @keywords internal
+## #' @keywords internal
+#' @export
+## REMINDER: The use of 'spy' inside of this function seems to crash
+## if the function is not exported...
 
 LG_boot_approx <- function(
     save_dir = NULL,
