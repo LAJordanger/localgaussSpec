@@ -4,7 +4,7 @@
 \alias{LG_plot_helper}
 \title{Helper-function for \code{LG_plot}.}
 \usage{
-LG_plot_helper(main_dir, input, .env)
+LG_plot_helper(main_dir, input, .env, .extract_LG_data_only = FALSE)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the
@@ -20,11 +20,20 @@ the desired data for the plot of interest.}
 \item{.env}{An environment in which \code{.arr} will be updated.
 This argument can be skipped when called in a non-interactive
 setting.}
+
+\item{.extract_LG_data_only}{Logical argument, default
+\code{FALSE}.  The default value ensures that a plot is
+created, whereas the value \code{TRUE} is used when the desired
+outcome is an object containing the estimated local Gaussian
+values.}
 }
 \value{
-A plot-object will be returned, with attributes describing
-    the content. The information can be extracted from the
-    plot-object by the help of \code{LG_explain_plot}.
+The default behaviour is that a plot-object will be
+    returned, with attributes describing the content. The
+    information can be extracted from the plot-object by the help
+    of \code{LG_explain_plot}.  When \code{.extract_LG_data_only}
+    is \code{TRUE}, the result will be an object containing the
+    estimated local Gaussian values.
 }
 \description{
 This is a helper function for \code{LG_plot}, that first extracts
