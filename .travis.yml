@@ -1,16 +1,9 @@
-# 2018-12-17: This approach fails now (worked before).  Can not find
-# any particular issues mentioned when searching for the error
-# message.  Think I need to play around a bit with the setup in this
-# file.  Better read the documentation to see what can be done.
-# https://docs.travis-ci.com/user/languages/r
-# https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/script/r.rb
-
 language: r
 sudo: required
 cache: packages
 
 r:
- - oldrel
+# - oldrel
  - release
  - devel
 
@@ -19,22 +12,7 @@ addons:
     packages:
       - libhunspell-dev
 
-# # We want to use devel devtools to load packages so we can catch package
-# # installation issues sooner rather than later.
-# r_github_packages:
-#   - hadley/devtools
-
-# # We need to install BiocInstaller for testing Bioconductor packages
-#bioc_required: true
-
-# The 'bioc_required' must have been included due to copying. I do not
-# need to test Bioconductor packages.
-
-# ## # Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
-# ## # this was causing hunspell installation to fail
 before_install:
-   #  - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-   # OBSOLETE: https://github.com/rstudio/shiny/commit/147f9ac64be368dd590088a245901eed3ffe243b#diff-354f30a63fb0907d4ad57269548329e3
   - sudo apt-get install libgmp3-dev
   - sudo apt-get install libmpfr-dev
 
