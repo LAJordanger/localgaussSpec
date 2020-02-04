@@ -103,6 +103,11 @@ LG_plot_load <- function(.look_up,
             }
             kill(.temp, .the_dimnames, .part)
         }
+        ##  Copy information from '.env' related to user defined
+        ##  curlicues that should be used to tweak the plot when it is
+        ##  called in a non-interactive setup.
+        .env[[.env_name]]$user_curlicues <- .env$user_curlicues
+        .env[[.env_name]]$non_interactive <- .env$non_interactive
     }
     ##  To make the code later on more compact, create a pointer to
     ##  the environment that we want to update.
@@ -138,43 +143,14 @@ LG_plot_load <- function(.look_up,
         return(list(..env = ..env,
                     .look_up = .look_up))
     }
-    
-    
-    ##  Create a list in '..env' with the required plot-arguments, and
-    ##  return the name needed to extract it.
-    .plot_list  <- LG_create_plot_df(.look_up = .look_up,
-                                     ..env = ..env)
+    ##  Add an environment '.plot_data' to '..env', with the
+    ##  data-frames needed for the desired plot.
+    LG_create_plot_df(.look_up = .look_up,
+                      ..env = ..env)
     ###-------------------------------------------------------------------
-    ##  Create and return the plot
-    ..env$.lag_plot <-     with(
-        data = ..env[[.plot_list]],
-        expr = {
-            LG_plot(
-                .data_list = .data_list,
-                .lag = .lag,
-                .percentile = .percentile,
-                .xlim = .xlim,
-                .ylim = .ylim,
-                .aes_list = .aes_list) + 
-                ##  Add title and 'trustworthiness'.
-                ggplot2::ggtitle(label = .plot_label) +
-                ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
-                if (! is.null(.annotate_label))
-                    annotate(geom = "text",
-                             x = -Inf,
-                             y = -Inf,
-                             size = 4,
-                             label = .annotate_label,
-                             col = "darkgreen",
-                             vjust = -.5,
-                             hjust = -0.1)
-        })
-    ##  Add names to the layers.
-    names(..env$.lag_plot$layers) <- c(
-        head(x = names(..env$.lag_plot$layers), n = -1),
-        ".annotate_convergence")
-    ##  Add the details as an attribute.
-    attributes(..env$.lag_plot)$details <- .look_up$details
+    ##  Create the plot
+    ..env$.lag_plot<- LG_plot(.look_up = .look_up,
+                              ..env = ..env)
     ##   Return the plot to the workflow.
     ..env$.lag_plot
 }

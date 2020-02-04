@@ -30,6 +30,15 @@
 #' @param input A list with the arguments needed in order to extract
 #'     the desired data for the plot of interest.
 #'
+#' @param input_curlicues A list that can be used when this function
+#'     is used outside of the \code{shiny}-application.  This can be
+#'     used to fine tune details related to the annotated information.
+#'     It is also possible to drop annotation from the plot, which
+#'     might be of interest when many plots are to be included in a
+#'     grid-based setup.  The default value \code{NULL} will ensure
+#'     that the plot will be created with the same parameters used in
+#'     the \code{shiny}-application.
+#'
 #' @param .env An environment in which \code{.arr} will be updated.
 #'     This argument can be skipped when called in a non-interactive
 #'     setting.
@@ -54,6 +63,7 @@
 LG_plot_helper <- function(
     main_dir,
     input,
+    input_curlicues = NULL,
     .env,
     .extract_LG_data_only = FALSE) {
 ###-------------------------------------------------------------------
@@ -84,10 +94,17 @@ LG_plot_helper <- function(
         ##  with this case?
         if (is.list(.AB_env))
             .AB_env <- .AB_env[[1]]
+        ##  Add a logical value to reveal that the function is called
+        ##  in a non-interactive environment.
+        .env$non_interactive <- TRUE
     } else {
         ##  Create a link to the 'Approx'-level environment.
         .AB_env <- .env$TS_logging[[unlist(.env$input[c("TS_key", "TS", "Approx")])]]
+        .env$non_interactive <- FALSE
     }
+    ##  Add information about the curlicues that might have been given
+    ##  by the user in the non-interactive case.
+    .env$user_curlicues <- input_curlicues
 ###-------------------------------------------------------------------
     ##  Do nothing if no graphical component has been selected.
     if (is.na(input$TCS_type))
@@ -133,7 +150,6 @@ LG_plot_helper <- function(
           "",
           deparse(LG_explain_plot_quote)))
     }
-    kill(.name)
 ###-------------------------------------------------------------------
     ##  The case of interest for the second iteration of this function
     ##  is the part concerning 'TS', in which case we need to pick out

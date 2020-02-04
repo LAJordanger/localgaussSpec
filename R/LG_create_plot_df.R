@@ -1,37 +1,33 @@
 #' Create the data needed when plotting the local Gaussian
 #' correlations and spectra.
 #'
-#' This function created a list with the data needed for the plots of
-#' the estimated local Gaussian correlations and spectra.  A simple
-#' caching is performed in order to avoid having computations more
-#' than once.
+#' This function created an environment with the data needed for the
+#' plots of the estimated local Gaussian correlations and spectra.  A
+#' simple caching is performed in order to avoid having computations
+#' more than once.
 #'
 #' @param .look_up The list created by \code{LG_lookup}, containing
 #'     the information needed in order to decide what kind of
 #'     data-frame that is required.
 #'
 #' @param ..env The environment containing the required information,
-#'     and also the environment where the resulting data-frame will be
-#'     stored.
+#'     and also the environment where the resulting environment will
+#'     be stored.
 #'
-#' @return The purpose of this function is to create a list with the
-#'     data needed for the function \code{LG_plot}.  The result will
-#'     be stored in the environment \code{..env}, and the unique name
-#'     (computed from the input parameters used in the construction of
-#'     it) will then be returned to the workflow.  This solution
-#'     enables a simple form of caching, since the computations only
-#'     will be performed when required.
+#' @return This function adds a new environment to the environment
+#'     \code{..env}, which contains the data needed for the function
+#'     \code{LG_plot} to work as desired.
 #'
 #' @keywords internal
 
 LG_create_plot_df <- function(.look_up,
-                                  ..env) {
+                              ..env) {
     ##  A minor shortcut for the caching-part.
     cache <- .look_up$cache
     ##  Return the name of the plot-list if the computation already
     ##  has been performed.
-    if (exists(x = cache$.plot_list, envir = ..env)) {
-        return(cache$.plot_list)
+    if (exists(x = cache$.plot_data, envir = ..env)) {
+        return(cache$.plot_data)
     }
     ##  Create the data-frame to be used when it is the estimated
     ##  local Gaussian correlations themselves that will be
@@ -249,28 +245,12 @@ LG_create_plot_df <- function(.look_up,
                     .look_up$is_CI_needed))
                 .aes_list$min_max
     }
-    ##  Add the desired content
-    ..env[[cache$.plot_list]] <- list(
+    ##  Add the desired content in an environment.
+    ..env[[cache$.plot_data]] <- as.environment(list(
         .data_list = .data_list,
-        .lag = .look_up$details$.selected_lag,
-        .percentile = .look_up$details$.selected_percentile,
         .xlim = .xlim,
         .ylim = .ylim,
-        .aes_list = .aes_list,
-        ##  Reminder: This .plot_label' might better be stored in the
-        ##  'look_up'-part.
-        ## .plot_label = paste(
-        ##     toupper(substr(x = .look_up$details$text$plot_type,
-        ##                    start = 1,
-        ##                    stop = 1)),
-        ##     substr(x = .look_up$details$text$plot_type,
-        ##            start = 2,
-        ##            stop = nchar(.look_up$details$text$plot_type)),
-        ##     .look_up$details$text$plot_type_YiYj,
-        ##     sep = "")
-        .plot_label = .look_up$details$.plot_label,
-        .annotate_label = .look_up$details$text$trust_the_result)
-    ##  Return the name of this list to the workflow
-    cache$.plot_list
+        .aes_list = .aes_list))
+    ##  Nothing to return.
+    invisible(NULL)
 }
-

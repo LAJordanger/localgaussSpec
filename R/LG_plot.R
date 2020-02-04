@@ -9,50 +9,11 @@
 #' when the function is used in a static setting, instead they are
 #' supposed to be given from the \code{LG_shiny}-interface.
 #'
-#' @param .data_list A list that with the data-frames that contains
-#'     the desired information needed by the \code{data}-argument in
-#'     the function \code{ggplot}.
+#' @param .look_up The list created by \code{LG_lookup}, which keep
+#'     tracks of information over a wide range of helper-functions.
 #'
-#' @param .lag A character-string, which when specified will add the
-#'     lag that is under inspection.  The default value \code{NULL}
-#'     turns of this part of the plot.
-#'
-#' @param .percentile A character-string, which when specified will
-#'     add the percentile under investigation (in the upper right
-#'     corner).  The default value \code{NULL} turns of this part of
-#'     the plot.
-#'
-#' @param .select An argument from the vector \code{c("all", "canvas",
-#'     "add")} that selects the desired plot.  The first alternative
-#'     is the one selected by default if no specification is made by
-#'     the user.  The two other alternatives are intended used when
-#'     this function is called from \code{\link{LG_shiny}}, in order
-#'     to reduce the amount of data that must be updated in order to
-#'     create the interactive visualisation.
-#' 
-#' @param .canvas To be used when adding details to a plot produced
-#'     earlier on.  This argument is needed when \code{LG_plot} is
-#'     called from \code{\link{LG_shiny}}.  The default value
-#'     \code{NULL} can be left unchanged in the general case.  Note
-#'     that this argument will be ignored unless \code{.select} is
-#'     given as \code{add}.
-#'
-#' @param .title The title to be used in the plot.
-#'
-#' @param .xlim Numeric vector of length two, giving the
-#'     \code{xlim}-value to be used in \code{ggplot}.  The default
-#'     value \code{c(0, 0.5)} has been selected for the visualisation
-#'     of the local Gaussian spectra.  The value \code{NULL} can be
-#'     used to allow \code{ggplot} to select reasonable values based
-#'     on the values in \code{.data}.
-#'
-#' @param .ylim Numeric vector of length two, giving the
-#'     \code{ylim}-value to be used in \code{ggplot}.  The default
-#'     value \code{NULL} will allow \code{ggplot} to select reasonable
-#'     values based on the values in \code{.data}.
-#'
-#' @param .aes_list A list containing the different \code{aes}-expressions
-#'     needed for the plots.
+#' @param ..env The environment with the information needed in order
+#'     to create the desired plot.
 #'
 #' @return The first incarnation of this code will focus on the
 #'     creation of plots depicting the local Gaussian spectral
@@ -62,63 +23,73 @@
 #'
 #' @keywords internal
 
-LG_plot <- function(.data_list,
-                    .lag = NULL,
-                    .percentile = NULL,
-                    .select = c("all", "canvas", "add"),
-                    .canvas = NULL,
-                    .title = NULL,
-                    .xlim = c(0, 0.5),
-                    .ylim = NULL,
-                    .aes_list = NULL) {
+LG_plot <- function(..env,
+                    .look_up) {
+    ##  Add a pointer to the environemnt containing the plot data.
+    .plot_data <- ..env[[.look_up$cache$.plot_data]]
+    ##  Find the default values for the curlicues, .i.e. information
+    ##  about whether or not annotations should be included or not,
+    ##  text sizes, colours, etc.
+    .curlicues <- LG_plot_curlicues(
+        new_curlicues = .look_up$curlicues)
+    ##  When required, update '.curlicues' based on user defined
+    ##  values (relevant outside of the 'shiny'-application.)
+    if (!is.null(..env$user_curlicues)) {
+        .curlicues <- LG_plot_curlicues(
+            new_curlicues = ..env$user_curlicues,
+            old_curlicues = .curlicues)
+    }
     ###-------------------------------------------------------------------
-    ##  Restrict '.select' to one value (needed when unspecified).
-    .select = .select[1]
-    ##  Check if '.data_list' contains a 'correlation'-node, since
+    ##  Check if '.plot_data$.data_list' contains a 'correlation'-node, since
     ##  that implies that a plot of these are of interest.
-    if (!is.null(.data_list$correlation)) {
-        .data <- .data_list$correlation
+    if (!is.null(.plot_data$.data_list$correlation)) {
+        .data <- .plot_data$.data_list$correlation
         ##  Initiate the framework
         .result <- ggplot(data = .data,
-                          mapping = .aes_list$xy) +
-            coord_cartesian(xlim = .xlim,
-                            ylim = .ylim) +
-            labs(title = .title) + 
+                          mapping = .plot_data$.aes_list$xy) +
+            coord_cartesian(xlim = .plot_data$.xlim,
+                            ylim = .plot_data$.ylim,
+                            default = TRUE) +
             geom_hline(yintercept = 0,
                        linetype = 2,
                        col = "brown",
-                       alpha = 0.8,
-                       lwd = 0.5) +
+                       alpha = .curlicues$correlation_plot$hline$alpha,
+                       lwd =  .curlicues$correlation_plot$hline$lwd) +
             geom_vline(xintercept = 0,
                        linetype = 1,
                        col = "brown",
-                       alpha = 0.25,
-                       lwd = 0.5) +
+                       alpha = .curlicues$correlation_plot$vline$alpha,
+                       lwd =  .curlicues$correlation_plot$vline$lwd) +
             ##  Add percentile when required (only local cases).
-            if (! is.null(.percentile))
-                annotate(geom = "text",
-                         x = Inf,
-                         y = Inf,
-                         size = 10,
-                         label = .percentile,
-                         col = "brown",
-                         vjust = 1.2,
-                         hjust = 1.2)
+            if (.curlicues$v_value$include)
+                eval(create_call(.cc_fun = "annotate",
+                                 .curlicues$v_value$annotate,
+                                 .cc_list = TRUE))
+        ##  Add a quote for numerical convergence (only local cases).
+            if (.curlicues$NC_value$include) 
+                .result  <- .result +
+                    eval(create_call(
+                    .cc_fun = "annotate",
+                    .curlicues$NC_value$annotate,
+                    .cc_list = TRUE))
         ##  Add names to the layers
         names(.result$layers) <-
             c(".x_axis_line", ".y_axis_line",
-              if (! is.null(.percentile))
-                  ".annotate_percentile")
+              if (.curlicues$v_value$include)
+                  ".annotate_percentile",
+              if (.curlicues$NC_value$include)
+                  ".annotate_convergence")
         ##  Add stuff based on the 'boxplot'-attribute.
         if (attributes(.data)$boxplot) {
             .result <- .result +
-                geom_boxplot(aes(group = cut_width(x = lag,
-                                                   width = 0.01,
-                                                   boundary = 0.1)),
-                             alpha = 0.5,
-                             outlier.size = 0.5,
-                             outlier.alpha = 0.5,
-                             size = 0.5)
+                geom_boxplot(aes(group = cut_width(
+                                     x = lag,
+                                     width = .curlicues$correlation_plot$boxplot$width,
+                                     boundary = .curlicues$correlation_plot$boxplot$boundary)),
+                             alpha = .curlicues$correlation_plot$boxplot$alpha,
+                             size = .curlicues$correlation_plot$boxplot$size,
+                             outlier.alpha = .curlicues$correlation_plot$boxplot$outlier.alpha,
+                             outlier.size = .curlicues$correlation_plot$boxplot$outlier.size)
             ##  Add name to layers.
             names(.result$layers) <- c(
                 head(x = names(.result$layers), n = -1),
@@ -131,8 +102,8 @@ LG_plot <- function(.data_list,
                          y = 0,
                          yend = .data$orig,
                          colour = "black",
-                         size = .25,
-                         alpha = 0.8)
+                         alpha = .curlicues$correlation_plot$segment$alpha,
+                         size = .curlicues$correlation_plot$segment$size)
             ##  Add name to layers.
             names(.result$layers) <- c(
                 head(x = names(.result$layers), n = -1),
@@ -143,29 +114,58 @@ LG_plot <- function(.data_list,
         .result <- .result +
             xlab("h") +
             theme(axis.title.y = element_blank())
+        ##  Add the title when relevant
+        if (.curlicues$title$include) {
+            .result  <- .result +
+                ggplot2::ggtitle(label = .curlicues$title$label) +
+                ggplot2::theme(plot.title = eval(create_call(
+                                   .cc_fun = "element_text",
+                                   .curlicues$title$element_text,
+                                   .cc_list = TRUE)))
+        }
+        ##  Add the details as an attribute.
+        attributes(..env$.lag_plot)$details <- .look_up$details
+        ##  Return the result to the workflow
         return(.result)
     }
     ###-------------------------------------------------------------------
     ##  The spectra cases.
     ##  -------------------------------------------------------------------
-    ##  Create a '.canvas' when necessary.  Reminder: Use the global
-    ##  data as default here, since those always will be included.
-    ##  Moreover, the The horizontal line added at this initial stage
-    ##  refers to the expected result if white-noise is encountered.
-    if (.select != "add") {
-        .canvas <- ggplot(data = .data_list$global,
-                          mapping = .aes_list$xy) +
-            coord_cartesian(xlim = .xlim,
-                            ylim = .ylim) +
-            geom_hline(yintercept = .data_list$.white_noise,
-                       linetype = 3) +
-            labs(title = .title)
+    ##  Start with a '.canvas' based on the global data, since those
+    ##  always will be included.  The horizontal line refers to the
+    ##  expected result when white-noise is encountered.
+    .canvas <- ggplot(data = .plot_data$.data_list$global,
+                      mapping = .plot_data$.aes_list$xy) +
+        coord_cartesian(xlim = .plot_data$.xlim,
+                        ylim = .plot_data$.ylim,
+                        default = TRUE) +
+        if (.curlicues$spectra_plot$WN_line$include) {
+            geom_hline(yintercept = .plot_data$.data_list$.white_noise,
+                       size = .curlicues$spectra_plot$WN_line$size,
+                       alpha = .curlicues$spectra_plot$WN_line$alpha,
+                       linetype = 3)
+        }
+    if (.curlicues$spectra_plot$WN_line$include)
         names(.canvas$layers) <- "horizontal_line"
-    }
     ###-------------------------------------------------------------------
-    ##  Return '.canvas' when '.select' is given as "canvas".
-    if (.select == "canvas")
-        return(.canvas)
+    ##  Create a list of logical values to decide what content to
+    ##  include in the plot.
+    spec_include <- list(
+        .geom_line_local = all(
+            ! is.null(.plot_data$.aes_list$.geom_line_local),
+            .curlicues$spectra_plot$local$line.include),
+        .geom_line_global_me = all(
+            ! is.null(.plot_data$.aes_list$.geom_line_global_me),
+            .curlicues$spectra_plot$global$line.include),
+        .geom_line_global = all(
+            ! is.null(.plot_data$.aes_list$.geom_line_global),
+            .curlicues$spectra_plot$global$line.include),
+        .geom_ribbon_global = all(
+            ! is.null(.plot_data$.aes_list$.geom_ribbon_global),
+            .curlicues$spectra_plot$global$ribbon.include),
+        .geom_ribbon_local = all(
+            ! is.null(.plot_data$.aes_list$.geom_ribbon_local),
+            .curlicues$spectra_plot$local$ribbon.include))
     ###-------------------------------------------------------------------
     ##  Create a list containing quoted expressions for the layers.
     ##  Some of these might become `NULL`, which made `ggplot`
@@ -176,68 +176,69 @@ LG_plot <- function(.data_list,
     .layers <- list(
         ##  A quote for the selected "central" local line.
         .geom_line_local =
-            if (! is.null(.aes_list$.geom_line_local))
+            if (spec_include$.geom_line_local)
                 quote(geom_line(
-                    mapping = .aes_list$.geom_line_local,
-                    data = .data_list$local,
+                    mapping = .plot_data$.aes_list$.geom_line_local,
+                    data = .plot_data$.data_list$local,
+                    size = .curlicues$spectra_plot$local$line.size,
+                    alpha = .curlicues$spectra_plot$local$line.alpha,
                     col = "blue",
-                    lty = .data_list$.lty)),
-        ##  A line dealing with the median in the `block`-case.
+                    lty = .plot_data$.data_list$.lty)),
+        ##  A line dealing with the mean in the `block`-case.
         .geom_line_global_me =
-            if (! is.null(.aes_list$.geom_line_global_me))
+            if (spec_include$.geom_line_global_me)
                 quote(geom_line(
-                    mapping = .aes_list$.geom_line_global_me,
-                    data = .data_list$global,
+                    mapping = .plot_data$.aes_list$.geom_line_global_me,
+                    data = .plot_data$.data_list$global,
+                    size = .curlicues$spectra_plot$global$line.size,
+                    alpha = .curlicues$spectra_plot$global$line.alpha,
                     col = "brown",
-                    lty = .data_list$.lty)),
+                    lty = .plot_data$.data_list$.lty)),
         ##  A line giving the original global spectrum (when relevant).
         .geom_line_global =
-            if (! is.null(.aes_list$.geom_line_global)) 
+            if (spec_include$.geom_line_global)
                 quote(geom_line(
-                    mapping = .aes_list$.geom_line_global,
-                    data = .data_list$global,
+                    mapping = .plot_data$.aes_list$.geom_line_global,
+                    data = .plot_data$.data_list$global,
+                    size = .curlicues$spectra_plot$global$line.size,
+                    alpha = .curlicues$spectra_plot$global$line.alpha,
                     col = "red",
-                    lty = .data_list$.lty)),
+                    lty = .plot_data$.data_list$.lty)),
         ##  Create quotes for the confidence bands too.
         .geom_ribbon_global =
-            if (! is.null(.aes_list$.geom_ribbon_global)) 
+            if (spec_include$.geom_ribbon_global)
                 quote(geom_ribbon(
-                    mapping = .aes_list$.geom_ribbon_global,
-                    data = .data_list$global,
-                    alpha = .3,
+                    mapping = .plot_data$.aes_list$.geom_ribbon_global,
+                    data = .plot_data$.data_list$global,
+                    alpha = .curlicues$spectra_plot$global$ribbon.alpha,
                     fill = "red")),
         ##
         .geom_ribbon_local =
-            if (! is.null(.aes_list$.geom_ribbon_local))
+            if (spec_include$.geom_ribbon_local)
                 quote(geom_ribbon(
-                    mapping = .aes_list$.geom_ribbon_local,
-                    data = .data_list$local,
-                    alpha = .3,
+                    mapping = .plot_data$.aes_list$.geom_ribbon_local,
+                    data = .plot_data$.data_list$local,
+                    alpha = .curlicues$spectra_plot$local$ribbon.alpha,
                     fill  = "blue")),
         ##  Add a quote for 'lag', when given.
         .annotate_lag =
-            if (! is.null(.lag))
-                quote(annotate(
-                    geom = "text",
-                    x = -Inf,
-                    y = Inf,
-                    size = 10,
-                    label = .lag,
-                    col = "brown",
-                    vjust = 1.3,
-                    hjust = -0.4)),
-        ##  And a quote to add `.percentile`, when given.
+            if (.curlicues$m_value$include)
+                create_call(.cc_fun = "annotate",
+                            .curlicues$m_value$annotate,
+                            .cc_list = TRUE),
+        ##  Add a quote for `.percentile`, when given.
         .annotate_percentile = 
-            if (! is.null(.percentile)) 
-                quote(annotate(
-                    geom = "text",
-                    x = Inf,
-                    y = Inf,
-                    size = 10,
-                    label = .percentile,
-                    col = "brown",
-                    vjust = 1.2,
-                    hjust = 1.2)))
+            if (.curlicues$v_value$include)
+                create_call(.cc_fun = "annotate",
+                            .curlicues$v_value$annotate,
+                            .cc_list = TRUE),
+        ##  Add a quote for numerical convergence.
+        .annotate_convergence =
+            if (.curlicues$NC_value$include) 
+                create_call(
+                    .cc_fun = "annotate",
+                    .curlicues$NC_value$annotate,
+                    .cc_list = TRUE))
     ###-------------------------------------------------------------------
     ##  Create the sum of layers for `ggplot`, without any
     ##  `NULL`-values messing up the result.
@@ -265,7 +266,105 @@ LG_plot <- function(.data_list,
     .result <- .result +
         xlab(quote(omega)) +
         theme(axis.title.y = element_blank())
+    ##  Add the title when relevant
+    if (.curlicues$title$include) {
+        .result  <- .result +
+            ggplot2::ggtitle(label = .curlicues$title$label) +
+            ggplot2::theme(plot.title = eval(create_call(
+                               .cc_fun = "element_text",
+                               .curlicues$title$element_text,
+                               .cc_list = TRUE)))
+    }
+    ##  Add the details as an attribute.
+    attributes(.result)$details <- .look_up$details
+    ###-------------------------------------------------------------------
+    ##  Only in non-interactive setup: Add information attributes
+    ##  specifying the ylim-values for the different cases, to make it
+    ##  easier to deal with the rescaling.  Moreover, when required,
+    ##  add an environment-attribute with information about 'data' and
+    ##  'mapping'.  This is of interest when a hybrid-plot is desired,
+    ##  where details from twp plots should be meshed together.
+    if (..env$non_interactive) {
+        ##  Find the range of those components that have been used
+        ##  from the global and local cases.
+        tmp_ylim_list <- list()
+        ##  Reminder: A rather messy ad hoc solution, the keys should
+        ##  have been taken care of in 'LG_lookup'.
+        if (spec_include$.geom_line_global) {
+            key <- "orig"
+            tmp_ylim_list$.geom_line_global <-
+                range(.plot_data$.data_list$global[key])
+        }
+        if (spec_include$.geom_line_local) {
+            key <- ifelse(
+                test = .look_up$is_block,
+                yes  = "mean",
+                no   = "orig")
+            tmp_ylim_list$.geom_line_local <-
+                range(.plot_data$.data_list$local[key])
+        }
+        if (spec_include$.geom_line_global_me) {
+            key <- "mean"
+            tmp_ylim_list$.geom_line_global_me <-
+                range(.plot_data$.data_list$global[key])
+        }
+        if (spec_include$.geom_ribbon_global) {
+            key <- ..env[[.look_up$cache$.spectra_df]]$.CI_low_high
+            tmp_ylim_list$.geom_ribbon_global <-
+                range(.plot_data$.data_list$global[key])
+        }
+        if (spec_include$.geom_ribbon_local) {
+            key <- ..env[[.look_up$cache$.spectra_df]]$.CI_low_high
+            tmp_ylim_list$.geom_ribbon_local <-
+                range(.plot_data$.data_list$local[key])
+        }
+        ##  Add the desired limit as an attribute to the plot, with a
+        ##  tiny added width at the top and bottom.
+        .yrange <- range(tmp_ylim_list)
+        attributes(.result)$ylim_list <- list(
+                               ylim_full = .plot_data$.ylim,
+                               ylim_restricted = .yrange + c(-1,1)/40 * diff(.yrange))
+        ##  Investigate if a data-environment should be added, and if
+        ##  so extract only the relevant parts.
+        if (any(unlist(.curlicues$data_extraction))) {
+            ##  Identify the parts of interest, and note that it might
+            ##  be necessary to ignore cases that does not work (e.g
+            ##  asking for ribbon-data when those are not available).
+            .extract_these <- names(.curlicues$data_extraction)[
+                as.logical(unlist(.curlicues$data_extraction) *
+                           unlist(spec_include))]
+            ##  Create a temporary list to use for the extraction.
+            .tmp_list <- list(
+                .geom_line_local = quote(list(
+                    mapping = .plot_data$.aes_list$.geom_line_local,
+                    data = .plot_data$.data_list$local)),
+                .geom_line_global_me = quote(list(
+                    mapping = .plot_data$.aes_list$.geom_line_global_me,
+                    data = .plot_data$.data_list$global)),
+                .geom_line_global = quote(list(
+                    mapping = .plot_data$.aes_list$.geom_line_global,
+                    data = .plot_data$.data_list$global)),
+                .geom_ribbon_global = quote(list(
+                    mapping = .plot_data$.aes_list$.geom_ribbon_global,
+                    data = .plot_data$.data_list$global)),
+                .geom_ribbon_local = quote(list(
+                    mapping = .plot_data$.aes_list$.geom_ribbon_local,
+                    data = .plot_data$.data_list$local)))
+            if (length(.extract_these) > 0) {
+                ##  Create the environment and add it to the result.
+                data_env <- new.env()
+                for (.name in .extract_these) {
+                    data_env[[.name]] <- eval(.tmp_list[[.name]])
+                }
+                attributes(.result)$data_env <- data_env
+            }
+            kill (.extract_these, .tmp_list, .name)
+        }
+    }
     ###-------------------------------------------------------------------
     ##  Return the plot to the workflow.
     .result
+
+    
+    
 }

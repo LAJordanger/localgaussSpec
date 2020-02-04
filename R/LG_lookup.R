@@ -352,9 +352,9 @@ LG_lookup <- function(input,
                          cache$.CI_local,
                          look_up$confidence_interval,
                          look_up$is_global_only))
-    ##  The storage of the final list, which contains the data-frame
-    ##  and 'aes'-values needed for the plots to work as desired.
-    cache$.plot_list <-
+    ##  The storage of the final environment, which contains the stuff
+    ##   needed for the plots to look as desired.
+    cache$.plot_data <-
         digest::digest(ifelse(test = look_up$TCS_type == "S",
                               yes  = cache$.spectra_df,
                               no   = cache$.correlation_df))
@@ -711,7 +711,7 @@ LG_lookup <- function(input,
     ##  The label to be used for the plots.
     details$.plot_label  <-  paste(
         toupper(substr(x = details$text$plot_type,
-                           start = 1,
+                       start = 1,
                        stop = 1)),
         substr(x = details$text$plot_type,
                start = 2,
@@ -733,7 +733,9 @@ LG_lookup <- function(input,
     details$text$trust_the_result <-
         if (details$is_local) {
             if (details$type == "one") {
-                "Computations based on the heinous 1-parameter approach.  Use 5-parameter instead!"
+                structure(
+                    .Data = "Computations based on the heinous 1-parameter approach.  Use 5-parameter instead!",
+                    short = "Warning: 1-parameter approach!")
             } else {
                 local({
                     ##  Extract convergence-information, with a minor
@@ -743,20 +745,40 @@ LG_lookup <- function(input,
                                     yes  = "boot_par_five_approx.Rda",
                                     no   = "par_five_approx.Rda")
                     .convergence <- .AB_env$details$convergence[[c(.file, input$point_type)]]
-                    ## Create the text to be used, with convergence status
-                    ## as an attribute.
+                    ## Create the text to be used, with convergence
+                    ## status as an attribute, and a short-version as
+                    ## attribute in case the plots later on should be
+                    ## included in some grid-based setup.
                     structure(
                         .Data = ifelse(test = .convergence,
                                        yes  = "NC = OK (numerical convergence verified)",
                                        no   = "NC = FAIL (numerical convergence failed)"),
-                        convergence = .convergence)
+                        convergence = .convergence,
+                        short = ifelse(test = .convergence,
+                                       yes  = "NC = OK",
+                                       no   = "NC = FAIL"))
                 })
             }
         }
     ###-------------------------------------------------------------------
-    ##  Add 'details' and 'cache' to 'look_up'
+    ##  Add 'details' and 'cache' to 'look_up'.
     look_up$details <- details
     look_up$cache <- cache
+    ##  Add the curclicues information to 'look_up'.
+    look_up$curlicues = list(
+        title = list(
+            label = look_up$details$.plot_label),
+        m_value = list(
+            include = ! is.null(look_up$details$.selected_lag),
+            annotate = list(
+                label = look_up$details$.selected_lag)),
+        v_value = list(
+            include = ! is.null(look_up$details$.selected_percentile),
+            annotate = list(
+                label = look_up$details$.selected_percentile)),
+        NC_value = list(
+            annotate = list(
+                label = look_up$details$text$trust_the_result)))
     ##  Return the result to the workflow.
     return(look_up)
 }

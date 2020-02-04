@@ -30,7 +30,7 @@
 #' @importFrom ggplot2 ggplot coord_cartesian labs geom_line
 #'     geom_hline geom_vline geom_boxplot geom_contour geom_tile
 #'     geom_ribbon aes annotate theme cut_width element_blank xlab
-#'     ylab scale_fill_gradient2 element_text ggtitle ylim
+#'     ylab scale_fill_gradient2 element_text ggtitle ylim rel
 #' @importFrom graphics plot
 #' @importFrom leanRcoding add_arrays append_dimensions
 #'     compare_spy_reports create_call dimnames_intersect
@@ -46,7 +46,7 @@
 #' @importFrom pryr where
 #' @importFrom stats kernel lag mad median optimise pnorm qnorm
 #'     quantile rnorm runif sd var acf as.ts pacf spec.pgram
-#' @importFrom stringr str_count str_detect str_replace
+#' @importFrom stringr str_detect str_replace
 #'     str_replace_all str_split str_sub
 #' @importFrom timeDate kurtosis skewness
 #' @importFrom tseries tsbootstrap

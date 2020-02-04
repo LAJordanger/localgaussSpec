@@ -13,22 +13,18 @@ the information needed in order to decide what kind of
 data-frame that is required.}
 
 \item{..env}{The environment containing the required information,
-and also the environment where the resulting data-frame will be
-stored.}
+and also the environment where the resulting environment will
+be stored.}
 }
 \value{
-The purpose of this function is to create a list with the
-    data needed for the function \code{LG_plot}.  The result will
-    be stored in the environment \code{..env}, and the unique name
-    (computed from the input parameters used in the construction of
-    it) will then be returned to the workflow.  This solution
-    enables a simple form of caching, since the computations only
-    will be performed when required.
+This function adds a new environment to the environment
+    \code{..env}, which contains the data needed for the function
+    \code{LG_plot} to work as desired.
 }
 \description{
-This function created a list with the data needed for the plots of
-the estimated local Gaussian correlations and spectra.  A simple
-caching is performed in order to avoid having computations more
-than once.
+This function created an environment with the data needed for the
+plots of the estimated local Gaussian correlations and spectra.  A
+simple caching is performed in order to avoid having computations
+more than once.
 }
 \keyword{internal}

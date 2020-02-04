@@ -4,7 +4,8 @@
 \alias{LG_plot_helper}
 \title{Helper-function for \code{LG_plot}.}
 \usage{
-LG_plot_helper(main_dir, input, .env, .extract_LG_data_only = FALSE)
+LG_plot_helper(main_dir, input, input_curlicues = NULL, .env,
+  .extract_LG_data_only = FALSE)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the
@@ -16,6 +17,15 @@ relevant information will be extracted from \code{.env}.)}
 
 \item{input}{A list with the arguments needed in order to extract
 the desired data for the plot of interest.}
+
+\item{input_curlicues}{A list that can be used when this function
+is used outside of the \code{shiny}-application.  This can be
+used to fine tune details related to the annotated information.
+It is also possible to drop annotation from the plot, which
+might be of interest when many plots are to be included in a
+grid-based setup.  The default value \code{NULL} will ensure
+that the plot will be created with the same parameters used in
+the \code{shiny}-application.}
 
 \item{.env}{An environment in which \code{.arr} will be updated.
 This argument can be skipped when called in a non-interactive

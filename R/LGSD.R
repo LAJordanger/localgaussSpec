@@ -302,3 +302,113 @@ LG_default$result_orig <- c(
                  stringsAsFactors = FALSE),
              .margins = 1,
              .fun = unlist)))
+
+## Add the defaults for the curlicues for the different
+## plots. Reminder: Some values, i.e. 'include' and 'label' will
+## primarily be updated from the internal code.  When the plots are
+## called outside of the shiny-application, then it is possible to
+## override all the information — which in particular is of interest
+## if the plots are to be shrinked into some grid-based presentation.
+
+## Reminder: 'ggplot2::theme_get()' gives a list with the default
+## values in the theme, and that is where the 'rel(1.2)'-default
+## values comes from.
+
+LG_default$curlicues <- list(
+    title = list(
+        include = TRUE,
+        label = NULL,
+        element_text = list(
+            family = NULL,
+            face = NULL,
+            color = "black",
+            size = rel(1.2),
+            hjust = 0.5,
+            vjust = NULL,
+            angle = NULL,
+            lineheight = NULL,
+            margin = NULL,
+            debug = NULL,
+            inherit.blank = FALSE)),
+    m_value = list(
+        include = TRUE,
+        annotate = list(
+            geom = "text",
+            x = -Inf,
+            y = Inf,
+            size = 10,
+            label = NULL,
+            col = "brown",
+            vjust = 1.3,
+            hjust = -0.4)),
+    v_value = list(
+        include = TRUE,
+        annotate = list(
+            geom = "text",
+            x = Inf,
+            y = Inf,
+            size = 10,
+            label = NULL,
+            col = "brown",
+            vjust = 1.2,
+            hjust = 1.2)),
+    NC_value = list(
+        include = TRUE,
+        short_or_long_label = "long",
+        annotate = list(
+            geom = "text",
+            label = NULL,
+            size = 4,
+            col = "darkgreen",
+            x = -Inf,
+            y = -Inf,
+            size = 4,
+            vjust = -.5,
+            hjust = -0.1)),
+    spectra_plot = list(
+        WN_line  = list(
+            include = TRUE,
+            size = .5,
+            alpha = .8),
+        global = list(
+            line.include = TRUE,
+            ribbon.include = TRUE,
+            line.size = .5,
+            line.alpha = .8,
+            ribbon.alpha = .3),
+        local = list(
+            line.include = TRUE,
+            ribbon.include = TRUE,
+            line.size = .5,
+            line.alpha = .8,
+            ribbon.alpha = .3)),
+    correlation_plot = list(
+        hline  = list(
+            lwd = .5,
+            alpha = .8),
+        vline  = list(
+            lwd = .5,
+            alpha = .25),
+        boxplot = list(
+            width = .01,
+            boundary = .1,
+            size = .5,
+            alpha = .5,
+            outlier.size = .5,
+            outlier.alpha = .3),
+        segment = list(
+            size = .25,
+            alpha = .8)),
+    data_extraction = list(
+        ##  local spectrum for real data.
+        .geom_line_local = FALSE,
+        ##  local spectrum for 'block'-case.
+        .geom_line_global_me = FALSE,
+        ##  global spectrum.
+        .geom_line_global = FALSE,
+        ##  global pointwise confidence intervals.
+        .geom_ribbon_global = FALSE,
+        ##  local pointwise confidence intervals.
+        .geom_ribbon_local = FALSE))
+
+
