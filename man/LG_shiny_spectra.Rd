@@ -4,10 +4,10 @@
 \alias{LG_shiny_spectra}
 \title{Computation of the spectra based on correlations.}
 \usage{
-LG_shiny_spectra(.look_up, ..env)
+LG_shiny_spectra(look_up, ..env)
 }
 \arguments{
-\item{.look_up}{A list created by \code{LG_lookup} (in the function
+\item{look_up}{A list created by \code{LG_lookup} (in the function
 \code{LG_plot_helper}), where the key details have been
 extracted (or constructed) from a (non-reactive copy) of the
 values defined by the \code{shiny}-interface.}
@@ -20,8 +20,8 @@ An update of \code{..env} will be performed with values
     needed for the plotting of the spectra.
 }
 \description{
-This helper function computes the spectra for a collection of
-(local Gaussian) auto- and cross-correlations.  This function is an
+This function computes the spectra for a collection of (local
+Gaussian) auto- and cross-correlations.  This function is an
 internal function which is called from the functions that creates
 the plots.
 }

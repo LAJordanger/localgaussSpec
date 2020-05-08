@@ -4,13 +4,13 @@
 \alias{LG_plot_heatmap}
 \title{Heatmap-plots for LGSD-data}
 \usage{
-LG_plot_heatmap(..env, .look_up)
+LG_plot_heatmap(..env, look_up)
 }
 \arguments{
 \item{..env}{The environment containing the desired information
 from which the data should be extracted}
 
-\item{.look_up}{The usual list of details needed for the
+\item{look_up}{The usual list of details needed for the
 investigation.}
 }
 \value{

@@ -61,6 +61,12 @@ LG_sanity_checks <- function(
     ##  original environment.
     arg_env <- spy_report$envir
 ###-------------------------------------------------------------------
+    ##  When required, convert 'main_dir' from vector to string.
+    if (length(arg_env$main_dir) > 1) {
+        arg_env$main_dir <- paste(
+            arg_env$main_dir,
+            collapse = .Platform$file.sep)
+    }
     ##  Check the validity of the 'main_dir'-argument.
     if (! dir.exists(arg_env$main_dir))
         error(.argument = "main_dir",

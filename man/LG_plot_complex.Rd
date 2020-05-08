@@ -4,14 +4,14 @@
 \alias{LG_plot_complex}
 \title{Complex-valued-plots for LGSD-data}
 \usage{
-LG_plot_complex(..env, .look_up, .selection = c("polar", "Cartesian",
+LG_plot_complex(..env, look_up, .selection = c("polar", "Cartesian",
   "zoom"))
 }
 \arguments{
 \item{..env}{The environment containing the desired information
 from which the data should be extracted}
 
-\item{.look_up}{The usual list of details needed for the
+\item{look_up}{The usual list of details needed for the
 investigation.}
 
 \item{.selection}{Specifies the type of plot to be used.  This

@@ -62,7 +62,7 @@ LG_shiny_interface_Master <- function(.env, .env2) {
                  envir = .env2)
             return(NULL)
             #####  REMINDER: Need to tweak this Hoodwinked-text later
-            #####  on if it is to look decent when printed.
+            #####  on if it is to look decent when ##... printed.
         } else {
             ##  Create the 'TS_logging' object, and add the initial
             ##  values to the 'input'-object in order for the logical
@@ -73,7 +73,7 @@ LG_shiny_interface_Master <- function(.env, .env2) {
     } else {
         .env$counter <- .env$counter + 1
         ###-------------------------------------------------------------------
-        print(sprintf("Updating worker-status at counter %s", .env$counter))
+        ##... print(sprintf("Updating worker-status at counter %s", .env$counter))
         ##  Create a list that detects the differences between stored
         ##  and logged input-parameters.  Reminder: The 'xyz'-list is
         ##  used in some of the functions in order to keep track of
@@ -116,7 +116,7 @@ LG_shiny_interface_Master <- function(.env, .env2) {
         ##  none of the workers should be called, and the following
         ##  termination procedure is thus included.
         if (!any(unlist(.env$TS_logging$update$worker))) {
-            print("**************************************************")
+            ##... print("**************************************************")
             return(NULL)
         }
         ##  Reminder: If the test above did not terminate this
@@ -146,7 +146,7 @@ LG_shiny_interface_Master <- function(.env, .env2) {
     ##  it will also create the 'TCS_type'-output and trigger the
     ##  'TCS_type'-worker to perform further updates of the interface.
     if (.env$TS_logging$update$worker$TS_info) {
-        print(sprintf("TS_info-worker at counter %s", .env$counter))
+        ##... print(sprintf("TS_info-worker at counter %s", .env$counter))
         LG_shiny_interface_1_TS_info(.env, .env2)
     }
 ###-------------------------------------------------------------------
@@ -154,15 +154,15 @@ LG_shiny_interface_Master <- function(.env, .env2) {
     ##  creates the buttons and sliders that describes the plot to be
     ##  investigated.
     if (.env$TS_logging$update$worker$TCS_type) {
-        print(sprintf("TCS_input-worker at counter %s", .env$counter))
+        ##... print(sprintf("TCS_input-worker at counter %s", .env$counter))
         LG_shiny_TCS_input(.env, .env2)
     }
     if (.env$TS_logging$update$worker$var_local) {
-        print(sprintf("CS-worker with 'p_diag_bw', at counter %s", .env$counter))
+        ##... print(sprintf("CS-worker with 'p_diag_bw', at counter %s", .env$counter))
         LG_shiny_CS_input(.env, .env2, .part = "p_diag_bw")
     }
     if (.env$TS_logging$update$worker$p_diag_bw) {
-        print(sprintf("CS-worker with 'levels', at counter %s", .env$counter))
+        ##... print(sprintf("CS-worker with 'levels', at counter %s", .env$counter))
         LG_shiny_CS_input(.env, .env2, .part = "levels")
     }
 ###-------------------------------------------------------------------
@@ -170,24 +170,24 @@ LG_shiny_interface_Master <- function(.env, .env2) {
     ##  the effects due to the actionButtons that selects the type of
     ##  spectrum to investigate.
     if (.env$TS_logging$update$worker$spectrum_type) {
-        print(sprintf("S_update at counter %s", .env$counter))
+        ##... print(sprintf("S_update at counter %s", .env$counter))
         LG_shiny_S_update(.env, .env2)
     }
 ###-------------------------------------------------------------------
     ##  When required call the 'plots'-worker.  This function creates
     ##  the plot (or the code needed to re-create the )
     if (.env$TS_logging$update$worker$plots) {
-        print(sprintf("plot-worker at counter %s", .env$counter))
+        ##... print(sprintf("plot-worker at counter %s", .env$counter))
         LG_shiny_interface_plots(.env, .env2)
     }
 ###-------------------------------------------------------------------
     ##  When required call the 'explanation'-worker.
     if (.env$input$explain_interface) {
-        print(sprintf("explain-interface-worker at counter %s", .env$counter))
+        ##... print(sprintf("explain-interface-worker at counter %s", .env$counter))
         LG_shiny_interface_explanations(.env, .env2, .explain="interface")
     }
     if (.env$input$explain_plot) {
-        print(sprintf("explain-plot-worker at counter %s", .env$counter))
+        ##... print(sprintf("explain-plot-worker at counter %s", .env$counter))
         LG_shiny_interface_explanations(.env, .env2, .explain="plot")
     }
     if (isTRUE(.env$input$show_shiny)) 

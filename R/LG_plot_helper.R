@@ -96,15 +96,15 @@ LG_plot_helper <- function(
             .AB_env <- .AB_env[[1]]
         ##  Add a logical value to reveal that the function is called
         ##  in a non-interactive environment.
-        .env$non_interactive <- TRUE
+        input$non_interactive <- TRUE
     } else {
         ##  Create a link to the 'Approx'-level environment.
         .AB_env <- .env$TS_logging[[unlist(.env$input[c("TS_key", "TS", "Approx")])]]
-        .env$non_interactive <- FALSE
+        input$non_interactive <- FALSE
     }
     ##  Add information about the curlicues that might have been given
     ##  by the user in the non-interactive case.
-    .env$user_curlicues <- input_curlicues
+    input$input_curlicues <- input_curlicues
 ###-------------------------------------------------------------------
     ##  Do nothing if no graphical component has been selected.
     if (is.na(input$TCS_type))
@@ -165,7 +165,7 @@ LG_plot_helper <- function(
     ##  Use 'LG_lookup' to create the lookup-information.
     look_up <- LG_lookup(input = input,
                          .AB_env = .AB_env)
-    LG_plot_load(.look_up = look_up,
+    LG_plot_load(look_up = look_up,
                  .env = .env,
                  .extract_LG_data_only = .extract_LG_data_only)
 }

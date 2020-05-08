@@ -4,10 +4,10 @@
 \alias{LG_plot_load}
 \title{Load files to be used during the interactive inspection.}
 \usage{
-LG_plot_load(.look_up, .env, .extract_LG_data_only)
+LG_plot_load(look_up, .env, .extract_LG_data_only)
 }
 \arguments{
-\item{.look_up}{A list created by \code{LG_lookup} (in the function
+\item{look_up}{A list created by \code{LG_lookup} (in the function
 \code{LG_plot_helper}), where the key details have been
 extracted (or constructed) from a (non-reactive copy) of the
 values defined by the \code{shiny}-interface.}

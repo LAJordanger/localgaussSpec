@@ -3,7 +3,7 @@
 #' @param ..env The environment containing the desired information
 #'     from which the data should be extracted
 #'
-#' @param .look_up The usual list of details needed for the
+#' @param look_up The usual list of details needed for the
 #'     investigation.
 #'
 #' @return A heatmap-plot of either the estimated local Gaussian
@@ -12,55 +12,142 @@
 #'
 #' @keywords internal
 
-LG_plot_heatmap <- function(..env, .look_up) {
+LG_plot_heatmap <- function(..env, look_up) {
     ##  Check if we have an investigation along the diagonal, and if
-    ##  not return a message stating that the function has not been
-    ##  implemented for that case.
-    if (! .look_up$point_type_branch == "on_diag")
+    ##  not return a message stating that the function has not yet
+    ##  been implemented for that case.
+    if (! look_up$point_type_branch == "on_diag")
         return("Not implemented outside of diagonal")
+    ##  Specify the dimensions that never should be dropped in the
+    ##  present case of interest.
+    .never_drop <- c(
+        switch(EXPR = look_up$TCS_type,
+               C    = "lag",
+               S    = "omega"),
+        switch(EXPR = look_up$heatmap_b_or_v,
+               b    = "bw_points",
+               m    = "m",
+               v    = "levels"))
+    ##  Initiate the restriction list, and add to it later on if
+    ##  required.  (Should probably be taken care of in some other
+    ##  function).
+    .restrict_list <-
+        if (look_up$heatmap_b_or_v == "b") {
+            list(variable = "rho",
+                 levels = look_up$levels_point)
+        } else {
+            if (look_up$heatmap_b_or_v == "v") {
+                list(variable = "rho",
+                     bw_points = look_up$bw_points)
+            } else {
+                list(variable = "rho",
+                     levels = look_up$levels_point,
+                     bw_points = look_up$bw_points)
+            }
+        }
     ##  Extract the data of interest, and specify assorted arguments
     ##  needed later on.
-    if (.look_up$TCS_type == "C") {
+    if (look_up$TCS_type == "C") {
         ##  The correlation case.
-        ..the_data <- ..env[[.look_up$cache$.L_pairs]]$.data
-        .never_drop = c("lag", "levels")
+        ..the_data <- 
+            if (look_up$heatmap_b_or_v == "b") {
+                local({
+                    not_null <- which(! dimnames(..env[[look_up$local_name]]$on_diag)$lag %in% "0")
+                    .data <- restrict_array(
+                        .arr = ..env[[look_up$local_name]]$on_diag,
+                        .restrict = list(lag = not_null),
+                        .drop = TRUE,
+                        .never_drop = c("lag", "levels", "bw_points"))
+                })
+            } else {
+                ..env[[look_up$cache$L_pairs]]$.data
+            }
         .midpoint <- 0
-        .aes_mapping <- aes(x = lag,
-                            y = levels,
-                            fill = value,
-                            z = value)
+        .aes_mapping <-
+            if (look_up$heatmap_b_or_v == "b") {
+                aes(x = lag,
+                    y = bw_points,
+                    fill = value,
+                    z = value)
+            } else {
+                aes(x = lag,
+                    y = levels,
+                    fill = value,
+                    z = value)
+            }
         .limits_gradient <- c(-1,1)
         .xlab_expression <- "h"
         .plot_title <- "Heatmap for the local Gaussian autocorrelations (along diagonal)"
-        .plot_stamp <- "rho[v]*(h)"
-        .x_stamp <- 1 + diff(range(.look_up$lag_vec))/2
     } else {
-        ##  The spectra case.
-        ..the_data <- ..env[[.look_up$cache$.spectra_local]][[.look_up$.bm_CI_local_spectra]]
-        .never_drop <- c("omega", "levels")
-        .midpoint <- 1
-        .aes_mapping <- aes(x = omega,
-                            y = levels,
-                            fill = value,
-                            z = value)
+        ###  The spectra case.
+        .bm_1 <- look_up$cache$spectra_local
+        .bm_2 <- look_up$.bm_CI_local_spectra
+        ##  Get hold of the desired data.
+        ..the_data <-
+            if (look_up$heatmap_b_or_v %in% c("b", "v")) {
+                ..env[[.bm_1]][[.bm_2]]
+            } else {
+                local({
+                    .temp <- lapply(
+                        X = ..env[[.bm_1]][[.bm_2[1]]],
+                        FUN = function(x)
+                            x[[.bm_2[3]]])
+                    ##  Reminder: The first node, 'cut=1', corresponds
+                    ##  to the 'm=0'-truncation, and can be removed.
+                    .TST <- my_abind(
+                        .temp[-1],
+                        .list = TRUE)
+                    ##  The 'cut'-dimension should be adjusted to
+                    ##  'm'-dimension.
+                    .pos <- which(names(dimnames(.TST)) == "cut")
+                    names(dimnames(.TST))[.pos] <- "m"
+                    dimnames(.TST)$m <- as.numeric(dimnames(.TST)$m) - 1
+                    ##  Return the desired data.
+                    .TST
+                })
+            }
+        .midpoint <- ifelse(test = {look_up$spectra_f_or_F == "F"},
+                            yes  = 0.75,
+                            no   = 1)
+        .aes_mapping <-
+            if (look_up$heatmap_b_or_v == "b") {
+                aes(x = omega,
+                    y = bw_points,
+                    fill = value,
+                    z = value)
+            } else {
+                if (look_up$heatmap_b_or_v == "v") {
+                    aes(x = omega,
+                        y = levels,
+                        fill = value,
+                        z = value)
+                } else {
+                    aes(x = omega,
+                        y = m,
+                        fill = value,
+                        z = value)
+                }
+            }
         .limits_gradient <- NULL
-        .xlab_expression <- expression(omega)  
-        .plot_title <- sprintf("Heatmap for the m=%s local Gaussian autospectrum (along diagonal)",
-                               as.numeric(.look_up$.bm_CI_local_spectra[2])-1)
-        .plot_stamp <- sprintf("f[v]^%s*(omega)",
-                               as.numeric(.look_up$.bm_CI_local_spectra[2])-1)
-        .x_stamp <- diff(range(.look_up$omega_vec))/2
+        .xlab_expression <- expression(omega)
+        .plot_title <-
+            if (look_up$heatmap_b_or_v %in% c("b", "v")) {
+                sprintf("Heatmap for the m=%s local Gaussian autospectrum (%s)",
+                        look_up$m_selected,
+                        ifelse(test = {look_up$heatmap_b_or_v == "b"},
+                               yes  = "bandwidth",
+                               no   = "along digaonal"))
+            } else {
+                "Heatmap-visualisation for diferent truncation levels"
+            }        
     }
-    ## str(..the_data)
-
-
-
+    ###-------------------------------------------------------------------
     ##  If the length of the 'content'-dimension is larger than one,
     ##  then it is first necessary to compute the mean of the
     ##  values. Note: For local Gaussian spectral densities, this is
     ##  the same as the result obtained when the means of the local
     ##  Gaussian autocorrelations are used in the computation.
-
+    ###-------------------------------------------------------------------
     ##  Reminder: We might also like to loop over the individual
     ##  samples in a block, since that could give us a brief idea with
     ##  regard to the variability between different samples.  However,
@@ -68,14 +155,12 @@ LG_plot_heatmap <- function(..env, .look_up) {
     ##  like to include for other plots too), and it is then also
     ##  necessary to consider in more detail the limits that should be
     ##  used on the legend-colours.
-
-
-    ## ## any(.look_up$is_block, .look_up$is_bootstrap)
+    ###-------------------------------------------------------------------
     if (length(dimnames(..the_data)$content) > 1) {
         ##  In the bootstrap-case, the 'content'-dimension contains
         ##  the "orig"-values, but those should not be included if we
         ##  want a mean of the bootstrapped values.
-        if (.look_up$is_bootstrap) {
+        if (look_up$is_bootstrap) {
             restrict_array(
                 .arr=..the_data,
                 .restrict = list(content = setdiff(
@@ -87,96 +172,146 @@ LG_plot_heatmap <- function(..env, .look_up) {
             X = ..the_data,
             MARGIN = which(names(dimnames(..the_data))!="content"),
             FUN = mean)
-        .restrict_list <- list(mean = "mean",
-                               variable = "rho")
-    } else {
-        .restrict_list <- list(variable = "rho")
+        ##  Update '.restrict_list'
+        .restrict_list <- c(.restrict_list,
+                            list(mean = "mean"))
     }
-
-
-    ##  Restrict the attention to one of the combinations
-    ##  "omega"+"levels", "lag"+"levels".  I guess some test for which
-    ##  part to restrict to would be nice at this point.
+    ##  Restrict the attention to the data of interest.
     ..step_1 <- restrict_array(
-        .arr=..the_data,
+        .arr= ..the_data,
         .restrict = .restrict_list,
         .drop = TRUE,
         .never_drop = .never_drop)
-    ## str(..step_1)
-
-
-    ##  Need to do tweak the names used for the 'levels', in order for
-    ##  the adjustment later on to work as desired (need numerical
-    ##  values).  Reminder: This adjustment is based on the assumption
-    ##  that we are on the diagonal!
-
-    .quantile_levels <- vapply(
-        X = strsplit(
-            x = dimnames(..step_1)$levels,
-            split = "_"),
-        FUN = function(..x)
-            pnorm(as.numeric(..x[1])),
-        FUN.VALUE = numeric(1))
-
-    dimnames(..step_1)$levels <- .quantile_levels
+    ##  Identify the y-limits to be used.
+    if (look_up$heatmap_b_or_v == "b") {
+        .y_values <- as.numeric(dimnames(..the_data)$bw_points)
+        .ylim <- c(0, max(.y_values, .5) * 1.05)
+    }
+    if (look_up$heatmap_b_or_v == "m") {
+        ##  TESTING, adjust to subset of the given data
+        if (!is.null(look_up$heatmap_m_restrict)) {
+            ..step_1 <- restrict_array(
+                .arr= ..step_1,
+                .restrict = look_up$heatmap_m_restrict,# list(m = as.character(1:25)),
+                .drop = TRUE,
+                .never_drop = .never_drop)
+        }
+        .y_values <- as.numeric(dimnames(..step_1)$m)
+        .ylim <-
+            if (!is.null(look_up$heatmap_m_restrict)) {
+                range(.y_values) * 1.05
+            } else
+                c(0, max(.y_values) * 1.05)
+    }
+    if (look_up$heatmap_b_or_v == "v") {
+        ##  Need to do tweak the names used for the 'levels', in order
+        ##  for the adjustment later on to work as desired (need
+        ##  numerical values).  Reminder: This adjustment is based on
+        ##  the assumption that we are on the diagonal!
+        .y_values <- vapply(
+            X = strsplit(
+                x = dimnames(..step_1)$levels,
+                split = "_"),
+            FUN = function(..x)
+                pnorm(as.numeric(..x[1])),
+            FUN.VALUE = numeric(1))
+        dimnames(..step_1)$levels <- .y_values
+        .ylim <- c(0,1)
+    }
     ##  Create the data-frame needed for the heatmap-plot.
     .df <- reshape2::melt(data = ..step_1)
-    ##  str(.df)
-
     ##  Avoid abysmally misleading plots, where everything seems to
-    ##  behave in exactly the same manner due to do wide strips for
+    ##  behave in exactly the same manner due to too wide strips for
     ##  the few levels that are present.  Strategy: If the distances
     ##  between the levels are larger than the specified threshold,
-    ##  then add a suitable number of "NA-levels" in between.  Moreover:
-    ##  If only one level has been investigated, then squeeze it
-    ##  between two "NA-levels".
-    #
-
-    .threshold_diff <- 0.02
-    .the_diffs <- diff(.quantile_levels)
-    .add_NA <- any(.the_diffs > .threshold_diff,
-                      length(.the_diffs) == 0)
-    
-    if (.add_NA) {
-        ##  Need to add some NA-levels, not necessarily the same
-        ##  number between each existing level.  Will add two outer
-        ##  levels if only one level is present.
-        .new_levels <- c()
-        if (length(.the_diffs) == 0) {
-            .new_levels  <- .quantile_levels + c(-1, 1) * .threshold_diff
-        } else {
-            .tmp <- ceiling(.the_diffs / .threshold_diff) 
-            for (i in seq_along(.the_diffs)) {
-                if (.tmp[i] == 1)
-                    next
-                .new_levels <- c(
-                    .new_levels,
-                    .quantile_levels[i] + .the_diffs[i] / .tmp[i] * 1:(.tmp[i]-1))
-            }
-        }
-        ##  Create a matrix of NA-values, convert to data-frame and
-        ##  combine with existing data-frame '.df'.
-        .new_dimnames <-
-            if(.look_up$TCS == "C") {
-                list(levels = .new_levels,
-                     lag = dimnames(..the_data)$lag)
+    ##  then add a suitable number of "NA-levels" in between.
+    ##  Moreover: If only one level has been investigated, then
+    ##  squeeze it between two "NA-levels".
+    if (look_up$heatmap_b_or_v %in% c("b", "v")) {
+        .threshold_diff <- 0.02
+        .the_diffs <- diff(.y_values)
+        .add_NA <- any(.the_diffs > .threshold_diff,
+                       length(.the_diffs) == 0)
+        if (.add_NA) {
+            ##  Need to add some new NA-values, not necessarily the same
+            ##  number between each existing level.  Add two outer values
+            ##  if only one y-value is present.
+            .new_y_values <- c()
+            if (length(.the_diffs) == 0) {
+                .new_y_values  <- .y_values + c(-1, 1) * .threshold_diff
             } else {
-                list(levels = .new_levels,
-                     omega = dimnames(..the_data)$omega)
+                .tmp <- ceiling(.the_diffs / .threshold_diff)
+                for (i in seq_along(.the_diffs)) {
+                    if (.tmp[i] == 1)
+                        next
+                    .new_y_values <- c(
+                        .new_y_values,
+                        .y_values[i] + .the_diffs[i] / .tmp[i] * 1:(.tmp[i]-1))
+                }
             }
+            ##  Create a matrix of NA-values, convert to data-frame and
+            ##  combine with existing data-frame '.df'.
+            .new_dimnames <- local({
+                y.part <-
+                    if (look_up$heatmap_b_or_v == "b") {
+                        list(bw_points = .new_y_values)
+                    } else {
+                        list(levels = .new_y_values)
+                    }
+                x.part <-
+                    if (look_up$TCS == "C") {
+                        list(lag = dimnames(..the_data)$lag)
+                    } else {
+                        list(omega = dimnames(..the_data)$omega)
+                    }
+                c(x.part, y.part)
+            })
+            .TMP <- matrix(data = NA_real_,
+                           nrow = length(.new_dimnames[[1]]),
+                           ncol = length(.new_dimnames[[2]]),
+                           dimnames = .new_dimnames)
+            .df <- rbind(.df, reshape2::melt(data = .TMP))
+        }
+    }
+    if (look_up$heatmap_b_or_v == "m") {
+        .add_NA <- TRUE
+        .m_values <- as.numeric(dimnames(..step_1)$m)
+        .half_lags <- c(.m_values - .5,
+                        max(.m_values) + .5)
+        .new_dimnames <-
+            list(m = .half_lags,
+                 omega = dimnames(..the_data)$omega)
         .TMP <- matrix(data = NA_real_,
-                       nrow = length(.new_levels),
+                       nrow = length(.new_dimnames[[1]]),
                        ncol = length(.new_dimnames[[2]]),
                        dimnames = .new_dimnames)
         .df <- rbind(.df, reshape2::melt(data = .TMP))
     }
-
-
-
-    
-
+    ##  Need some extra tweaking of the plots that shows the local
+    ##  Gaussian autocorrelations (along the diagonal) for the
+    ##  collection of lag-values, i.e. add some NA-values to emphasise
+    ##  that we do not look on something that is continuous in the
+    ##  lag-argument!
+    if (look_up$TCS_type == "C") {
+        .half_lags <- c(look_up$lag_vec - .5,
+                        max(look_up$lag_vec) + .5)
+        .new_dimnames <-
+            if (look_up$heatmap_b_or_v == "b") {
+                list(bw_points = unique(.df$bw_points),
+                     lag = .half_lags)
+            } else {
+                list(levels = unique(.df$levels),
+                     lag = .half_lags)
+            }
+        .TMP <- matrix(data = NA_real_,
+                       nrow = length(.new_dimnames[[1]]),
+                       ncol = length(.new_dimnames[[2]]),
+                       dimnames = .new_dimnames)
+        .df <- rbind(.df, reshape2::melt(data = .TMP))
+    }
     ##  Create the plot.
-    low_col <- "blue"; high_col  <- "red"
+    low_col <- "blue"
+    high_col  <- "red"
     .plot <- ggplot(data=.df,
                     mapping = .aes_mapping) +
         geom_tile()  +
@@ -188,54 +323,54 @@ LG_plot_heatmap <- function(..env, .look_up) {
         ##  Adjust legend and labels.
         labs(fill = NULL) +
         xlab(.xlab_expression) +
-        ylab("v") +
-        theme(axis.title.x = element_text(hjust = 0.97, vjust = 0, size = 20),
-              axis.title.y = element_text(vjust = 0.97, hjust = 0, size = 20, angle = 0))  +
+        ylab(look_up$heatmap_b_or_v) +
+        theme(axis.title.y = element_text(angle = 0))  +
+        ## ## theme(axis.title.x = element_text(hjust = 0.97, vjust = 0, size = 20),
+        ## ##       axis.title.y = element_text(vjust = 0.97, hjust = 0, size = 20, angle = 0))  +
         ##  Add the title
         ggtitle(label = .plot_title) +
         theme(plot.title = element_text(hjust = 0.5,
                                         vjust = 0,
                                         size = 15,
-                                        colour = "brown"))  +
-        ##  Use standardised ylim, so it is easy to see from the
-        ##  heatmap where our levels along the diagonal belongs.
-        ylim(0,1)
-
+                                        colour = "brown"))
+    ##  Adjust the y-axis based on the type of plot, in particular,
+    ##  for the inspection of the levels along the diagonal, the axis
+    ##  should reflect that the value is in fact a percentage.  The
+    ##  bandwidth investigation should have 0 as its lower limit.
+    if (look_up$heatmap_b_or_v %in% c("b", "m")) {
+        .plot <- .plot +
+            ylim(.ylim)
+    } else {
+        .plot <- .plot +
+            ggplot2::scale_y_continuous(
+                         limits = .ylim,
+                         labels = scales::percent)
+    }
     ##  Add contour lines for the spectra case, but only when no
     ##  NA-values where added.  Perhaps also do this conditional on
-    ##  some selected input parameter?
-    if (all(.look_up$TCS_type == "S",
+    ##  some selected input parameter?  Moreover, add information
+    ##  about the m-value.
+    if (all(look_up$TCS_type == "S",
             ! .add_NA)) {
         .plot <- .plot +
             geom_contour(bins = 50,
                          colour = "brown",
                          lwd = .25,
-                         na.rm = TRUE) }
-
-    
-    ##  Add vertical lines for the correlations case, to emphasise
-    ##  that we do not have a situation with a continuous values along
-    ##  the lag-axis.
-    if (.look_up$TCS_type == "C") {
-        .plot <- .plot +
-            geom_vline(
-                xintercept = c(.look_up$lag_vec - 0.5,
-                               max(.look_up$lag_vec) + 0.5),
-                colour = "grey",
-                lty = 2,
-                size = .5, 
-                alpha = .75)
+                         na.rm = TRUE)
     }
-    ##  Return the plot with a suitable stamp on it.
-    .plot + 
-        annotate(geom = "text",
-                 label = .plot_stamp,
-                     x = .x_stamp,,
-                     y = 0.5,
-                     parse = TRUE,
-                     size = 10,
-                     alpha = 0.5,
-                     colour = "brown",
-                     hjust = 0.5,
-                 vjust = 0.5)
+    ##  Add details about content when required.  Reminder: It can for
+    ##  some non-interactive cases be necessary to tweak the size of
+    ##  the labels, and it can then be possible to experiment directly
+    ##  with the content stored in the 'look_up'-attachment of the
+    ##  plot.
+    if (isFALSE(look_up$drop_annotation)) {
+        if (!is.null(look_up$curlicues$text$annotated))
+            .plot <- .plot +
+                eval(look_up$curlicues$text$annotated)
+    }
+    ##  Add 'details' and 'curlicues' as attributes.
+    attributes(.plot)$details <- look_up$details
+    attributes(.plot)$curlicues <- look_up$curlicues
+    ##  Return the plot to the workflow
+    .plot
 }

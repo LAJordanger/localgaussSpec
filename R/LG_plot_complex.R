@@ -3,7 +3,7 @@
 #' @param ..env The environment containing the desired information
 #'     from which the data should be extracted
 #'
-#' @param .look_up The usual list of details needed for the
+#' @param look_up The usual list of details needed for the
 #'     investigation.
 #'
 #' @param .selection Specifies the type of plot to be used.  This
@@ -17,26 +17,26 @@
 #' @keywords internal
 
 LG_plot_complex <- function(..env,
-                            .look_up,
+                            look_up,
                             .selection = c("polar", "Cartesian", "zoom")) {
     ##  Restrict attention to the cases having complex-valued data.
-    if (! any(.look_up$is_cross_pair,
-              all(.look_up$is_off_diagonal,
-                  .look_up$is_auto_pair)))
+    if (! any(look_up$is_cross_pair,
+              all(look_up$is_off_diagonal,
+                  look_up$is_auto_pair)))
         return("We need complex-valued data for this plot to be created")
     ##  Restrict to default value for '.selection'.
     .selection <- .selection[1]
     ##  Extract the desired chunk of data.
-    .data <- ..env[[cache$.spectra_local]][[.look_up$.bm_CI_local_spectra]]
+    .data <- ..env[[look_up$cache$spectra_local]][[look_up$.bm_CI_local_spectra]]
     ##  For this plot, we want (for a given point) to loop over the
     ##  frequency omega, so we need to restrict with that in mind.
     #####
     ##  Reminder: Remove the line below when the shiny-interface has
     ##  been updated, and this is taken care of in 'LG_lookup'.
-    .look_up$omega_complex_investigation <- dimnames(.data)$omega[15]
+    look_up$omega_complex_investigation <- dimnames(.data)$omega[15]
     .restrict_list <- list(
-        levels = .look_up$levels_point,
-        omega = .look_up$omega_complex_investigation)
+        levels = look_up$levels_point,
+        omega = look_up$omega_complex_investigation)
     .data2 <- restrict_array(
         .arr = .data,
         .restrict = .restrict_list,
@@ -76,29 +76,29 @@ LG_plot_complex <- function(..env,
     .lag_omega_info <- paste(
         gsub(pattern = " = ",
              replacement = " == ",
-             x =.look_up$details$.selected_lag),
+             x =look_up$details$.selected_lag),
         "~~~omega == ",
-        formatC(x = .look_up$omega_complex_investigation,
+        formatC(x = look_up$omega_complex_investigation,
                 digits = 3),
         sep = "")
     .canvas <- ggplot(
         data = points_df,
         mapping = aes(x = x,
                       y = y)) +
-        geom_point(
+        ggplot2::geom_point(
             size = 1,
             alpha = 0.5,
             na.rm = TRUE) +
-        coord_fixed() +
+        ggplot2::coord_fixed() +
         theme(axis.title.x = element_blank(),
               axis.title.y = element_blank()) +
         annotate(geom = "text",
                  x = -Inf,
                  y = -Inf,
                  size = 5,
-                 label = .look_up$details$text$trust_the_result,
+                 label = look_up$details$text$trust_the_result,
                  col = ifelse(
-                     test = attributes(.look_up$details$text$trust_the_result)$convergence,
+                     test = attributes(look_up$details$text$trust_the_result)$convergence,
                      yes  = "darkgreen",
                      no   = "red"),
                  vjust = -.5,
@@ -107,7 +107,7 @@ LG_plot_complex <- function(..env,
                  x = Inf,
                  y = Inf,
                  size = 5,
-                 label = .look_up$details$.selected_percentile,
+                 label = look_up$details$.selected_percentile,
                  col = "brown",
                  vjust = 1,
                  hjust = 1) + 
@@ -124,16 +124,16 @@ LG_plot_complex <- function(..env,
     ##  When required, return the zoom version.
     if (.selection == "zoom") {
         .canvas_zoom <- .canvas +
-            scale_y_continuous(
+            ggplot2::scale_y_continuous(
                 labels = ..imaginary)
         return(.canvas_zoom)
     }
     ##  Update '.canvas' with new limits (with complex valued y-axis),
     ##  and add coordinate-axes.
     .canvas <- .canvas +
-        scale_x_continuous(
+        ggplot2::scale_x_continuous(
             limits = ..limits) +
-        scale_y_continuous(
+        ggplot2::scale_y_continuous(
             limits = ..limits,
             labels = ..imaginary) +
         geom_hline(
@@ -151,10 +151,10 @@ LG_plot_complex <- function(..env,
     ##  based on the median/quantiles of the different
     ##  spectral-values.
     .probs <- local({
-        if (.look_up$details$CI_percentage == "min_max") {
+        if (look_up$details$CI_percentage == "min_max") {
             c(0, 0.5, 1)
         } else {
-            .CI_percentage <- .look_up$details$CI_percentage / 100
+            .CI_percentage <- look_up$details$CI_percentage / 100
             .lower <- (1-.CI_percentage)/2
             .upper <- .CI_percentage + .lower
             c(.lower, 0.5, .upper)

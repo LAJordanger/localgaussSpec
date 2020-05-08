@@ -5,13 +5,13 @@
 \title{Create plots to inspect different aspects of Local Gaussian
 Spectral Densities and Local Gaussian Correlations.}
 \usage{
-LG_plot(..env, .look_up)
+LG_plot(..env, look_up)
 }
 \arguments{
 \item{..env}{The environment with the information needed in order
 to create the desired plot.}
 
-\item{.look_up}{The list created by \code{LG_lookup}, which keep
+\item{look_up}{The list created by \code{LG_lookup}, which keep
 tracks of information over a wide range of helper-functions.}
 }
 \value{

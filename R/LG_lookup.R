@@ -54,6 +54,30 @@ LG_lookup <- function(input,
     ##  Initiate 'look_up' as a copy of 'input'. extract information
     ##  from '.AB_env', and compute ingredients needed later on.
     look_up <- input
+
+
+    ##  2020-02-14: New plot-functions will require additional
+    ##  interface-arguments, but until those have been implementet it
+    ##  is necessary to have this tweak in order to test the other
+    ##  parts of the code.
+
+    if (is.null(look_up$spectra_f_or_F))
+        look_up$spectra_f_or_F <- "f" # "F"
+    if (is.null(look_up$heatmap))
+        look_up$heatmap <- FALSE
+    if (is.null(look_up$heatmap_b_or_v))
+        look_up$heatmap_b_or_v <- "b" # "v"
+    if (is.null(look_up$L2_distance_normal))
+        look_up$L2_distance_normal <- FALSE
+    if (is.null(look_up$L2_distance_percentages))
+        look_up$L2_distance_percentages <- FALSE
+    if (is.null(look_up$L2_inspection_vbmL))
+        look_up$L2_inspection_vbmL <- "v"
+    if (is.null(look_up$drop_annotation))
+        look_up$drop_annotation <- FALSE
+
+    
+    
     ##  Adjust for the 'cut' vs. 'm_selected' values
     look_up$m_selected <- look_up$cut
     look_up$cut <- look_up$cut + 1
@@ -84,7 +108,7 @@ LG_lookup <- function(input,
     look_up$pairs_ViVj <- paste(input[c("Vi", "Vj")], collapse = "_")
     look_up$pairs_VjVi <- paste(input[c("Vj", "Vi")], collapse = "_")
     ##  Create a logical value to reveal if an adjustment of the sign
-    ##  is required when the correlations are unwrapped (an effect due
+    ##  is required when the correlations are unfolded (an effect due
     ##  to the "complex-conjugation" and "diagonal symmetry" used to
     ##  avoid redundant computations).
     look_up$is_adjust_sign <- local({
@@ -113,12 +137,15 @@ LG_lookup <- function(input,
     ##  Create vectors needed for the investigation of the local
     ##  Gaussian spectra, i.e. compute the frequency vector based on
     ##  the 'input'-values, and extract information about the lags.
+    ##  The length out argument might later on be something that
+    ##  should be possible to fine-tune by a user, but for the time
+    ##  being it is selected based on the 'heatmap'-value.
     look_up$omega_vec <- seq(from = input$frequency_range[1],
                              to   = input$frequency_range[2],
-                             length.out = 64)
-    ### REMINDER: Include argument that changes the default to
-    ### e.g. 200 when heatmaps are to be investigated.
-    ##                             length.out = 200)
+                             length.out = ifelse(
+                                 test = look_up$heatmap,
+                                 yes  = 200,
+                                 no   = 64))
     look_up$lag_vec <-
         seq_len(max(as.numeric(.AB_env$details$.dimnames$lag)))
     ##  Add a logical value needed in some tests.
@@ -215,6 +242,30 @@ LG_lookup <- function(input,
     look_up$is_negative_lags_needed <- {
         ! all(look_up$levels_point == look_up$levels_point_reflected,
               ! look_up$is_lag_zero_needed)}
+    ##  Find the details related to the 'xlim'-value.
+    look_up$max_lag <- max(look_up$lag_vec)
+    look_up$xlim <-
+        if (look_up$TCS_type == "C") {
+            if (look_up$is_negative_lags_needed) {
+                if (look_up$is_global_only) {
+                    range(0, look_up$max_lag)
+                } else
+                    c(-1, 1) * look_up$max_lag
+            } else
+                range(0, look_up$max_lag)
+        } else {
+            look_up$frequency_range
+        }
+    ##  Find the details related to the selected confidence interval.
+    look_up$.CI_low_high <-
+        if (look_up$is_CI_needed)
+            if (look_up$confidence_interval == "min_max") {
+                c("min", "max")
+            } else {
+                paste(c("low", "high"),
+                      look_up$confidence_interval,
+                      sep = "_")
+            }
     ###-------------------------------------------------------------------
     ##  It is necessary to derive a 'point_type_branch' from 'point_type' in
     ##  order for the correct data to be loaded.
@@ -229,556 +280,32 @@ LG_lookup <- function(input,
     ##  Create a bookmark needed for the inspection of the spectra.
     look_up$.bm_CI_local_spectra <-
         c(look_up$point_type_branch, look_up$cut, "spec")
-    ###-------------------------------------------------------------------    
-    ##  Create a cache-list to be used when loading and tweaking data,
-    ##  so computations does not need to be done more than once.
-    ##  Reminder: This is intertwined with the restriction-lists used
-    ##  in the extraction of the data, so that is also covered here.
-    cache <- list()
-    ##  The main environment that the rest of the environments will be
-    ##  stored in.
-    cache$.env_name <-
-        digest::digest(input[c("TS_key", "TS", "Approx", "Boot_Approx", "type")])
+    ###-------------------------------------------------------------------
     ##  Add the names to be used for the loaded files.
-    look_up$.global_name <- ".LGC_array_global"
-    look_up$.local_name <- ".LGC_array_local"
-    ##  Specify the restrictions to be used when an inspection of the
-    ##  global correlations is the target.
-    look_up$.LGC_restrict_global <- list(
-        branch = c(TS = ifelse(
-                       test = look_up$is_bootstrap,
-                       yes  = "TS_original",
-                       no   = "TS_for_analysis")),
-        pairs = list(
-            pairs = unique(c(look_up$pairs_ViVj, look_up$pairs_VjVi))))
-    ##  Create caches for these restrictions for local correlations.
-    for (.node in seq_along(look_up$.LGC_restrict_global)) {
-        .write <- paste(
-            ".G_",
-            names(look_up$.LGC_restrict_global)[.node],
-            sep = "")
-        .read <- names(look_up$.LGC_restrict_global)[1:.node]
-        cache[[.write]] <- 
-            digest::digest(paste(
-                        ".G_",
-                        look_up$.LGC_restrict_global[.read]))
-    }
-    kill(.write, .read)
-    ##  Specify the restrictions to be used when an inspection of the
-    ##  local Gaussian correlations is the target.
-    look_up$.LGC_restrict_local <- list(
-        branch = c(
-            point_type = look_up$point_type_branch,
-            bw_points = look_up$bw_points),
-        pairs = list(
-            pairs = unique(c(look_up$pairs_ViVj, look_up$pairs_VjVi))),
-        levels = list(
-            levels = unique(c(look_up$levels_point, look_up$levels_point_reflected))))
-    ##  Create caches for these restrictions for local correlations.
-    for (.node in seq_along(look_up$.LGC_restrict_local)) {
-        .write <- paste(
-            ".L_",
-            names(look_up$.LGC_restrict_local)[.node],
-            sep = "")
-        .read <- names(look_up$.LGC_restrict_local)[1:.node]
-        cache[[.write]] <- 
-            digest::digest(paste(
-                        ".L_",
-                        look_up$.LGC_restrict_local[.read]))
-    }
-    kill(.write, .read)
-    ##  Create the final cache for the correlations.
-    cache$.correlation_df <-
-        if (look_up$is_global_only) {
-            digest::digest(look_up$.LGC_restrict_global)
-        } else
-            digest::digest(look_up$.LGC_restrict_local)
+    look_up$global_name <- "LGC_array_global"
+    look_up$local_name <- "LGC_array_local"
+    ##  Add a 'restrict'-list to 'look_up', to be used when slicing up
+    ##  the loaded data into the desired shapes.
+    look_up$restrict <- LG_lookup_restrict(look_up = look_up)
     ###-------------------------------------------------------------------
-    ##  Caching related to the spectral densities.  First, an array
-    ##  with the product of the correlations and the desired
-    ##  'exp^{-2*pi*i*omega*h}'-values.
-    cache$.exp <-
-        digest::digest(input$frequency_range)
-    ##  The weights to be used, depending on the window function.
-    cache$.weights <-
-        digest::digest(input$window)
-    ##  The weights to be used when we consider the integral of the
-    ##  spectral density.
-    cache$.weights_integral <-
-        digest::digest(c(input$window, "integral"))
-    ##  The storage of the global and local spectra-summands (i.e. the
-    ##  unweighted components of the sums that must be taken later
-    ##  on), which both must take into account the desired
-    ##  frequencies, and which for the local case also must take into
-    ##  account the selected bandwidth.
-    cache$.spectra_summands_global  <-
-        digest::digest(cache$.exp)
-    cache$.spectra_summands_local  <- 
-        digest::digest(c(cache$.exp,
-                         input[c("bw_points")]))
-    ##  The storage of the spectra-values, which for both local and
-    ##  global spectra depends on the available summands with weights
-    ##  based on the desired lag-window function (for all the possible
-    ##  cut-values), restricted to the pair of variables that are to
-    ##  be inspected. Reminder: The sorting here is to avoid redoing
-    ##  computations that can be resolved by the help of the diagonal
-    ##  reflection property of the local Gaussian correlations.  The
-    ##  storage of the spectra-summands for selected bandwidth.
-    cache$.spectra_global  <- 
-        digest::digest(c(cache$.spectra_summands_global,
-                         cache$.weights,
-                         sort(unlist(input[c("Vi", "Vj")]))))
-    cache$.spectra_local  <- 
-        digest::digest(c(cache$.spectra_summands_local,
-                         cache$.weights,
-                         sort(unlist(input[c("Vi", "Vj")]))))
-    ##  The storage of the collection of all the available pointwise
-    ##  confidence intervals for the selected cut.
-    cache$.CI_global <-
-        digest::digest(c(cache$.spectra_global,
-                         look_up$spectra_type,
-                         look_up$cut,
-                         look_up$is_adjust_sign))
-    cache$.CI_local <-
-        digest::digest(c(cache$.spectra_local,
-                         look_up$S_type,
-                         look_up$cut,
-                         look_up$levels_point,
-                         look_up$is_adjust_sign))
-    ##  The storage for the data-frame containing the data for the
-    ##  spectral density of interest.
-    cache$.spectra_df <- 
-        digest::digest(c(cache$.CI_global,
-                         cache$.CI_local,
-                         look_up$confidence_interval,
-                         look_up$is_global_only))
-    ##  The storage of the final environment, which contains the stuff
-    ##   needed for the plots to look as desired.
-    cache$.plot_data <-
-        digest::digest(ifelse(test = look_up$TCS_type == "S",
-                              yes  = cache$.spectra_df,
-                              no   = cache$.correlation_df))
+    ##  Add a 'cache'-list to 'look_up'
+    look_up$cache <- LG_lookup_cache(look_up = look_up)
     ###-------------------------------------------------------------------
-    ##  Create a list 'details' that will contain the stuff that will
-    ##  be used as an attachment to the plots when used outside of the
-    ##  interactive framework.  Reminder: This list will contain all
-    ##  the logical values from 'look_up', it will contain all the
-    ##  relevant parameter-values needed to create the informative
-    ##  text, and it will also contain the text used to explain the
-    ##  plots in the interface.  This implies that it is possible to
-    ##  include the plot in a paper (using e.g. 'knitr'), and those
-    ##  that consider the "default"-information to be inadequate can
-    ##  then create their own texts.
-
-    ##  Add all the logcial 'is_'-values from 'look_up'.
-    details <- look_up[str_detect(string = names(look_up),
-                                   pattern = "is_")]
-    ## Add information from 'input' and '.AB_env'.
-    details$TS_key <- input$TS_key
-    details$details <- .AB_env$details$details
-    details$N <- .AB_env$details$N
-    details$.variables <- .AB_env$details$.variables
-    details$.nr_variables <- .AB_env$details$.nr_variables
-    details$Vi <- input$Vi
-    details$Vj <- input$Vj
-    ##  Add details based on the value of 'is_block'
-    if (details$is_block) {
-        details$nr_simulated_samples <- .AB_env$details$nr_simulated_samples
-    }
-    ###-------------------------------------------------------------------
-    ##  Add information about the content of the plot.
-    details$TCS_type <- input$TCS_type
-    details$text$length_variables <- paste(
-        ifelse(test = details$is_block,
-               yes  = "simulated",
-               no   = "real"),
-        " data of length ",
-        details$N,
-        ", ",
-        ifelse(test = details$.nr_variables == 1,
-               yes  = "univariate",
-               no   = paste(
-                   details$.nr_variables,
-                   "-variate",
-                   sep = "")),
-        " observations.",
-        sep = "")
-    details$window <- look_up$window
-    details$truncation_level <- look_up$cut
-    ###-------------------------------------------------------------------
-    ##  Add information about the type of local Gaussian approximation
-    ##  that was used in the construction, i.e. if the estimated local
-    ##  Gaussian correlations stems from a one- or five-parameter
-    ##  approximation.
-    details$type <- gsub(pattern = "par_",
-                         replacement = "",
-                         look_up$type)
-    ##  Add information about the variables, and if it is an auto- or
-    ##  cross-case that is under investigation.  Note that the
-    ##  'auto_cross' in this case should be anew, since the
-    ##  'auto_cross' part of 'look_up' can contain both values.
-    details$Vi <- look_up$Vi
-    details$Vj <- look_up$Vj
-    details$auto_cross <- ifelse(
-        test = details$is_auto_pair,
-        yes  = "auto",
-        no   = "cross")
-    ##  Extract information about the spectrum variant, to be used as building
-    ##  block and in tests.
-    if (input$TCS_type == "S") {
-        ##  Find the parts of 'S_type'.
-        .parts <- stringr::str_split(string = input$S_type,
-                                     pattern = "_")[[1]]
-        ##  Create a basic version of the spectrum variant.
-        details$spectrum_variant <-
-            ifelse(test = length(.parts) == 2,
-                   yes  = details$auto_cross,
-                   no   = .parts[3])
-        ##  Create a more detailed version that takes into account the need for
-        ##  the investigation to also treat complex valued local Gaussian
-        ##  auto-spectra (for points that lies off the diagonal).
-        details$spectrum_variant_detailed <-
-            if (length(.parts) == 2) {
-                    sprintf("%s-spectrum",
-                            details$auto_cross)
-            } else
-                sprintf("(%s) %s-spectrum",
-                        details$auto_cross,
-                        .parts[3])
-        ##  Add descriptive information about the spectrum in the case it is an
-        ##  investigation of a complex valued entitiy.  In particular, this
-        ##  explanation will not be included for the real-valued spectra.
-        details$spectrum_variant_cross_details <-
-            if (any(details$is_cross_pair,
-                    all(details$is_auto_pair,
-                        ! details$is_on_diagonal)))
-                sprintf(
-                    "The %s%s is %s of the complex-valued %scross-spectrum.%s",
-                    ifelse(test = details$is_local,
-                           yes  = "local Gaussian ",
-                           no   = " "),
-                    details$spectrum_variant_detailed,
-                    switch(EXPR = details$spectrum_variant,
-                           Co   = "the real part",
-                           Quad = "minus one times the imaginary part",
-                           amplitude = "the amplitude",
-                           phase = "the phase"),
-                    ifelse(test = details$is_local,
-                           yes  = "local Gaussian ",
-                           no   = ""),
-                    ifelse(test = all(details$is_auto_pair,
-                                      ! details$is_on_diagonal),
-                           yes  = paste("  Note that the local Gaussian",
-                                  " auto-spectrum is complex valued in this",
-                                  " case since the point lies off the diagonal",
-                                  sep = ""),
-                           no   = ""))
-        kill(.parts)
-    }
-
-    ##  Add information about the coordinates, both as numbers and
-    ##  as percentiles of the standard normal distribution.
-    details$.point_coord <- look_up$.point_coord
-    details$.point_coord_percentile <- pnorm(details$.point_coord)
-    details$.selected_percentile <- look_up$.selected_percentile
-    ##  Add the bandwidth, as a character.  Note: This is not
-    ##  necessarily a number, it could also represent a
-    ##  percentage.  Some care must thus be taken when the text
-    ##  version is to be created.
-    details$bandwidth <- look_up$bw_points
-    ###-------------------------------------------------------------------
-    ##  If a bootstrap is present: Extract 'boot_type', 'block_length'
-    ##  and 'nb' (number of bootstrap replicates).
-    if (look_up$is_bootstrap) {
-        for (.arg in c("boot_type", "block_length", "nb"))
-            details [[.arg]] <- look_up[[.arg]]
-        kill(.arg)
-    }
-    ###-------------------------------------------------------------------
-    ##  If a confidence interval is needed, find the relevant values.
-    if (details$is_CI_needed) 
-        details$CI_percentage <- local({
-            .min_max <- stringr::str_detect(
-                                     string = look_up$confidence_interval,
-                                     pattern = "min")
-            if (.min_max) {
-                "min_max"
-            } else
-                as.numeric(look_up$confidence_interval)
-        })
-    ###-------------------------------------------------------------------
-    ##  Specify if the plot shows correlations or a spectrum.
-    details$content <- switch(
-        EXPR = input$TCS_type,
-        C = "correlations",
-        S = "spectrum",
-        T = "time series")
-    ###-------------------------------------------------------------------
-    ##  Register the original variable names.
-    details$.original_variable_names <-
-        .AB_env$details$.original_variable_names
-    ###-------------------------------------------------------------------
-    ######################################################################
-    ##  Add text-information based on 'details_values' to simplify the
-    ##  explanation of the plots that is investigated.
-    ######################################################################    
-    ###-------------------------------------------------------------------
-    ##  Add information about the line-types and colours that is used
-    ##  for the different configurations.
-    details$text$local_colour <- "blue"
-    details$text$global_colour <- "red"
-    details$text$simulated_data_lty <- "dashed line"
-    details$text$real_data_lty <- "line"
-    ###-------------------------------------------------------------------
-    ##   Add a description of the content.  This specifies first
-    ##   auto/cross and correlations/spectrum, then it mentions
-    ##   the point (bot has ordinary coordinates and percentiles).
-    ##   If the plot is of correlations, additional information
-    ##   will be added based on 'lag_zero_needed' and
-    ##   'negative_lags_needed'.
-
-
-    .basic <- sprintf(
-        "A plot of the %s %s-%s",
-        ifelse(test = details$is_local,
-               yes  = "local Gaussian",
-               no   = "ordinary"),
-        details$auto_cross,
-        details$content)
-    .spectra <-
-        if (details$content == "spectrum")
-            sprintf(
-                " (truncated at lag %s using the %s lag-window kernel for smoothing)",
-                details$truncation_level,
-                details$window)
-    .spectra_local_global <-
-        if (all(details$content == "spectrum",
-                details$is_local)) {
-            sprintf(" at the point (%s).  The coefficients of this point corresponds to the standard-normal percentiles %s.",
-                    paste(details$.point_coord, collapse = ", "),
-                    details$.selected_percentile)
-        } else
-            "."
-    .explanations <-
-        if (details$content == "correlations") {
-            paste(c(if (! details$is_lag_zero_needed)
-                        c("  Note that the lag zero component always is one ",
-                          " in this case, and it has thus been dropped from the plot."),
-                    if (all(! details$is_negative_lags_needed,
-                            details$is_local))
-                        c("  The local correlations are even in the lag-argument",
-                          " in this case (since the point lies on the diagonal),",
-                          " so only positive lags are shown in the plot.")),
-                  collapse = "")
-        } else {
-            if (details$is_local) {
-                paste(c("  The ",
-                        details$text$global_colour,
-                        " part represents the ordinary global ",
-                        details$auto_cross,
-                        "-spectrum (included for comparison)",
-                        " whereas the ",
-                        details$text$local_colour,
-                        " part shows the spectra computed from the local Gaussian ",
-                        details$auto_cross,
-                        "-correlations.  Note that this spectrum is ",
-                        ifelse(test = look_up$is_even_spectrum,
-                               yes  = "even",
-                               no   = "odd"),
-                        " in the",
-                        " frequency-argument."),
-                      collapse = "")
-            } else {
-                ""
-            }
-        }
-    details$text$content <- sprintf("%s%s%s%s",
-                                    .basic,
-                                    .spectra,
-                                    .spectra_local_global,
-                                    .explanations)
-    
-    ###-------------------------------------------------------------------
-    ##  Add information about bandwidth and type of local Gaussian
-    ##  approximation.  Add a warning if the heinous one-parameter local
-    ##  Gaussian approximations are used.
-    details$text$computations <- 
-        if (details$is_local) 
-            paste(
-                c("The computations are based on the correlations obtained from",
-                  " a local fitting, at the point (",
-                  paste(details$.point_coord,
-                        collapse = ", "),
-                  "), of a ",
-                  details$type,
-                  "-parameter Gaussian approximation to the probability",
-                  " density functions of lagged pairs of pseudo-normalised observations,",
-                  " where the bandwidth ",
-                  details$bandwidth,
-                  " was used in the estimation algorithm (for all the lags).",
-                  if (details$type == "one")
-                      c("  **WARNING:**  The one-parameter local Gaussian",
-                        " approximation are included as an option, but it will",
-                        " in general fail to capture the local properties",
-                        " of interest.  Use the five-parameter approach instead!")),
-                collapse = "")
-            
-            
-    #####  Reminder: This needs to be tweaked a bit to cover the cases
-    #####  where the bandwidth is given as a percentage...  Trigger below
-    #####  to ensure that these cases will be taken care of.
-    if (is.na(as.numeric(details$bandwidth)))
-        error(c("The value in ",
-                sQuote("look_up$bw_points"),
-                "is not a numerical value.",
-                "Update code for extraction in this case!"))
-    ###-------------------------------------------------------------------
-    ##  Add CI-text (when relevant)
-    if (details$is_CI_needed) {
-        details$text$CI <- paste(
-            if (details$CI_percentage == "min_max") {
-                "Pointwise max and min values based on "
-            } else
-                paste(details$CI_percentage,
-                      "\\% pointwise confidence interval based on ",
-                      sep = ""),
-            if (details$is_block) {
-                paste(details$nr_simulated_samples,
-                      " independent samples.",
-                      sep = "")
-            } else
-                paste(details$nb,
-                      " ",
-                      details$boot_type,
-                      "-bootstrap replicates, having block-length ",
-                      details$block_length,
-                      ".",
-                      sep = ""),
-            sep = "")
-    }
-    ###-------------------------------------------------------------------
-    ##  Add information about the type of the plot, that covers both
-    ##  correlations and spectra.
-    details$text$plot_type <-  paste(
-        c(ifelse(test = details$is_local,
-                 yes  = "local Gaussian ",
-                 no   = "ordinary "),
-          if (input$TCS_type == "C") {
-              c(details$auto_cross,
-                "-")
-          } else {
-              c(if (look_up$is_auto_pair)
-                    switch(EXPR = details$spectrum_variant,
-                           auto = "",
-                           Co   = "co",
-                           Quad = "quadrature ",
-                           amplitude = "amplitude ",
-                           phase = "phase ",
-                           "  **NO DESCRIPTION** "))
-          },
-          details$content),
-        collapse = "")
-
-    
-    details$text$plot_type_YiYj <- paste(
-        if (look_up$is_auto_pair) {
-            c(" of ",
-              details$Vi)
-        } else c(" between ",
-                 details$Vi,
-                 " and ",
-                 details$Vj),
-        collapse = "")
-
-
-    ##  Add information about the percentile when a local
-    ##  investigation is performed.
-    details$.selected_percentile <-
-        if (! look_up$is_global_only)
-            paste(
-                paste(
-                    round(x = pnorm(look_up$.point_coord),
-                          digits = 3) * 100,
-                    "%",
-                    sep = ""),
-                collapse = " :: ")
-    ##  A detail needed for the plots in the spectra-case.
-    if (look_up$TCS_type == "S") {
-        details$.selected_lag <- sprintf(
-            "m = %s",
-            as.numeric(look_up$m_selected))
-    }
-    ##  The label to be used for the plots.
-    details$.plot_label  <-  paste(
-        toupper(substr(x = details$text$plot_type,
-                       start = 1,
-                       stop = 1)),
-        substr(x = details$text$plot_type,
-               start = 2,
-               stop = nchar(details$text$plot_type)),
-        details$text$plot_type_YiYj,
-        sep = "")
-    
-    
-    
-
-
-    ###-------------------------------------------------------------------
-    ##  Add information about whether or not the numerical convergence
-    ##  should be trusted, i.e. if 'eflag' was 0 when the
-    ##  five-parameter local Gaussian approach was used.  If for some
-    ##  reason the heinous one-parameter local Gaussian approach is
-    ##  used, simply state that the result is worthless crap that
-    ##  never should be used.
-    details$text$trust_the_result <-
-        if (details$is_local) {
-            if (details$type == "one") {
-                structure(
-                    .Data = "Computations based on the heinous 1-parameter approach.  Use 5-parameter instead!",
-                    short = "Warning: 1-parameter approach!")
-            } else {
-                local({
-                    ##  Extract convergence-information, with a minor
-                    ##  adjustment to deal with the different names used
-                    ##  for the bootstrap data.
-                    .file <- ifelse(test = details$is_bootstrap,
-                                    yes  = "boot_par_five_approx.Rda",
-                                    no   = "par_five_approx.Rda")
-                    .convergence <- .AB_env$details$convergence[[c(.file, input$point_type)]]
-                    ## Create the text to be used, with convergence
-                    ## status as an attribute, and a short-version as
-                    ## attribute in case the plots later on should be
-                    ## included in some grid-based setup.
-                    structure(
-                        .Data = ifelse(test = .convergence,
-                                       yes  = "NC = OK (numerical convergence verified)",
-                                       no   = "NC = FAIL (numerical convergence failed)"),
-                        convergence = .convergence,
-                        short = ifelse(test = .convergence,
-                                       yes  = "NC = OK",
-                                       no   = "NC = FAIL"))
-                })
-            }
-        }
-    ###-------------------------------------------------------------------
-    ##  Add 'details' and 'cache' to 'look_up'.
-    look_up$details <- details
-    look_up$cache <- cache
-    ##  Add the curclicues information to 'look_up'.
-    look_up$curlicues = list(
-        title = list(
-            label = look_up$details$.plot_label),
-        m_value = list(
-            include = ! is.null(look_up$details$.selected_lag),
-            annotate = list(
-                label = look_up$details$.selected_lag)),
-        v_value = list(
-            include = ! is.null(look_up$details$.selected_percentile),
-            annotate = list(
-                label = look_up$details$.selected_percentile)),
-        NC_value = list(
-            annotate = list(
-                label = look_up$details$text$trust_the_result)))
+    ##  Add 'details' to 'look_up', this will be used to explain the
+    ##  content of the plots, both in the interactive and
+    ##  non-interactive investigations. In the latter case it will be
+    ##  available as an attribute to the plot, and 'LG_explain_plot'
+    ##  can then give a standard presentation — or a user can extract
+    ##  the details directly from the attribute in order to create
+    ##  his/hers own presentation.
+    look_up$details <- LG_lookup_details(
+        look_up = look_up,
+        input = input,
+        .AB_env = .AB_env)
+    ##  Add 'curclicues'-details to 'look_up', i.e. details related to
+    ##  the size, colour, position and so on for the information added
+    ##  to the final plot.
+    look_up$curlicues = LG_lookup_curlicues(look_up = look_up)
     ##  Return the result to the workflow.
     return(look_up)
 }

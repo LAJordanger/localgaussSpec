@@ -105,7 +105,7 @@ LG_shiny_TCS_input  <- function(
     if (!.update_required) {
         return(NULL)
     } else
-        kill(.update_required, .bm, .old_values, .new_values)
+        kill(.update_required, .old_values, .new_values)
 ###-------------------------------------------------------------------
     ##  Still running?  Then a switch has happened, and it is (most
     ##  likely) necessary to update the log-information.

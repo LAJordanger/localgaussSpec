@@ -5,10 +5,10 @@
 \title{Create the data needed when plotting the local Gaussian
 correlations and spectra.}
 \usage{
-LG_create_plot_df(.look_up, ..env)
+LG_create_plot_df(look_up, ..env)
 }
 \arguments{
-\item{.look_up}{The list created by \code{LG_lookup}, containing
+\item{look_up}{The list created by \code{LG_lookup}, containing
 the information needed in order to decide what kind of
 data-frame that is required.}
 
