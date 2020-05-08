@@ -25,6 +25,7 @@ Imports:
     plyr,
     pryr,
     reshape2,
+    scales,
     shiny,
     stats,
     stringr,
