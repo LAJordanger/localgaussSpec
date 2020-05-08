@@ -44,6 +44,7 @@
 #' @importFrom mvtnorm dmvnorm pmvnorm
 #' @importFrom plyr aaply
 #' @importFrom pryr where
+#' @importFrom scales percent
 #' @importFrom stats kernel lag mad median optimise pnorm qnorm
 #'     quantile rnorm runif sd var acf as.ts pacf spec.pgram
 #' @importFrom stringr str_detect str_replace

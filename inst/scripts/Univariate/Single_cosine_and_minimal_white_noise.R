@@ -1,5 +1,7 @@
-#' White Gaussian noise of length 1974 (the same length as the
-#' 'dmbp'-example).  This example is the basis for figure 5 of
+#' One cosine and a tiny bit of white noise, length 1974 (the same
+#' length as the 'dmbp'-example).  This shows that peaks and troughs
+#' of the local Gaussian spectrum should be interpreted with caution.
+#' This example is the basis for figure 9 of
 #' "Nonlinear spectral analysis via the local Gaussian correlation".
 
 ###############
@@ -73,8 +75,8 @@ main_dir <- "~/LG_DATA"
 
 nr_samples <- 100
 N <- 1974
-TS_key <- "WNG"
-.seed_for_sample <- 124
+TS_key <- "dmt"
+.seed_for_sample <- 12435
 set.seed(.seed_for_sample)
 ##  Generate the sample.  (See the help page for the given key for
 ##  details about the arguments.)
@@ -82,6 +84,16 @@ set.seed(.seed_for_sample)
     TS_key = TS_key,
     N = N,
     nr_samples = nr_samples,
+    A = rbind(c(0), 
+              c(1)),
+    delta = c(1.0),
+    delta_range = c(1),
+    alpha = c(2/5 * pi + 0.64),
+    theta = NULL,
+    wn = list(type = "rnorm",
+              args = list(mean = 0,
+                          sd = .05),
+              adjust = 0),
     .seed = NULL)
 rm(nr_samples, N, .seed_for_sample)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
@@ -163,7 +175,8 @@ shiny::runApp(LG_shiny(
 
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-##     c(ts.dir = "WNG_42d37be7b7c1e3fa1b1dd18f6f605018", approx.dir = "Approx__1")
+##     c(ts.dir = "dmt_4d532713e9b2866675cf31b64942ce70",
+##       approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the

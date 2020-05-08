@@ -1,5 +1,6 @@
-#' An investigation for bivariate artificial trigonometric stuff,
-#' based on an univariate case that did possess the desired peaks.
+#' An investigation of the 'dmbp'-data, length 1974.  This example is
+#' used in figures 3 and 4 (investigation of 200 lags) of
+#' "Nonlinear spectral analysis via the local Gaussian correlation".
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -65,54 +66,29 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
-##  Simulate 'nr_samples' samples of length 'N' from the time series
-##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
-##  package-maintainer if additional models are of interest to
-##  investigate.)
+##  Extract the desired time series needed for the present
+##  investigation from 'dmbp', and save it into the file-hierarchy.
 
-nr_samples <- 100
-N <- dim(EuStockMarkets)[1] - 1 ## = 1859
-TS_key <- "dmt_bivariate"
-.seed_for_sample <- 124552
-set.seed(.seed_for_sample)
-##  Generate the sample.  (See the help page for the given key for
-##  details about the arguments.)
-.TS_sample <- TS_sample(
-    TS_key = TS_key,
-    N = N,
-    nr_samples = nr_samples,
-    first_dmt = list(A = rbind(c(-2, -1, 0, 1),
-                               c(1/20, 1/3 - 1/20, 1/3, 1/3)),
-                     delta = c(1.0, 0.5, 0.3, 0.5),
-                     delta_range = c(0.5, 0.2, 0.2, 0.6),
-                     alpha = c(pi/2, pi/8, 4/5 * pi, pi/2) + {
-                         set.seed(12)
-                         runif(n = 4, min = 0.1, max = 0.2)},
-                     theta = NULL,
-                     wn = NULL),
-    phase_adjustment = c(pi/3, pi/4, 0, pi/2),
-    .seed = NULL)
-rm(nr_samples, N, .seed_for_sample)
-##  Create a unique 'save_dir' and save 'TS_sample' to the
-##  file-hierarchy.  (Note: )
-save_dir <- paste(TS_key,
-                  digest::digest(.TS_sample$TS),
-                  sep = "_")
-##  Save to file and update file-hierarchy.
+.TS <- localgaussSpec::dmbp[, "V1"]
+##  (The 'dmbp' in the 'localgaussSpec'-package is a copy of the one
+##  from the 'rugarch'-package.  It has been copied in order for this
+##  script to run without the need for installating 'rugarch' first.)
+
+set.seed(136)
 tmp_TS_LG_object <- TS_LG_object(
-    TS_data = .TS_sample,
-    main_dir = main_dir,
-    save_dir = save_dir,
-    .remove_ties = TRUE)
-rm(TS_key, .TS_sample, save_dir)
+    TS_data = .TS,
+    main_dir = main_dir)
+rm(.TS)
 ###############
 
 ##############################
 
 ###############
-##  Compute the local Gaussian correlations.  This requires a
-##  specification of the desired points, the bandwidth and the number
-##  of lags. WARNING: The type of approximation must also be
+##  Compute the local Gaussian spectral densities.  This requires
+##  first that the local Gaussian correlations of interest must be
+##  computed, which implies that the points of interest must be
+##  selected together with information about the bandwidth and the
+##  number of lags. WARNING: The type of approximation must also be
 ##  specified, i.e. the argument 'LG_type', where the options are
 ##  "par_five" and "par_one".  The "five" and "one" refers to the
 ##  number of free parameters used in the approximating bivariate
@@ -122,24 +98,19 @@ rm(TS_key, .TS_sample, save_dir)
 ##  interest to compare the result with "par_five", otherwise avoid it
 ##  as it most likely will be a waste of computational resources.
 
-.LG_type <- "par_five"
+.LG_type <- c("par_five", "par_one")
 .LG_points <- LG_select_points(
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
-    .shape = c(3, 3))
-lag_max <- 15
-##  Reminder: length 1859, b = 1.75 * (1859)^(-1/6) = 0.4990662.  This
-##  indicates that a bandwidth of '0.5' should be used.  For the
-##  univariate case the three bandwidths 0.5, 0.75, 1 was
-##  investigated, but due to the increased number of computations
-##  needed for the multivariate case, only one bandwidth will be
-##  considered here. The value '0.6' has been selected based on the
-##  impression that '0.5' might not be appropriate to use for the
-##  points having coefficients in the tails of the margins.
-.b <- 0.6
-        
-##  Do the main computation.  
-.tmp_LG_approx_scribe <- LG_approx_scribe(
+    .shape = c(3, 0))
+lag_max <- 200
+##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
+##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
+##  alternatives.  
+.b <- c(0.5, 0.75, 1)
+
+##  Do the main computation on the sample at hand.
+LG_AS <- LG_approx_scribe(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
@@ -149,14 +120,20 @@ lag_max <- 15
     .bws_fixed_only = TRUE,
     LG_type = .LG_type)
 rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
-###############
 
-##  Extract the directory information needed for 'LG_shiny'.
-data_dir_for_LG_shiny <- .tmp_LG_approx_scribe$data_dir
-rm(.tmp_LG_approx_scribe)
+##  Inspect the result using the shiny-application.  Note that no
+##  bootstrap based computation of pointwise confidence intervals are
+##  computed here, since the aim is restricted to the inspection of
+##  the estimated local Gaussian autocorrelations.  (The selection of
+##  arguments for the bootstrapping might benefit from an inspection
+##  of these estimates, see the discussion in "Nonlinear spectral
+##  analysis via the local Gaussian correlation" for details.)
 
-##  Start the shiny application for an interactive inspection of the
-##  result.
+data_dir_for_LG_shiny <- LG_AS$data_dir
+rm(LG_AS)
+
+##  And start the shiny application for an interactive inspection of
+##  the result.
 
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
@@ -173,12 +150,13 @@ shiny::runApp(LG_shiny(
 ###  'data_dir'-argument, such that the call to the shiny-application
 ###  can be done without the need for the script to be sourced
 ###  directly.  The result for the present script (based on the
-###  original input parameters) are given below.
+###  original input parameters) are given below  (in the case where
+###  this script is used after the script 'dmbp.R').
 
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## c(ts.dir = "dmt_bivariate_e7566c1ebfcd871b792fc45cad29e8a9", 
-## approx.dir = "Approx__1")
+##     c(ts.dir = "0fb42549ce13fce773c12b77463bdca8",
+##       approx.dir = "Approx__2")
 
 #####
 ## Note that 'data_dir' only contains the specification of the

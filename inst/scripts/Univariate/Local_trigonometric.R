@@ -1,9 +1,12 @@
-#' rmgarch-test based on 'EUStockMarkets' 1860 observations, DAX, SMI,
-#' CAC, FTSE, compound returns.  NOTE: This example is solely included
-#' in order to show how the computations can be done.  In particular,
-#' the model used in this script is the simplest one that is
-#' available, i.e. no attempt has been made in order to search for a
-#' multivariate GARCH-type model that gives the best fit to the data.
+#' A "local trigonometric example", length 1974 (the same length as
+#' the 'dmbp'-example).  This shows that peaks and troughs of the
+#' local Gaussian spectrum should be interpretted with caution.  This
+#' example is the basis for figures 7 and 8 of
+#' "Nonlinear spectral analysis via the local Gaussian correlation".
+#' Note: The plot shown in figure 7 is based on some additional code
+#' that extracts the relevant parameters from the files created by
+#' this script. The plot in figure 7 is thus not created directly by
+#' the 'localgaussSpec'-package.
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -30,7 +33,7 @@
 
 ###############
 ## Check that the required package(s) are available.
-.required_packages <- c("localgaussSpec", "rmgarch")
+.required_packages <- c("localgaussSpec")
 .successful <- vapply(
     X = .required_packages,
     FUN = requireNamespace,
@@ -57,6 +60,7 @@ rm(.required_packages, .successful)
 ##  for the operative system.
 ###############
 
+
 ###############
 ##  Specify the directory in which the resulting file-hierarchy will
 ##  be stored. The default directory "LG_DATA" will be created if it
@@ -69,42 +73,15 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
-##  Specify the model to be used based on the log-returns of the
-##  'EuStockMarkets'-data.  NOTE: This approach use the simplest
-##  available model, as the purpose of this script is solely to
-##  present the setup for the computation.
-
-###############
-##  Compute the daily log-returns to be used as 'data' in the
-##  computation.
-
-.first <- head(EuStockMarkets, n = -1)
-.second <- tail(EuStockMarkets, n = -1)
-data <- log(.second/.first)
-rm(.first, .second)
-
-##  Specify the model (using the default marginals).
-uspec <- rugarch::ugarchspec(
-                      mean.model = list(armaOrder = c(0,0)),
-                      variance.model = list(garchOrder = c(1,1), model = "sGARCH"), 
-                      distribution.model = "norm")
-uspec <- rugarch::multispec(replicate(n = dim(data)[2],
-                                      expr = uspec))
-###############
-
-##############################
-
-###############
 ##  Simulate 'nr_samples' samples of length 'N' from the time series
 ##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
 ##  package-maintainer if additional models are of interest to
 ##  investigate.)
 
 nr_samples <- 100
-N <- dim(data)[1] ## = 1859
-TS_key <- "sample_rmgarch"
-
-.seed_for_sample <- 245
+N <- 1974
+TS_key <- "dmt"
+.seed_for_sample <- 4624342
 set.seed(.seed_for_sample)
 ##  Generate the sample.  (See the help page for the given key for
 ##  details about the arguments.)
@@ -112,10 +89,17 @@ set.seed(.seed_for_sample)
     TS_key = TS_key,
     N = N,
     nr_samples = nr_samples,
-    uspec = uspec,
-    data = data,
-    rseed = NULL)
-rm(nr_samples, N, .seed_for_sample, uspec, data)
+    A = rbind(c(-2, -1, 0, 1), 
+              c(1/20, 1/3 - 1/20, 1/3, 1/3)),
+    delta = c(1.0, 0.5, 0.3, 0.5),
+    delta_range = c(0.5, 0.2, 0.2, 0.6),
+    alpha = c(pi/2, pi/8, 4/5 * pi, pi/2) + {
+        set.seed(12)
+        runif(n = 4, min = 0.1, max = 0.2)},
+    theta = NULL,
+    wn = NULL,
+    .seed = NULL)
+rm(nr_samples, N, .seed_for_sample)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
 ##  file-hierarchy.  (Note: )
 save_dir <- paste(TS_key,
@@ -150,17 +134,12 @@ rm(TS_key, .TS_sample, save_dir)
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
     .shape = c(3, 3))
-lag_max <- 15
-##  Reminder: length 1859, b = 1.75 * (1859)^(-1/6) = 0.4990662.  This
-##  indicates that a bandwidth of '0.5' should be used.  For the
-##  univariate case the three bandwidths 0.5, 0.75, 1 was
-##  investigated, but due to the increased number of computations
-##  needed for the multivariate case, only one bandwidth will be
-##  considered here. The value '0.6' has been selected based on the
-##  impression that '0.5' might not be appropriate to use for the
-##  points having coefficients in the tails of the margins.
-.b <- 0.6
-        
+lag_max <- 20
+##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
+##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
+##  alternatives.  
+.b <- c(0.5, 0.75, 1)
+
 ##  Do the main computation.  
 .tmp_LG_approx_scribe <- LG_approx_scribe(
     main_dir = main_dir,
@@ -177,7 +156,6 @@ rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 ##  Extract the directory information needed for 'LG_shiny'.
 data_dir_for_LG_shiny <- .tmp_LG_approx_scribe$data_dir
 rm(.tmp_LG_approx_scribe)
-
 ##  Start the shiny application for an interactive inspection of the
 ##  result.
 
@@ -198,10 +176,10 @@ shiny::runApp(LG_shiny(
 ###  directly.  The result for the present script (based on the
 ###  original input parameters) are given below.
 
-dump("data_dir_for_LG_shiny", stdout())
-data_dir_for_LG_shiny <-
-    c(ts.dir = "sample_rmgarch_aaa92a9847da63f873aa9bbadaa1bcc1",
-      approx.dir = "Approx__1")
+## dump("data_dir_for_LG_shiny", stdout())
+## data_dir_for_LG_shiny <-
+##     c(ts.dir = "dmt_3a0010ae2dde5bfcd94c7fee2611292a",
+##       approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the
@@ -211,3 +189,4 @@ data_dir_for_LG_shiny <-
 ## computer, or even move it to a computer using another OS than the
 ## one used for the original computation.
 ################################################################################
+

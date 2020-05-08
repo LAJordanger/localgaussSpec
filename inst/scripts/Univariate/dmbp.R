@@ -1,20 +1,6 @@
-#' Computations based on 'EUStockMarkets' 1860 observations, DAX, SMI,
-#' CAC, FTSE, compound returns.
-
-## Daily Closing Prices of Major European Stock Indices, 1991-1998
-## Description:
-##      Contains the daily closing prices of major European stock indices:
-##      Germany DAX (Ibis), Switzerland SMI, France CAC, and UK FTSE.  The
-##      data are sampled in business time, i.e., weekends and holidays are
-##      omitted.
-## Usage:
-##      EuStockMarkets
-## Format:
-##      A multivariate time series with 1860 observations on 4 variables.
-##      The object is of class ‘"mts"’.
-## Source:
-##      The data were kindly provided by Erste Bank AG, Vienna, Austria.
-##  Create an array (without the 'date') from ibmspko
+#' An investigation of the 'dmbp'-data, length 1974.  This example is
+#' used in figures 11-14 of
+#' "Nonlinear spectral analysis via the local Gaussian correlation".
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -80,14 +66,14 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
-##  Compute the daily log-returns to be used in the computation.
+##  Extract the desired time series needed for the present
+##  investigation from 'dmbp', and save it into the file-hierarchy.
 
-.first <- head(EuStockMarkets, n = -1)
-.second <- tail(EuStockMarkets, n = -1)
-.TS <- log(.second/.first)
-rm(.first, .second)
+.TS <- localgaussSpec::dmbp[, "V1"]
+##  (The 'dmbp' in the 'localgaussSpec'-package is a copy of the one
+##  from the 'rugarch'-package.  It has been copied in order for this
+##  script to run without the need for installating 'rugarch' first.)
 
-##  Save the time series and initiate the file-hierarchy.
 set.seed(136)
 tmp_TS_LG_object <- TS_LG_object(
     TS_data = .TS,
@@ -112,21 +98,16 @@ rm(.TS)
 ##  interest to compare the result with "par_five", otherwise avoid it
 ##  as it most likely will be a waste of computational resources.
 
-.LG_type <- "par_five"
+.LG_type <- c("par_five", "par_one")
 .LG_points <- LG_select_points(
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
     .shape = c(3, 3))
-lag_max <- 15
-##  Reminder: length 1859, b = 1.75 * (1859)^(-1/6) = 0.4990662.  This
-##  indicates that a bandwidth of '0.5' should be used.  For the
-##  univariate case the three bandwidths 0.5, 0.75, 1 was
-##  investigated, but due to the increased number of computations
-##  needed for the multivariate case, only one bandwidth will be
-##  considered here. The value '0.6' has been selected based on the
-##  impression that '0.5' might not be appropriate to use for the
-##  points having coefficients in the tails of the margins.
-.b <- 0.6
+lag_max <- 20
+##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
+##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
+##  alternatives.  
+.b <- c(0.5, 0.75, 1)
 
 ##  Do the main computation on the sample at hand.
 LG_AS <- LG_approx_scribe(
@@ -145,7 +126,7 @@ rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 nb <- 100
 block_length <- 100
 
-set.seed(141326)
+set.seed(1421236)
 LG_BS <- LG_boot_approx_scribe(
     main_dir        = main_dir,
     data_dir         = LG_AS$data_dir,
@@ -202,12 +183,11 @@ shiny::runApp(LG_shiny(
 ###  can be done without the need for the script to be sourced
 ###  directly.  The result for the present script (based on the
 ###  original input parameters) are given below (in the case where
-###  this script is used before the script
-###  'EuStockMarkets_logreturns_lags=200.R').
+###  this script is used before the script 'dmbp_200_lags.R').
 
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-##     c(ts.dir = "38ea1450589cb6a6759f085b0947f016",
+##     c(ts.dir = "0fb42549ce13fce773c12b77463bdca8",
 ##       approx.dir = "Approx__1",
 ##       boot.approx.dir = "Boot_Approx__1")
 

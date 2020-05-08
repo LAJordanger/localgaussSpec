@@ -1,8 +1,5 @@
-#' One cosine and a bit of white noise, length 1974 (the same length
-#' as the 'dmbp'-example).  This example is the basis for figure 6 of
-#' "Nonlinear spectral analysis via the local Gaussian correlation".
-
-
+#' An investigation for bivariate artificial trigonometric stuff,
+#' based on an univariate case that did possess the desired peaks.
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -56,7 +53,6 @@ rm(.required_packages, .successful)
 ##  for the operative system.
 ###############
 
-
 ###############
 ##  Specify the directory in which the resulting file-hierarchy will
 ##  be stored. The default directory "LG_DATA" will be created if it
@@ -75,9 +71,9 @@ main_dir <- "~/LG_DATA"
 ##  investigate.)
 
 nr_samples <- 100
-N <- 1974
-TS_key <- "dmt"
-.seed_for_sample <- 12435
+N <- dim(EuStockMarkets)[1] - 1 ## = 1859
+TS_key <- "dmt_bivariate"
+.seed_for_sample <- 124552
 set.seed(.seed_for_sample)
 ##  Generate the sample.  (See the help page for the given key for
 ##  details about the arguments.)
@@ -85,16 +81,16 @@ set.seed(.seed_for_sample)
     TS_key = TS_key,
     N = N,
     nr_samples = nr_samples,
-    A = rbind(c(0),
-              c(1)),
-    delta = c(1.0),
-    delta_range = c(1),
-    alpha = c(2/5 * pi + 0.64),
-    theta = NULL,
-    wn = list(type = "rnorm",
-              args = list(mean = 0,
-                          sd = .75),
-              adjust = 0),
+    first_dmt = list(A = rbind(c(-2, -1, 0, 1),
+                               c(1/20, 1/3 - 1/20, 1/3, 1/3)),
+                     delta = c(1.0, 0.5, 0.3, 0.5),
+                     delta_range = c(0.5, 0.2, 0.2, 0.6),
+                     alpha = c(pi/2, pi/8, 4/5 * pi, pi/2) + {
+                         set.seed(12)
+                         runif(n = 4, min = 0.1, max = 0.2)},
+                     theta = NULL,
+                     wn = NULL),
+    phase_adjustment = c(pi/3, pi/4, 0, pi/2),
     .seed = NULL)
 rm(nr_samples, N, .seed_for_sample)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
@@ -131,12 +127,17 @@ rm(TS_key, .TS_sample, save_dir)
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
     .shape = c(3, 3))
-lag_max <- 20
-##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
-##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
-##  alternatives.  
-.b <- c(0.5, 0.75, 1)
-
+lag_max <- 15
+##  Reminder: length 1859, b = 1.75 * (1859)^(-1/6) = 0.4990662.  This
+##  indicates that a bandwidth of '0.5' should be used.  For the
+##  univariate case the three bandwidths 0.5, 0.75, 1 was
+##  investigated, but due to the increased number of computations
+##  needed for the multivariate case, only one bandwidth will be
+##  considered here. The value '0.6' has been selected based on the
+##  impression that '0.5' might not be appropriate to use for the
+##  points having coefficients in the tails of the margins.
+.b <- 0.6
+        
 ##  Do the main computation.  
 .tmp_LG_approx_scribe <- LG_approx_scribe(
     main_dir = main_dir,
@@ -152,7 +153,7 @@ rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 
 ##  Extract the directory information needed for 'LG_shiny'.
 data_dir_for_LG_shiny <- .tmp_LG_approx_scribe$data_dir
-rm(.tmp_LG_approx_scribe$data_dir)
+rm(.tmp_LG_approx_scribe)
 
 ##  Start the shiny application for an interactive inspection of the
 ##  result.
@@ -175,8 +176,9 @@ shiny::runApp(LG_shiny(
 ###  original input parameters) are given below.
 
 ## dump("data_dir_for_LG_shiny", stdout())
-## data_dir_for_LG_shiny <- c(ts.dir =
-## "dmt_1e848c18302705844bb4c1bb75982c18", approx.dir = "Approx__1")
+## data_dir_for_LG_shiny <-
+##     c(ts.dir = "dmt_bivariate_73ef14e659ac59cb4c93690a16bc158c", 
+##       approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the

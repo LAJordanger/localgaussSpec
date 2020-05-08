@@ -1,5 +1,12 @@
-#' An investigation for bivariate artificial trigonometric stuff,
-#' based on an univariate case that did possess the desired peaks.
+#' A "local trigonometric example", length 1974 (the same length as
+#' the 'dmbp'-example).  This shows that peaks and troughs of the
+#' local Gaussian spectrum should be interpretted with caution.  This
+#' example is the basis for figures 7 and 8 of
+#' "Nonlinear spectral analysis via the local Gaussian correlation".
+#' Note: The plot shown in figure 7 is based on some additional code
+#' that extracts the relevant parameters from the files created by
+#' this script. The plot in figure 7 is thus not created directly by
+#' the 'localgaussSpec'-package.
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -26,7 +33,7 @@
 
 ###############
 ## Check that the required package(s) are available.
-.required_packages <- c("localgaussSpec")
+.required_packages <- c("localgaussSpec", "rugarch")
 .successful <- vapply(
     X = .required_packages,
     FUN = requireNamespace,
@@ -53,6 +60,7 @@ rm(.required_packages, .successful)
 ##  for the operative system.
 ###############
 
+
 ###############
 ##  Specify the directory in which the resulting file-hierarchy will
 ##  be stored. The default directory "LG_DATA" will be created if it
@@ -65,32 +73,45 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
+##  Specify the model to be used based on the 'dmbp'-data.  First
+##  specify the model '.spec' without any parameters, then fit it to
+##  'dmbp', and finally import the fitted coeffisients back into into
+##  the specification '.spec'
+
+data("dmbp")
+##  Specify the model:
+.spec <- ugarchspec(
+    variance.model=list(model="sGARCH",
+                        garchOrder=c(1,1)),
+    mean.model=list(armaOrder=c(0,0),
+                    include.mean=TRUE),
+    distribution.model="norm",
+    fixed.pars=list(mu=0.001,
+                    omega=0.00001,
+                    alpha1=0.02,
+                    beta1=0.95))
+###############
+
+##############################
+
+###############
 ##  Simulate 'nr_samples' samples of length 'N' from the time series
 ##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
 ##  package-maintainer if additional models are of interest to
 ##  investigate.)
 
 nr_samples <- 100
-N <- dim(EuStockMarkets)[1] - 1 ## = 1859
-TS_key <- "dmt_bivariate"
-.seed_for_sample <- 4624342
+N <- 50000
+TS_key <- "rugarch"
+.seed_for_sample <- 235154325
 set.seed(.seed_for_sample)
-##  Generate the sample.  (See the help page for the given key for
-##  details about the arguments.)
+##  Generate the sample.
 .TS_sample <- TS_sample(
     TS_key = TS_key,
-    N = N,
+    N = N, 
+    n.start = 100,
     nr_samples = nr_samples,
-    first_dmt = list(A = rbind(c(-2, -1, 0, 1),
-                               c(1/20, 1/3 - 1/20, 1/3, 1/3)),
-                     delta = c(1.0, 0.5, 0.3, 0.5),
-                     delta_range = c(0.5, 0.2, 0.2, 0.6),
-                     alpha = c(pi/2, pi/8, 4/5 * pi, pi/2) + {
-                         set.seed(12)
-                         runif(n = 4, min = 0.1, max = 0.2)},
-                     theta = NULL,
-                     wn = NULL),
-    phase_adjustment = pi/3,
+    spec = .spec,
     .seed = NULL)
 rm(nr_samples, N, .seed_for_sample)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
@@ -124,20 +145,13 @@ rm(TS_key, .TS_sample, save_dir)
 
 .LG_type <- "par_five"
 .LG_points <- LG_select_points(
-    .P1 = c(0.1, 0.1),
-    .P2 = c(0.9, 0.9),
-    .shape = c(3, 3))
-lag_max <- 15
-##  Reminder: length 1859, b = 1.75 * (1859)^(-1/6) = 0.4990662.  This
-##  indicates that a bandwidth of '0.5' should be used.  For the
-##  univariate case the three bandwidths 0.5, 0.75, 1 was
-##  investigated, but due to the increased number of computations
-##  needed for the multivariate case, only one bandwidth will be
-##  considered here. The value '0.6' has been selected based on the
-##  impression that '0.5' might not be appropriate to use for the
-##  points having coefficients in the tails of the margins.
-.b <- 0.6
-        
+    .P1 = 0.1,
+    .P2 = 0.9,
+    .shape = 3)
+lag_max <- 10
+
+.b <- .4
+
 ##  Do the main computation.  
 .tmp_LG_approx_scribe <- LG_approx_scribe(
     main_dir = main_dir,
@@ -161,7 +175,7 @@ rm(.tmp_LG_approx_scribe)
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
     data_dir = data_dir_for_LG_shiny))
-
+    
 ################################################################################
 ###### NOTE:
 ###  The interaction with the file-hierarchy contains tests that
@@ -175,10 +189,16 @@ shiny::runApp(LG_shiny(
 ###  directly.  The result for the present script (based on the
 ###  original input parameters) are given below.
 
+
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## c(ts.dir = "dmt_bivariate_7978ab37595c70ef47eeb898ceb347e2",
-## approx.dir = "Approx__1")
+## structure(c("dmt_310d2a31193a8b4e06c18ba8028d7146", "Approx__1", 
+## "Boot_Approx__1", "Boot_Spectra"), .Names = c("ts.dir", "approx.dir", 
+## "boot.approx.dir", "boot.spectra.dir"))
+
+
+### TODO: UPDATE
+
 
 #####
 ## Note that 'data_dir' only contains the specification of the

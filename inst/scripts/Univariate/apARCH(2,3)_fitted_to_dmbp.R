@@ -1,5 +1,8 @@
-#' An investigation of the 'dmbp'-data, length 1974.  This example is
-#' used in figures 3 and 4 (investigation of 200 lags) of
+#' An apARCH(2,3)-model fitted to the 'dmbp'-data, length 1974 (the
+#' same length as the 'dmbp'-example).  The result from the fitted
+#' model can be compared with those based on the original data, to get
+#' a visual indicator of the suitability of the model (at the points
+#' investigated).  This example is used in figures 10, 12-14 of
 #' "Nonlinear spectral analysis via the local Gaussian correlation".
 
 ###############
@@ -27,7 +30,7 @@
 
 ###############
 ## Check that the required package(s) are available.
-.required_packages <- c("localgaussSpec")
+.required_packages <- c("localgaussSpec", "rugarch")
 .successful <- vapply(
     X = .required_packages,
     FUN = requireNamespace,
@@ -66,29 +69,91 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
-##  Extract the desired time series needed for the present
-##  investigation from 'dmbp', and save it into the file-hierarchy.
+##  Specify the model to be used based on the 'dmbp'-data.  First
+##  specify the model '.spec' without any parameters, then fit it to
+##  'dmbp', and finally import the fitted coeffisients back into into
+##  the specification '.spec'
 
-.TS <- localgaussSpec::dmbp[, "V1"]
-##  (The 'dmbp' in the 'localgaussSpec'-package is a copy of the one
-##  from the 'rugarch'-package.  It has been copied in order for this
-##  script to run without the need for installating 'rugarch' first.)
+data("dmbp")
+##  Specify the model:
+.spec <- rugarch::ugarchspec(
+    variance.model =
+        list(model = "fGARCH",
+             garchOrder = c(2, 3),
+             submodel = "APARCH",
+             external.regressors = NULL,
+             variance.targeting = FALSE),
+    mean.model =
+        list(armaOrder = c(0, 0),
+             include.mean = TRUE,
+             archm = FALSE,
+             archpow = 1,
+             arfima = FALSE,
+             external.regressors = NULL,
+             archex = FALSE),
+    distribution.model = "sstd",
+    start.pars = list(),
+    fixed.pars = list())
+##  Fit the model to the observations:
+.fitted <- rugarch::ugarchfit(
+    spec =  .spec,
+    data = dmbp[, "V1"],
+    solver = "hybrid")
 
-set.seed(136)
-tmp_TS_LG_object <- TS_LG_object(
-    TS_data = .TS,
-    main_dir = main_dir)
-rm(.TS)
+##  Update the coefficients:
+rugarch::setfixed(.spec) <- rugarch::coef(.fitted)
+rm(.fitted)
+
+##  NOTE: The present code shows how one particular GARCH-type model
+##  can be fitted to the 'dmbp'-data.  The original investigation
+##  included code that tested a wide variety of alternatives, before
+##  the present apARCH(2,3)-model in the end was selected as the one
+##  of interest to use in "Nonlinear spectral analysis via the local
+##  Gaussian correlation".
 ###############
 
 ##############################
 
 ###############
-##  Compute the local Gaussian spectral densities.  This requires
-##  first that the local Gaussian correlations of interest must be
-##  computed, which implies that the points of interest must be
-##  selected together with information about the bandwidth and the
-##  number of lags. WARNING: The type of approximation must also be
+##  Simulate 'nr_samples' samples of length 'N' from the time series
+##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
+##  package-maintainer if additional models are of interest to
+##  investigate.)
+
+nr_samples <- 100
+N <- 1974
+TS_key <- "rugarch"
+.seed_for_sample <- 4624342
+set.seed(.seed_for_sample)
+##  Generate the sample.
+.TS_sample <- TS_sample(
+    TS_key = TS_key,
+    N = N, 
+    n.start = 100,
+    nr_samples = nr_samples,
+    spec = .spec,
+    .seed = NULL)
+rm(nr_samples, N, .seed_for_sample)
+##  Create a unique 'save_dir' and save 'TS_sample' to the
+##  file-hierarchy.  (Note: )
+save_dir <- paste(TS_key,
+                  digest::digest(.TS_sample$TS),
+                  sep = "_")
+##  Save to file and update file-hierarchy.
+tmp_TS_LG_object <- TS_LG_object(
+    TS_data = .TS_sample,
+    main_dir = main_dir,
+    save_dir = save_dir,
+    .remove_ties = TRUE)
+rm(TS_key, .TS_sample, save_dir)
+###############
+
+##############################
+
+###############
+##  Compute the local Gaussian correlations.  This requires a
+##  specification of the desired points, the bandwidth and the number
+##  of lags. WARNING: The type of approximation must also be
 ##  specified, i.e. the argument 'LG_type', where the options are
 ##  "par_five" and "par_one".  The "five" and "one" refers to the
 ##  number of free parameters used in the approximating bivariate
@@ -102,15 +167,15 @@ rm(.TS)
 .LG_points <- LG_select_points(
     .P1 = c(0.1, 0.1),
     .P2 = c(0.9, 0.9),
-    .shape = c(3, 0))
-lag_max <- 200
+    .shape = c(3, 3))
+lag_max <- 20
 ##  Reminder: length 1974, b = 1.75 * (1974)^(-1/6) = 0.4940985.  Thus
 ##  use bandwidths 0.5, 0.75, 1 and see how it fares for the different
 ##  alternatives.  
 .b <- c(0.5, 0.75, 1)
 
-##  Do the main computation on the sample at hand.
-LG_AS <- LG_approx_scribe(
+##  Do the main computation.  
+.tmp_LG_approx_scribe <- LG_approx_scribe(
     main_dir = main_dir,
     data_dir = tmp_TS_LG_object$TS_info$save_dir,
     TS = tmp_TS_LG_object$TS_info$TS,
@@ -120,20 +185,14 @@ LG_AS <- LG_approx_scribe(
     .bws_fixed_only = TRUE,
     LG_type = .LG_type)
 rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
+###############
 
-##  Inspect the result using the shiny-application.  Note that no
-##  bootstrap based computation of pointwise confidence intervals are
-##  computed here, since the aim is restricted to the inspection of
-##  the estimated local Gaussian autocorrelations.  (The selection of
-##  arguments for the bootstrapping might benefit from an inspection
-##  of these estimates, see the discussion in "Nonlinear spectral
-##  analysis via the local Gaussian correlation" for details.)
+##  Extract the directory information needed for 'LG_shiny'.
+data_dir_for_LG_shiny <- .tmp_LG_approx_scribe$data_dir
+rm(.tmp_LG_approx_scribe)
 
-data_dir_for_LG_shiny <- LG_AS$data_dir
-rm(LG_AS)
-
-##  And start the shiny application for an interactive inspection of
-##  the result.
+##  Start the shiny application for an interactive inspection of the
+##  result.
 
 shiny::runApp(LG_shiny(
     main_dir = main_dir,
@@ -150,12 +209,12 @@ shiny::runApp(LG_shiny(
 ###  'data_dir'-argument, such that the call to the shiny-application
 ###  can be done without the need for the script to be sourced
 ###  directly.  The result for the present script (based on the
-###  original input parameters) are given below  (in the case where
-###  this script is used after the script 'dmbp.R').
+###  original input parameters) are given below.
 
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-##     c(ts.dir = "234f779b58b1cf8aee6ebcdb5d6853e0", approx.dir = "Approx__2")
+##     c(ts.dir = "rugarch_3e08382d945f0567d9f8f5d8e171aa53",
+##       approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the

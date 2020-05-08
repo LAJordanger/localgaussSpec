@@ -1,6 +1,9 @@
-#' This is a test for the bivariate case that will investigate how to
-#' use the setup when only one single cosine is used.  Few parameters
-#' included in this setup.
+#' rmgarch-test based on 'EUStockMarkets' 1860 observations, DAX, SMI,
+#' CAC, FTSE, compound returns.  NOTE: This example is solely included
+#' in order to show how the computations can be done.  In particular,
+#' the model used in this script is the simplest one that is
+#' available, i.e. no attempt has been made in order to search for a
+#' multivariate GARCH-type model that gives the best fit to the data.
 
 ###############
 ##  NOTE: This script is a part of the package 'localgaussSpec'.  Its
@@ -27,7 +30,7 @@
 
 ###############
 ## Check that the required package(s) are available.
-.required_packages <- c("localgaussSpec")
+.required_packages <- c("localgaussSpec", "rmgarch")
 .successful <- vapply(
     X = .required_packages,
     FUN = requireNamespace,
@@ -66,15 +69,42 @@ main_dir <- "~/LG_DATA"
 ##############################
 
 ###############
+##  Specify the model to be used based on the log-returns of the
+##  'EuStockMarkets'-data.  NOTE: This approach use the simplest
+##  available model, as the purpose of this script is solely to
+##  present the setup for the computation.
+
+###############
+##  Compute the daily log-returns to be used as 'data' in the
+##  computation.
+
+.first <- head(EuStockMarkets, n = -1)
+.second <- tail(EuStockMarkets, n = -1)
+data <- log(.second/.first)
+rm(.first, .second)
+
+##  Specify the model (using the default marginals).
+uspec <- rugarch::ugarchspec(
+                      mean.model = list(armaOrder = c(0,0)),
+                      variance.model = list(garchOrder = c(1,1), model = "sGARCH"), 
+                      distribution.model = "norm")
+uspec <- rugarch::multispec(replicate(n = dim(data)[2],
+                                      expr = uspec))
+###############
+
+##############################
+
+###############
 ##  Simulate 'nr_samples' samples of length 'N' from the time series
 ##  corresponding to 'TS_key', and save it into the file-hierarchy. (Contact the
 ##  package-maintainer if additional models are of interest to
 ##  investigate.)
 
 nr_samples <- 100
-N <- dim(EuStockMarkets)[1] - 1 ## = 1859
-TS_key <- "dmt_bivariate"
-.seed_for_sample <- 12435
+N <- dim(data)[1] ## = 1859
+TS_key <- "sample_rmgarch"
+
+.seed_for_sample <- 245
 set.seed(.seed_for_sample)
 ##  Generate the sample.  (See the help page for the given key for
 ##  details about the arguments.)
@@ -82,20 +112,10 @@ set.seed(.seed_for_sample)
     TS_key = TS_key,
     N = N,
     nr_samples = nr_samples,
-    first_dmt = list(
-        A = rbind(c(0),
-                  c(1)),
-        delta = c(1.0),
-        delta_range = c(1),
-        alpha = c(2/5 * pi + 0.64),
-        theta = NULL,
-        wn = list(type = "rnorm",
-                  args = list(mean = 0,
-                              sd = .75),
-                  adjust = 0)),
-    phase_adjustment = pi/3,
-    .seed = NULL)
-rm(nr_samples, N, .seed_for_sample)
+    uspec = uspec,
+    data = data,
+    rseed = NULL)
+rm(nr_samples, N, .seed_for_sample, uspec, data)
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
 ##  file-hierarchy.  (Note: )
 save_dir <- paste(TS_key,
@@ -180,8 +200,8 @@ shiny::runApp(LG_shiny(
 
 ## dump("data_dir_for_LG_shiny", stdout())
 ## data_dir_for_LG_shiny <-
-## c(ts.dir = "dmt_bivariate_39736813d9ee9e640c0b6195e86e5cc5", 
-## approx.dir = "Approx__1")
+##     c(ts.dir = "sample_rmgarch_3ba0572c315f69b5b54c81752ff6068c", 
+##       approx.dir = "Approx__1")
 
 #####
 ## Note that 'data_dir' only contains the specification of the
