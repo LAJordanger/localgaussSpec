@@ -114,8 +114,6 @@ LG_approx <- function(
         TS_load(.TS_info = TS,
                 save_dir = FALSE)
         spy_report$envir$TS <- TS
-####  TASK: Reminder, the present use of `eval`+`create_call` is a
-#####  bad solution, and I should try to get rid of it...
     }
     ##  If 'TS' originates from a 'TS_LG_object', it should have an
     ##  attribute 'TS_for_analysis' that should be used instead of TS.
@@ -126,6 +124,11 @@ LG_approx <- function(
         spy_report$envir$TS <- TS
     }
 ###-------------------------------------------------------------------
+    ##  Add an attribute to TS that can be used to identify if the
+    ##  investigation should be based on the "circular index-based
+    ##  block-of-blocks"-bootstrap, since that case must be treated
+    ##  differently later on in the code.
+    attributes(TS)$cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibb_block")
     ##  Extract relevant attributes from 'TS'.
     .attr_from_TS <- local({
         .ignore <- c("dim", "dimnames", "TS_for_analysis")
@@ -150,37 +153,71 @@ LG_approx <- function(
                 .arr = .arr,
                 .restrict = vec,
                 .drop = TRUE)
-        ##  Extract the desired part from 'TS'.
-        .ts <- restrict_array(
-            .arr = TS,
-            .restrict = vec["content"],
-            .drop = TRUE,
-            .never_drop = c("observations", "variables"))
         ##  Find numerical values of lag and level-point.
         lag <- as.integer(vec$lag)
         level_point <- .points[vec$levels, ]
         ##  Split 'vec$pairs' for subsetting
         .pairs <- strsplit(x = vec$pairs, split = "_")[[1]]
-        ##  Extract the data of interest.
-        .data <- local({
-            .first <- restrict_array(
-                .arr = .ts,
-                .restrict = list(variables = .pairs[1]),
+        ##  Get hold of the desired data, strategy depends on the
+        ##  value of the 'cibbb_case'-attribute, i.e. if it is a
+        ##  bootstrap where the "cyclical index-based block-of-blocks"
+        ##  adjustment should be applied.
+        if (attributes(TS)$cibbb_case) {
+            ##  Extract the desired indices for the the given
+            ##  bootstrap-replicate.
+            .indices <- restrict_array(
+                .arr = TS,
+                .restrict = vec["content"],
                 .drop = TRUE,
+                .never_drop = c("observations", "variables"),
                 .keep_attributes = FALSE)
-            .second <- restrict_array(
-                .arr = .ts,
-                .restrict = list(variables = .pairs[2]),
-                .drop = TRUE,
-                .keep_attributes = FALSE)
-            if (lag == 0) {
+            ##  Find the adjusted cibbb-indices.
+            .cibb <- TS_cibb_block(
+                .indices = .indices,
+                .lag = lag)
+            ##  Extract the data of interest.
+            .data <- local({
+                .first <- restrict_array(
+                    .arr = attributes(TS)$orig_TS,
+                    .restrict = list(observations = .cibb$first,
+                                     variables = .pairs[1]),
+                    .drop = TRUE)
+                .second <- restrict_array(
+                    .arr = attributes(TS)$orig_TS,
+                    .restrict = list(observations = .cibb$second,
+                                     variables = .pairs[2]),
+                    .drop = TRUE)
                 cbind(.first,
                       .second)
-            } else
-                cbind(
-                    tail(.first, -lag),
-                    head(.second, -lag))
-        })
+            })
+        } else {
+            ##  Extract the desired part from 'TS'.
+            .ts <- restrict_array(
+                .arr = TS,
+                .restrict = vec["content"],
+                .drop = TRUE,
+                .never_drop = c("observations", "variables"))
+            ##  Extract the data of interest.
+            .data <- local({
+                .first <- restrict_array(
+                    .arr = .ts,
+                    .restrict = list(variables = .pairs[1]),
+                    .drop = TRUE,
+                    .keep_attributes = FALSE)
+                .second <- restrict_array(
+                    .arr = .ts,
+                    .restrict = list(variables = .pairs[2]),
+                    .drop = TRUE,
+                    .keep_attributes = FALSE)
+                if (lag == 0) {
+                    cbind(.first,
+                          .second)
+                } else
+                    cbind(
+                        tail(.first, -lag),
+                        head(.second, -lag))
+            })
+        }
         ##  Compute local Gaussian parameters from LGA(1).  Reminder:
         ##  If 'x' and 'y' are identical, i.e. when all the points
         ##  lies on the diagonal, then the 'find_rho' function simply
@@ -192,73 +229,14 @@ LG_approx <- function(
                           nrow = 1),
             b = bws)
         ##  Use content_details to decide what to return.
-                if (content_details == "rho_only") {
-                    tmp$par.est
-                } else
-                    if (content_details == "rho_log.fun") {
-                        c(tmp$par.est, log_fun = tmp$log_f.est)
-                    } else
-                        c(bws, tmp$par.est, log_fun = tmp$log_f.est)
+        if (content_details == "rho_only") {
+            tmp$par.est
+        } else
+            if (content_details == "rho_log.fun") {
+                c(tmp$par.est, log_fun = tmp$log_f.est)
+            } else
+                c(bws, tmp$par.est, log_fun = tmp$log_f.est)
     }
-
-
-
-################################################################################
-
-    ## ##     arg_grid_fixed <- expand.grid(
-    ## ##         lag = 0:spy_report$envir$lag_max,
-    ## ##         levels = spy_report$envir$dl_vec,
-    ## ##         pairs = .attr_from_TS$.variable_pairs,
-    ## ##         content = dimnames(TS)$content,
-    ## ##         bw_points = .bws_fixed,
-    ## ##         stringsAsFactors = FALSE)
-    
-    ## ## LG_type == "par_one"
-    ## ## .arg_grid = arg_grid_fixed
-    ## ## .new_dnn = "variable"
-    ## ## TS = TS
-    ## ## .arr = NULL
-    ## ## content_details = content_details
-    ## ## fixed_bws = TRUE
-    
-    ## ## vec <- .arg_grid[1, ]
-    ## ## vec <- .arg_grid[100, ]
-    
-
-
-            
-    ## ## ## ## ## ## ## par_one_helper(vec, TS, .arr, content_details,
-    ## ## ## ## ## ## ##                fixed_bws)
-
-
-    ## ## arg_list_par_five_helper <- list(
-    ## ##     vec = vec,
-    ## ##     TS = TS,
-    ## ##     .arr = .arr,
-    ## ##     content_details = content_details,
-    ## ##     fixed_bws = fixed_bws)
-
-    
-    ## ## .tmp_uc_par_five_helper <- under_construction(
-    ## ##     .uc_fun = par_five_helper,
-    ## ##     .uc_package_name = NULL,
-    ## ##     vec = arg_list_par_five_helper$vec,
-    ## ##     TS = arg_list_par_five_helper$TS,
-    ## ##     .arr = arg_list_par_five_helper$.arr,
-    ## ##     content_details = arg_list_par_five_helper$content_details,
-    ## ##     fixed_bws = arg_list_par_five_helper$fixed_bws,
-    ## ##     high_details_level = FALSE,
-    ## ##     clean_workspace = TRUE,
-    ## ##     script_files = "")
-
-    
-
-    
-################################################################################
-
-## ## ##### HERE
-
-    
 ###-------------------------------------------------------------------
     ##  Create a helper-function to deal with the 'par_five'-cases.
     par_five_helper <- function(vec, TS, .arr, .points,
@@ -274,35 +252,70 @@ LG_approx <- function(
                 .restrict = vec,
                 .drop = TRUE,
                 .keep_attributes = FALSE)
-        ##  Extract the desired part from 'TS'.
-        .ts <- restrict_array(
-            .arr = TS,
-            .restrict = vec["content"],
-            .drop = TRUE,
-            .never_drop = c("observations", "variables"))
-        ##  Find numerical values of lag and the level point
+        ##  Find numerical values of lag and level-point.
         lag <- as.integer(vec$lag)
         level_point <- .points[vec$levels, ]
         ##  Split 'vec$pairs' for subsetting
         .pairs <- strsplit(x = vec$pairs, split = "_")[[1]]
-        ##  Extract the components of interest.
-        .first <- restrict_array(
-            .arr = .ts,
-            .restrict = list(variables = .pairs[1]),
-            .drop = TRUE,
-            .keep_attributes = FALSE)
-        .second <- restrict_array(
-            .arr = .ts,
-            .restrict = list(variables = .pairs[2]),
-            .drop = TRUE,
-            .keep_attributes = FALSE)
-        ##  Make the required adjustment.
-        if (lag == 0) {
+        ##  Get hold of the desired data, strategy depends on the
+        ##  value of the 'cibbb_case'-attribute, i.e. if it is a
+        ##  bootstrap where the "cyclical index-based block-of-blocks"
+        ##  adjustment should be applied.
+        if (attributes(TS)$cibbb_case) {
+            ##  Extract the desired indices for the the given
+            ##  bootstrap-replicate.
+            .indices <- restrict_array(
+                .arr = TS,
+                .restrict = vec["content"],
+                .drop = TRUE,
+                .never_drop = c("observations", "variables"),
+                .keep_attributes = FALSE)
+            ##  Find the adjusted cibbb-indices.
+            .cibb <- TS_cibb_block(
+                .indices = .indices,
+                .lag = lag)
+            ##  Extract the components of interest.
+            .first <- restrict_array(
+                .arr = attributes(TS)$orig_TS,
+                .restrict = list(observations = .cibb$first,
+                                 variables = .pairs[1]),
+                .drop = TRUE,
+                .keep_attributes = FALSE)
+            .second <- restrict_array(
+                .arr = attributes(TS)$orig_TS,
+                .restrict = list(observations = .cibb$second,
+                                 variables = .pairs[2]),
+                .drop = TRUE,
+                .keep_attributes = FALSE)
+            ##  Drop the names.
             .x <- unname(.first)
             .y <- unname(.second)
         } else {
-            .x <- unname(tail(.first, -lag))
-            .y <- unname(head(.second, -lag))
+            ##  Extract the desired part from 'TS'.
+            .ts <- restrict_array(
+                .arr = TS,
+                .restrict = vec["content"],
+                .drop = TRUE,
+                .never_drop = c("observations", "variables"))
+            ##  Extract the components of interest.
+            .first <- restrict_array(
+                .arr = .ts,
+                .restrict = list(variables = .pairs[1]),
+                .drop = TRUE,
+                .keep_attributes = FALSE)
+            .second <- restrict_array(
+                .arr = .ts,
+                .restrict = list(variables = .pairs[2]),
+                .drop = TRUE,
+                .keep_attributes = FALSE)
+            ##  Make the required adjustment.
+            if (lag == 0) {
+                .x <- unname(.first)
+                .y <- unname(.second)
+            } else {
+                .x <- unname(tail(.first, -lag))
+                .y <- unname(head(.second, -lag))
+            }
         }
         ##  Compute local Gaussian parameters from LGA(5).  Note: If
         ##  'x' and 'y' are identical, i.e. when all the points lies
@@ -355,7 +368,6 @@ LG_approx <- function(
                 c(bws, param, log_fun = log_fun, eflag = eflag)
         }
     }
-    
 ###-------------------------------------------------------------------
     ##  If '.bws_fixed' are different from 'NULL', compute the
     ##  relevant Local Gaussian Approximations.
@@ -371,7 +383,6 @@ LG_approx <- function(
             content = dimnames(TS)$content,
             bw_points = .bws_fixed,
             stringsAsFactors = FALSE)
-
         ##  Compute data for the 'par_one'-case (this automatically
         ##  becomes 'NULL' if 'LG_type' doesn't contain "par_one").
         par_one_fixed <-
@@ -406,10 +417,6 @@ LG_approx <- function(
 ###-------------------------------------------------------------------
     ##  If '.bws_fixed_only' are 'TRUE', find the Local Gaussian
     ##  Approximations based on bandwidths computed from the data.
-
-    ## ## capture_env() 
-
-
     if (.bws_fixed_only) {
         par_one_data <- par_one_fixed
         par_five_data <- par_five_fixed
@@ -603,64 +610,11 @@ LG_approx <- function(
         attributes(par_five_data) <- c(
             attributes(par_five_data),
             .attr_from_TS)
-        
-    ## ## capture_env() 
-    
-    ## ## ##  information in a part for extract the lag-zero case and store it as an
-    ## ## ##  attribute for the reduced array.  First: Find the proper
-    ## ## ##  restriction lists to use.
-
-    ## ## ## ## capture_env() 
-    ## ## .restrict_zero <- c(list(
-    ## ##     lag = "0",
-    ## ##     variable = "rho"),
-    ## ##     if (.attr_from_TS$.multivariate_TS)
-    ## ##         list(pairs = .attr_from_TS$.bivariate_pairs))
-    ## ## .restrict_h <- list(lag = as.character(1:lag_max))
-    ## ## kill(lag_max)
-    
-    ## ## if (any(LG_type == "par_one")) {
-    ## ##     class(par_one_data) <- LG_default$class$array
-    ## ##     lag_zero <- restrict_array(
-    ## ##         .arr = par_one_data,
-    ## ##         .restrict = .restrict_zero)
-    ## ##     par_one_data <- restrict_array(
-    ## ##         .arr = par_one_data,
-    ## ##         .restrict = .restrict_h)
-    ## ##     attributes(par_one_data)$.multivariate <- attributes(TS)$.multivariate
-    ## ##     attributes(par_one_data)$.bivariate_pairs <- attributes(TS)$.bivariate_pairs
-    ## ##     attributes(par_one_data)$.lag_zero <- if (attributes(TS)$.multivariate) {
-    ## ##         lag_zero
-    ## ##     } else
-    ## ##         NA_integer_
-    ## ##     kill(lag_zero)
-    ## ## }
-    ## ## if (any(LG_type == "par_five")) {
-    ## ##     class(par_five_data) <- LG_default$class$array
-    ## ##     lag_zero <- restrict_array(
-    ## ##         .arr = par_five_data,
-    ## ##         .restrict = .restrict_zero)
-    ## ##     par_five_data <- restrict_array(
-    ## ##         .arr = par_five_data,
-    ## ##         .restrict = .restrict_h)
-    ## ##     attributes(par_five_data)$.multivariate <- attributes(TS)$.multivariate
-    ## ##     attributes(par_one_data)$.bivariate_pairs <- attributes(TS)$.bivariate_pairs
-    ## ##     attributes(par_five_data)$.lag_zero <- if (attributes(TS)$.multivariate) {
-    ## ##         lag_zero
-    ## ##     } else
-    ## ##         NA_integer_
-    ## ##     kill(lag_zero)
-    ## ## }
-    ## ## kill(.restrict_zero, .restrict_h, TS)
-
 ###-------------------------------------------------------------------
     ##  When relevant, add an attribute to 'par_five_data' that
     ##  reveals if all the values from 'localgauss' originates from a
     ##  proper numerical convergence, i.e. test if all 'eflag' has the
     ##  value '0'.
-
-    ## ## capture_env() 
-    
     if  (any(LG_type == "par_five")) {
         attr(x = par_five_data, which = "convergence") <-
             0 == sum(restrict_array(
@@ -680,7 +634,7 @@ LG_approx <- function(
             cat(paste("\n\t",
                       "Nonzero exit-flags detected!",
                       "\n\t",
-                      "Some optimisations failed, proceed with care."))
+                      "Some optimisations failed, proceed with care.\n\n"))
     }
 
 ###-------------------------------------------------------------------
@@ -761,4 +715,3 @@ LG_approx <- function(
 #####  returns '1', and I suspect that it might be something with
 #####  'arg_grid_h' that mess stuff up.  This has not been
 #####  investigated in detail since a work-around was created.
-

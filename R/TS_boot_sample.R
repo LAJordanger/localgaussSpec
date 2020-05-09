@@ -25,22 +25,20 @@
 #'
 #' @keywords internal
 
-
-#######  TASK: This code resamples from the normalised version, and
-#######  that might not be optimal since there could be dependencies
-#######  due to the normalisation-process.
-
 TS_boot_sample <- function(
     TS,
     main_dir,
     save_dir,
     nb = 5,
-    boot_type = "block",
+    boot_type = c("cibb_block", "block"),
     block_length = 20,
     boot_seed = NULL) {
 ###-------------------------------------------------------------------
     ##  Sanity checks not included here, assumes everything has been
-    ##  tested in the calling function.
+    ##  tested in the calling function.  Restrict the 'boot_type' to
+    ##  its first argument if it is longer than one.
+    if (length(boot_type) > 1) 
+        boot_type <- boot_type[1]
 ###-------------------------------------------------------------------
     ##  Update `TS` with the object from file
     load(file = paste(c(main_dir, TS),
@@ -80,12 +78,10 @@ TS_boot_sample <- function(
     if (! is.null(boot_seed))
         set.seed(seed = boot_seed)
     kill(boot_seed)
-
 ###-------------------------------------------------------------------
     ##  Extract the attributes to be reinserted later on.
     TS_attributes_to_keep <-
         attributes(TS)[!names(attributes(TS))%in%c("dim", "dimnames")]
-    
     ##  Compute the bootstrap replicates, including an update of the
     ##  dimension-names and attributes to tell other parts of the code
     ##  what to do when this object is encountered.  First: Drop the
@@ -123,7 +119,7 @@ TS_boot_sample <- function(
                         FUN.VALUE = numeric(.n)))
         } else {
             function(x) {
-                if (.d == 1) {
+                if (any(.d == 1, boot_type == "cibb_block")) {
                     x
                 } else
                     as.vector(vapply(
@@ -143,17 +139,33 @@ TS_boot_sample <- function(
     })
 ################################################################################
     ##  Create the desired 'TS_boot', by exploiting the format that
-    ##  'TS' has been converted to.  Note: The present setup does not
-    ##  wory about the 
-    TS_boot <- structure(
-        .Data = TS[.boot_indices],
-        .Dim = c(dim(TS), nb),
-        .Dimnames = c(
-            dimnames(TS),
-            list(content = paste(LG_default$boot.prefix, 1:nb, sep = ""))))
+    ##  'TS' has been converted to.  There are (for the time being)
+    ##  two options here, one based on the block-bootstrap, and one
+    ##  based on the "circular index-based block-of-blocks" bootstrap.
+    ##  Reminder: In the latter case it is the "starting-indicies"
+    ##  that are stored, and the extraction is taken care of in other
+    ##  functions later on.
+    TS_boot <- if (boot_type == "cibb_block") {
+                   structure(
+                       .Data = .boot_indices,
+                       .Dim = c(1, dim(TS)[2], nb),
+                       .Dimnames = c(
+                           list(variables = "cibb_block"),
+                           dimnames(TS)[2],
+                           list(content = paste(LG_default$boot.prefix, 1:nb, sep = ""))))
+               } else {
+                   structure(
+                       .Data = TS[.boot_indices],
+                       .Dim = c(dim(TS), nb),
+                       .Dimnames = c(
+                           dimnames(TS),
+                           list(content = paste(LG_default$boot.prefix, 1:nb, sep = ""))))
+               }
     attributes(TS_boot) <- c(
         attributes(TS_boot),
-        list(bootstrap = TRUE),
+        list(bootstrap = TRUE,
+             orig_TS = TS,
+             boot_type = boot_type),
         TS_attributes_to_keep)
     kill(TS, nb, block_length, TS_attributes_to_keep, .boot_indices)
 ###-------------------------------------------------------------------
@@ -177,4 +189,3 @@ TS_boot_sample <- function(
          TS = c(save_dir, save_file.Rda),
          save_dir = save_dir)
 }
-

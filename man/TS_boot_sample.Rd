@@ -4,8 +4,9 @@
 \alias{TS_boot_sample}
 \title{Create bootstrap-replicates of a time series.}
 \usage{
-TS_boot_sample(TS, main_dir, save_dir, nb = 5, boot_type = "block",
-  block_length = 20, boot_seed = NULL)
+TS_boot_sample(TS, main_dir, save_dir, nb = 5,
+  boot_type = c("cibb_block", "block"), block_length = 20,
+  boot_seed = NULL)
 }
 \arguments{
 \item{TS}{The original time series that we want to create
@@ -23,12 +24,11 @@ turn of the interaction with disk.}
 we want to use in our analysis.  Default value 5 (at least in
 the development phase).}
 
-\item{boot_type}{This one can be used to select what kind of
-bootstrap-algorithm to be used.  Default value \code{"block"},
-but it has not been implemented any other algorithms
-yet... (Reminder: It would be be nice to include the
-'network-duality' approach in this context -- but then I fear I
-might need to implement that routine from scratch.)}
+\item{boot_type}{This argument should be either \code{"cibb_block"}
+or \code{"block"}, the former gives an implementation of the
+circular index-based block-of-blocks bootstrap adjustment,
+whereas the latter gives the ordinary block bootstrap.  The
+default option is \code{"cibb_block"}.}
 
 \item{block_length}{The length of the blocks to be used when
 \code{boot_type="block"} is used.  Default value 20 in the

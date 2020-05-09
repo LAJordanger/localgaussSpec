@@ -1,6 +1,5 @@
-#' @param boot_type This one can be used to select what kind of
-#'     bootstrap-algorithm to be used.  Default value \code{"block"},
-#'     but it has not been implemented any other algorithms
-#'     yet... (Reminder: It would be be nice to include the
-#'     'network-duality' approach in this context -- but then I fear I
-#'     might need to implement that routine from scratch.)
+#' @param boot_type This argument should be either \code{"cibb_block"}
+#'     or \code{"block"}, the former gives an implementation of the
+#'     circular index-based block-of-blocks bootstrap adjustment,
+#'     whereas the latter gives the ordinary block bootstrap.  The
+#'     default option is \code{"cibb_block"}.
