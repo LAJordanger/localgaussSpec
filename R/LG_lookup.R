@@ -300,7 +300,6 @@ LG_lookup <- function(input,
     ##  his/hers own presentation.
     look_up$details <- LG_lookup_details(
         look_up = look_up,
-        input = input,
         .AB_env = .AB_env)
     ##  Add 'curclicues'-details to 'look_up', i.e. details related to
     ##  the size, colour, position and so on for the information added
