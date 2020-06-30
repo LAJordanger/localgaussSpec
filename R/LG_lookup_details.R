@@ -383,6 +383,24 @@ LG_lookup_details <- function(look_up,
         details$text$plot_type_YiYj,
         sep = "")
     ###-------------------------------------------------------------------
+    ##  When necessary, investigate the status regarding the
+    ##  problematic numerical convergence.  The first test reports the
+    ##  existence of some problem for some of the tuning parameters
+    ##  used in the investigation, but it might happen that the
+    ##  problem is not present for all the tuning parameters.
+    if (details$is_local) {
+        if (details$type == "five") {
+            if (isFALSE(details$convergence)) {
+                ##  Check the given combination of tuning parameters.
+                details$NC_fail_details <-
+                    LG_lookup_details_NC_fail(look_up,
+                                              .AB_env)
+                ##  Update convergence-status based on this.
+                details$convergence <- ! details$NC_fail_details$problem_present
+            }
+        }
+    }
+    ###-------------------------------------------------------------------
     ##  Add information about whether or not the numerical convergence
     ##  should be trusted, i.e. if 'eflag' was 0 when the
     ##  five-parameter local Gaussian approach was used.  If for some

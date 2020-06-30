@@ -32,6 +32,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
         point_reflected = list(levels = look_up$levels_point_reflected),
         point_both = list(levels = unique(c(look_up$levels_point,
                                             look_up$levels_point_reflected))),
+        non_neg_lags = list(lag = as.character(c(0, look_up$lag_vec))),
         pos_lags = list(lag = if (look_up$is_lag_zero_needed) {
                                   as.character(c(0, look_up$lag_vec))
                               } else
@@ -155,6 +156,21 @@ LG_lookup_restrict <- function (look_up = look_up) {
                            no   = "orig"),
                     if (look_up$is_CI_needed)
                         look_up$.CI_low_high))
+    ###-------------------------------------------------------------------
+    ##  The restrictions to be used when it turns out that at least
+    ##  one of the local Gaussian estimates did not succeed, and it is
+    ##  of interest to check if the problem is present for the tuning
+    ##  parameters used to specify the plot of interest.  This is done
+    ##  by recycling/combining information extracted above.
+    restrict$NC_check$CS <- list(
+        branch = look_up$point_type_branch,
+        pos_lags = c(restrict$C$local$pos_lags,
+                     bw_points = look_up$bw_points),
+        neg_lags = c(restrict$C$local$neg_lags,
+                     bw_points = look_up$bw_points))
+    ##  Tweak the list to ensure that lag "0" also is included for the
+    ##  positive lags.
+    restrict$NC_check$CS$pos_lags$lag <- .template$non_neg_lags$lag
     ###-------------------------------------------------------------------
     ##  Include a helper function that will be used as the initial
     ##  step in several other functions.  Reminder: If all the

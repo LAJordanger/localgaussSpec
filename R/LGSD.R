@@ -436,6 +436,8 @@ LG_default$curlicues <- list(
             width = .01,
             boundary = .1,
             size = .5,
+            colour = "black",
+            fill = "white",
             alpha = .5,
             outlier.size = .5,
             outlier.alpha = .3),

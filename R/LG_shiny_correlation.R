@@ -103,9 +103,12 @@ LG_shiny_correlation <- function(look_up,
                 .arr = ..env[[cache$L_branch]],
                 .restrict = restrict$L_pairs)
             ##  Return the data with information about limits.
+            .tmp <- restrict_array(
+                .arr = .data,
+                .restrict = list(variable = "rho"))
             list(.data = .data,
                  .xlim = look_up$xlim,
-                 .ylim = range(0, .data))
+                 .ylim = range(0, .tmp))
         })
     }
     ###-------------------------------------------------------------------
@@ -115,11 +118,14 @@ LG_shiny_correlation <- function(look_up,
         ..env[[cache$L_levels]] <- local({
             .data <- ..env[[cache$L_pairs]]$.data
             ##  Return the data with information about limits.
+            .tmp <- restrict_array(
+                .arr = .data,
+                .restrict = list(variable = "rho"))
             list(.data = unfold(.data,
                                 look_up = look_up,
                                 .gl = "local"),
                  .xlim = look_up$xlim,
-                 .ylim = range(0, .data))
+                 .ylim = range(0, .tmp))
         })
     }
 }

@@ -18,7 +18,7 @@ LG_lookup_curlicues <- function(look_up) {
     CSC$title  <- list(label = look_up$details$.plot_label)
     ##  Compute the 'include'-nodes of the different labels.
     CSC$plot_stamp$include <- {look_up$TCS_type %in% c("C", "S")}
-    CSC$NC_value$include <- isTRUE(look_up$details$convergence)
+    CSC$NC_value$include <- {look_up$global_local == "local"}
     CSC$n_R_L_values$include <- TRUE
     CSC$m_value$include  <- {look_up$TCS_type == "S"}
     CSC$v_value$include  <- look_up$is_local
@@ -54,6 +54,13 @@ LG_lookup_curlicues <- function(look_up) {
             curlicues$b_value$annotate$vjust <-
                 curlicues$v_value$annotate$vjust
         }
+    }
+    ##  Adjust the colour and the size of the numerical convergence
+    ##  information if things did not converge numerically.
+    if (isFALSE(look_up$details$convergence)) {
+        curlicues$NC_value$annotate$size <- 4 + 2 *
+            curlicues$NC_value$annotate$size
+        curlicues$NC_value$annotate$col  <- "red"
     }
     ##  Add the relevant labels, and use information from 'xlim' to
     ##  set the x-component of the position (it is here assumed that a
@@ -145,8 +152,8 @@ LG_lookup_curlicues <- function(look_up) {
             x = xlim[1],
             label = if (look_up$type == "par_one") {
                         structure(
-                            .Data = "Computations based on the heinous 1-parameter approach.  Use 5-parameter instead!",
-                            short = "Warning: 1-parameter approach!")
+                            .Data = "'Computations based on the heinous 1-parameter approach.  Use 5-parameter instead!'",
+                            short = "'Warning: 1-parameter approach!'")
                     } else {
                         structure(
                             .Data = ifelse(test = isTRUE(look_up$details$convergence),
@@ -197,6 +204,29 @@ LG_lookup_curlicues <- function(look_up) {
                   y = "short")) {
         curlicues$NC_value$annotate$label =
             attributes(curlicues$NC_value$annotate$label)$short
+    }
+    ###-------------------------------------------------------------------
+    ##  Ensure that the proper adjustment is made if a numerical
+    ##  convergence problem should be higlighted for the boxplot of
+    ##  the local Gaussian autocorrelations.
+    if (all(look_up$TCS_type == "C",
+            isFALSE(look_up$details$convergence))) {
+        ##  Update the values used for the boxplot, so it is easy to
+        ##  detect the problematic lags.
+        .subsetting <- look_up$details$NC_fail_details$C_status
+        .colour <- rep(
+            x = curlicues$correlation_plot$boxplot$colour,
+            times = length(.subsetting))
+        .fill <- rep(
+            x = curlicues$correlation_plot$boxplot$fill,
+            times = length(.subsetting))
+        ##  Adjust '.colour' and '.fill' for the problematic cases.
+        .colour[.subsetting] <- "brown"
+        .fill[.subsetting] <- "red"
+        ##  Update the values to be used.
+        curlicues$correlation_plot$boxplot$colour <- .colour
+        curlicues$correlation_plot$boxplot$fill <- .fill
+        kill(.subsetting, .colour, .fill)
     }
     ###-------------------------------------------------------------------
     ##  Add the data-frame needed in order for the text-annotations.
