@@ -19,7 +19,7 @@
 LG_extract_scripts <- function(target_dir) {
     ##  Identify the source path.
     .package <- "localgaussSpec"
-    .script_dir <- "localgaussSpec_scripts"
+    .script_dir <- "scripts"
     .source_path <- file.path(
         find.package(package = .package),
         .script_dir)
