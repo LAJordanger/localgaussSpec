@@ -63,6 +63,8 @@ LG_plot <- function(..env,
                                      width = curlicues$correlation_plot$boxplot$width,
                                      boundary = curlicues$correlation_plot$boxplot$boundary)),
                              alpha = curlicues$correlation_plot$boxplot$alpha,
+                             colour = curlicues$correlation_plot$boxplot$colour,
+                             fill = curlicues$correlation_plot$boxplot$fill,
                              size = curlicues$correlation_plot$boxplot$size,
                              outlier.alpha = curlicues$correlation_plot$boxplot$outlier.alpha,
                              outlier.size = curlicues$correlation_plot$boxplot$outlier.size)
@@ -338,7 +340,4 @@ LG_plot <- function(..env,
     ###-------------------------------------------------------------------
     ##  Return the plot to the workflow.
     .result
-
-    
-    
 }
