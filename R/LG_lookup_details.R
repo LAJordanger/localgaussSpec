@@ -48,7 +48,7 @@ LG_lookup_details <- function(look_up,
         " observations.",
         sep = "")
     details$window <- look_up$window
-    details$truncation_level <- look_up$cut
+    details$truncation_level <- look_up$m_selected
     ###-------------------------------------------------------------------
     ##  Investigate if information about convergence-status is
     ##  available, which only is relevant for the local cases when the
