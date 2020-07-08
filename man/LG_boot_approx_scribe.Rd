@@ -84,11 +84,11 @@ are set to \code{TRUE}.}
 we want to use in our analysis.  Default value 5 (at least in
 the development phase).}
 
-\item{boot_type}{This argument should be either \code{"cibb_block"}
-or \code{"block"}, the former gives an implementation of the
-circular index-based block-of-blocks bootstrap adjustment,
-whereas the latter gives the ordinary block bootstrap.  The
-default option is \code{"cibb_block"}.}
+\item{boot_type}{This argument should be either
+\code{"cibbb_tuples"} or \code{"block"}, the former gives an
+implementation of the circular index-based block bootstrap for
+tuples adjustment, whereas the latter gives the ordinary block
+bootstrap.  The default option is \code{"cibbb_tuples"}.}
 
 \item{block_length}{The length of the blocks to be used when
 \code{boot_type="block"} is used.  Default value 20 in the

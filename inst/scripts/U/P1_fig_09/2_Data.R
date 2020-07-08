@@ -77,8 +77,8 @@ rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 ##  Specify the details needed for the construction of the
 ##  bootstrapped pointwise confidence intervals, and do the
 ##  computations.  Note that the default for the 'boot_type'-argument
-##  is "cibb_block", i.e. the circular index based block bootstrap
-##  discussed in paper P1.
+##  is "cibbb_tuples", i.e. the circular index based block bootstrap
+##  for tuples discussed in paper P1.
 
 nb <- 100
 block_length <- 25
@@ -88,7 +88,7 @@ LG_BS <- LG_boot_approx_scribe(
     main_dir        = main_dir,
     data_dir         = LG_AS$data_dir,
     nb              = nb,
-    boot_type       = "cibb_block",
+    boot_type       = "cibbb_tuples",
     block_length    = block_length,
     boot_seed       = NULL,
     lag_max         = NULL,

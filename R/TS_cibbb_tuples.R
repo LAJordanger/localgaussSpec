@@ -11,7 +11,7 @@
 #'
 #' @keywords internal
 
-TS_cibb_block <- function(.indices, .lag) {
+TS_cibbb_tuples <- function(.indices, .lag) {
     .n <- length(.indices)
     ##  The subsetting used in the local Gaussian spectra-papers
     ##  implies that the first subsetting shoud be with regard to 't'

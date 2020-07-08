@@ -100,7 +100,7 @@ TS_acr <- function(.TS_info,
         ##  desired results. Reminder: We here need to separate out
         ##  the solution to be used in general from the one used for
         ##  the circular index-based block bootstrap for tuples.
-        cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibb_block")
+        cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibbb_tuples")
         if  (! cibbb_case) {
             .first <- restrict_array(
                 .arr = .ts,
@@ -128,7 +128,7 @@ TS_acr <- function(.TS_info,
                                FUN.VALUE = numeric(1)),
                 .Names = 0:lag_max))
         } else {
-            ## The "cibb_block"-case, in which '.ts' contains the
+            ## The "cibbb_tuples"-case, in which '.ts' contains the
             ## pivotal indices for the computation.
             .indices <- as.vector(.ts)
             .orig_TS <- attributes(TS)$orig_TS
@@ -158,12 +158,14 @@ TS_acr <- function(.TS_info,
                                    if (lag == 0) {
                                        .first %*% .second / .denom
                                    } else {
-                                       ##  Use 'cibb_block' adjustment
-                                       ##  for the subsetting.
-                                       .cibb <- TS_cibb_block(
-                                       .indices = .indices,
-                                       .lag = lag)
-                                       .first_orig[.cibb$first] %*% .second_orig[.cibb$second] / .denom
+                                       ##  Use 'cibbb_tuples'
+                                       ##  adjustment for the
+                                       ##  subsetting.
+                                       .cibbb_tuples <- TS_cibbb_tuples(
+                                           .indices = .indices,
+                                           .lag = lag)
+                                       .first_orig[.cibbb_tuples$first] %*%
+                                           .second_orig[.cibbb_tuples$second] / .denom
                                    }
                                },
                                FUN.VALUE = numeric(1)),

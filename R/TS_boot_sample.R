@@ -30,7 +30,7 @@ TS_boot_sample <- function(
     main_dir,
     save_dir,
     nb = 5,
-    boot_type = c("cibb_block", "block"),
+    boot_type = c("cibbb_tuples", "block"),
     block_length = 20,
     boot_seed = NULL) {
 ###-------------------------------------------------------------------
@@ -119,7 +119,7 @@ TS_boot_sample <- function(
                         FUN.VALUE = numeric(.n)))
         } else {
             function(x) {
-                if (any(.d == 1, boot_type == "cibb_block")) {
+                if (any(.d == 1, boot_type == "cibbb_tuples")) {
                     x
                 } else
                     as.vector(vapply(
@@ -145,12 +145,12 @@ TS_boot_sample <- function(
     ##  Reminder: In the latter case it is the "starting-indicies"
     ##  that are stored, and the extraction is taken care of in other
     ##  functions later on.
-    TS_boot <- if (boot_type == "cibb_block") {
+    TS_boot <- if (boot_type == "cibbb_tuples") {
                    structure(
                        .Data = .boot_indices,
                        .Dim = c(1, dim(TS)[2], nb),
                        .Dimnames = c(
-                           list(variables = "cibb_block"),
+                           list(variables = "cibbb_tuples"),
                            dimnames(TS)[2],
                            list(content = paste(LG_default$boot.prefix, 1:nb, sep = ""))))
                } else {

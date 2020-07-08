@@ -128,7 +128,7 @@ LG_approx <- function(
     ##  investigation should be based on the circular index-based
     ##  block bootstrap for tuples, since that case must be treated
     ##  differently later on in the code.
-    attributes(TS)$cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibb_block")
+    attributes(TS)$cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibbb_tuples")
     ##  Extract relevant attributes from 'TS'.
     .attr_from_TS <- local({
         .ignore <- c("dim", "dimnames", "TS_for_analysis")
@@ -172,19 +172,19 @@ LG_approx <- function(
                 .never_drop = c("observations", "variables"),
                 .keep_attributes = FALSE)
             ##  Find the adjusted cibbb-indices.
-            .cibb <- TS_cibb_block(
+            .cibbb_tuples <- TS_cibbb_tuples(
                 .indices = .indices,
                 .lag = lag)
             ##  Extract the data of interest.
             .data <- local({
                 .first <- restrict_array(
                     .arr = attributes(TS)$orig_TS,
-                    .restrict = list(observations = .cibb$first,
+                    .restrict = list(observations = .cibbb_tuples$first,
                                      variables = .pairs[1]),
                     .drop = TRUE)
                 .second <- restrict_array(
                     .arr = attributes(TS)$orig_TS,
-                    .restrict = list(observations = .cibb$second,
+                    .restrict = list(observations = .cibbb_tuples$second,
                                      variables = .pairs[2]),
                     .drop = TRUE)
                 cbind(.first,
@@ -271,19 +271,19 @@ LG_approx <- function(
                 .never_drop = c("observations", "variables"),
                 .keep_attributes = FALSE)
             ##  Find the adjusted cibbb-indices.
-            .cibb <- TS_cibb_block(
+            .cibbb_tuples <- TS_cibbb_tuples(
                 .indices = .indices,
                 .lag = lag)
             ##  Extract the components of interest.
             .first <- restrict_array(
                 .arr = attributes(TS)$orig_TS,
-                .restrict = list(observations = .cibb$first,
+                .restrict = list(observations = .cibbb_tuples$first,
                                  variables = .pairs[1]),
                 .drop = TRUE,
                 .keep_attributes = FALSE)
             .second <- restrict_array(
                 .arr = attributes(TS)$orig_TS,
-                .restrict = list(observations = .cibb$second,
+                .restrict = list(observations = .cibbb_tuples$second,
                                  variables = .pairs[2]),
                 .drop = TRUE,
                 .keep_attributes = FALSE)
