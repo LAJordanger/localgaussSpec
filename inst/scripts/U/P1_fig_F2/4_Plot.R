@@ -69,7 +69,6 @@ library(grid)
 
 .levels_Diagonal <- 1L
 .global_local <- "local"  # "global"
-.boot_type <- "cibb" 
 
 input_common <- list(
     TCS_type = "S",
