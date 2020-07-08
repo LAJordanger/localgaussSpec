@@ -147,7 +147,8 @@ LG_default <-
 ###-------------------------------------------------------------------
         ##  Main files for storing of data:
 ###  At the highest level, overview of the time series that has been
-###  generated, i.e. type, paramaters, length, seed.
+###  generated, i.e. type, paramaters, length, seed.  Reminder:
+###  Important to avoid OS-dependent symbols in this part!
         main_dir = c("~", "LG_DATA"),
         other_TS_dir_prefix = "other",
         content_file_name = "TS_content.Rda",
