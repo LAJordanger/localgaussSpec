@@ -141,7 +141,7 @@ TS_boot_sample <- function(
     ##  Create the desired 'TS_boot', by exploiting the format that
     ##  'TS' has been converted to.  There are (for the time being)
     ##  two options here, one based on the block-bootstrap, and one
-    ##  based on the "circular index-based block-of-blocks" bootstrap.
+    ##  based on the circular index-based block bootstrap for tuples.
     ##  Reminder: In the latter case it is the "starting-indicies"
     ##  that are stored, and the extraction is taken care of in other
     ##  functions later on.

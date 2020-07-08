@@ -125,8 +125,8 @@ LG_approx <- function(
     }
 ###-------------------------------------------------------------------
     ##  Add an attribute to TS that can be used to identify if the
-    ##  investigation should be based on the "circular index-based
-    ##  block-of-blocks"-bootstrap, since that case must be treated
+    ##  investigation should be based on the circular index-based
+    ##  block bootstrap for tuples, since that case must be treated
     ##  differently later on in the code.
     attributes(TS)$cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibb_block")
     ##  Extract relevant attributes from 'TS'.
@@ -159,9 +159,9 @@ LG_approx <- function(
         ##  Split 'vec$pairs' for subsetting
         .pairs <- strsplit(x = vec$pairs, split = "_")[[1]]
         ##  Get hold of the desired data, strategy depends on the
-        ##  value of the 'cibbb_case'-attribute, i.e. if it is a
-        ##  bootstrap where the "cyclical index-based block-of-blocks"
-        ##  adjustment should be applied.
+        ##  value of the 'cibbb_case'-attribute, i.e. if it is the
+        ##  circular index-based block bootstrap for tuples that
+        ##  should be applied.
         if (attributes(TS)$cibbb_case) {
             ##  Extract the desired indices for the the given
             ##  bootstrap-replicate.
@@ -258,9 +258,9 @@ LG_approx <- function(
         ##  Split 'vec$pairs' for subsetting
         .pairs <- strsplit(x = vec$pairs, split = "_")[[1]]
         ##  Get hold of the desired data, strategy depends on the
-        ##  value of the 'cibbb_case'-attribute, i.e. if it is a
-        ##  bootstrap where the "cyclical index-based block-of-blocks"
-        ##  adjustment should be applied.
+        ##  value of the 'cibbb_case'-attribute, i.e. if it is the
+        ##  circular index-based block bootstrap for tuples that
+        ##  should be applied.
         if (attributes(TS)$cibbb_case) {
             ##  Extract the desired indices for the the given
             ##  bootstrap-replicate.

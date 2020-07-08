@@ -2,7 +2,7 @@
 % Please edit documentation in R/TS_cibb_block.R
 \name{TS_cibb_block}
 \alias{TS_cibb_block}
-\title{Circular index-based block-of-blocks adjustment}
+\title{Circular index-based block bootstrap for tuples}
 \usage{
 TS_cibb_block(.indices, .lag)
 }
@@ -13,11 +13,11 @@ TS_cibb_block(.indices, .lag)
 }
 \value{
 This helper function returns a list with two vectors, one
-    named \code{first} and one named \code{second}.  The indices in
-    \code{second} are those needed in order for the circular
-    index-based block-of-blocks adjustment.
+    named \code{first} and one named \code{second}.  These are the
+    indices needed for the circular index-based block bootstrap for
+    tuples.
 }
 \description{
-Circular index-based block-of-blocks adjustment
+Circular index-based block bootstrap for tuples
 }
 \keyword{internal}

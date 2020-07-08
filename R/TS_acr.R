@@ -99,7 +99,7 @@ TS_acr <- function(.TS_info,
         ##  Extract the components of interest, and compute the
         ##  desired results. Reminder: We here need to separate out
         ##  the solution to be used in general from the one used for
-        ##  the circular index-based block-of-blocks bootstrap.
+        ##  the circular index-based block bootstrap for tuples.
         cibbb_case <- isTRUE(attributes(TS)$boot_type == "cibb_block")
         if  (! cibbb_case) {
             .first <- restrict_array(
