@@ -120,8 +120,8 @@ TS_sample <- function (
     ##  Update the formals of the function with the value 'N'
     formals(TS_data$fun)[[TS_data$fun_data$size_name]] <- N
     ##  Generate the required time series sample(s).
-    ## TS <- if (TS_key %in% c("sample_rmgarch", "sample_dccgarch")) {
-    TS <- if (TS_key == "sample_rmgarch") {
+    ## TS <- if (TS_key %in% c("rmgarch", "sample_dccgarch")) {
+    TS <- if (TS_key == "rmgarch") {
               ##  Generate the desired sample in a reproducible way:
               ##  Adjust formals to include nr_samples - and - update
               ##  'rseed' if it is 'NULL' (otherwise this will not be

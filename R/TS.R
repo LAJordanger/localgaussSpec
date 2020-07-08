@@ -445,9 +445,9 @@ myTS <- function(TS_key, ...){
     ##  Adjustment when 'rugarch'
     if (TS_key == "rugarch")
         .fun_data$args$spec <- given.args$spec
-    ##  Adjustment when 'sample_rmgarch' or 'sample_dccgarch'.
-    ## ## ## ## if (TS_key == "sample_rmgarch") {
-    if (TS_key %in% c("sample_rmgarch", "sample_dccgarch")) {
+    ##  Adjustment when 'rmgarch' or 'sample_dccgarch'.
+    ## ## ## ## if (TS_key == "rmgarch") {
+    if (TS_key %in% c("rmgarch", "sample_dccgarch")) {
         .fun_data$args$uspec <- given.args$uspec
         .fun_data$args$data <- given.args$data
     }

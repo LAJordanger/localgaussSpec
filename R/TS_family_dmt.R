@@ -359,11 +359,11 @@ TS_families <- c(
 ## ##  if the argument to 'gogarchspec' differs a bit from the other two
 ## ##  cases.  The difference seems to be that the 'gogarchspec' does not 
 
-sample_rmgarch <- function(n.sim = 100,
-                           m.sim = 10,
-                           uspec = NULL,
-                           data = NULL,
-                           rseed = NULL) {
+rmgarch <- function(n.sim = 100,
+                    m.sim = 10,
+                    uspec = NULL,
+                    data = NULL,
+                    rseed = NULL) {
     if (! requireNamespace("rmgarch", quietly = TRUE))
         error(c("The package",
                 sQuote("rmgarch"),
@@ -430,9 +430,9 @@ sample_rmgarch <- function(n.sim = 100,
 ##  Add the new function to "TS_families".
 TS_families <- c(
     TS_families,
-    list(sample_rmgarch =
+    list(rmgarch =
              list(package = "localgaussSpec",
-                  fun = "sample_rmgarch",
+                  fun = "rmgarch",
                   args = list(uspec = NULL,
                               data = NULL,
                               rseed = NULL),
