@@ -81,7 +81,7 @@
 TS_LG_object <- function (
     TS_data,
     details = NULL,
-    main_dir = "~/LG_DATA",  # The value from 'LG_default'
+    main_dir = c("~", "LG_DATA"),  # The value from 'LG_default'
     save_dir = NULL,
     .remove_ties = TRUE) {
 ###-------------------------------------------------------------------
@@ -114,8 +114,16 @@ TS_LG_object <- function (
     ##  characters that creates problems when used with another
     ##  operative system?
 ###-------------------------------------------------------------------
+    ##  Collect 'main_dir' to one string if it is given as a vector.
+    if (length(main_dir) > 1) {
+        main_dir <- paste(
+            main_dir,
+            collapse = .Platform$file.sep)
+    }
+###-------------------------------------------------------------------
     ##  Extract a couple of Boolean objects related to 'main_dir'.
-    main_dir_boolean <- (main_dir == LG_default$main_dir)
+    main_dir_boolean <- {main_dir == paste(LG_default$main_dir,
+                                           collapse = .Platform$file.sep)}
     main_dir_exists_boolean <- dir.exists(main_dir)
 ###-------------------------------------------------------------------
     ##  If 'main_dir' does not exists: Create it if it is the default

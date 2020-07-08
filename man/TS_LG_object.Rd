@@ -4,7 +4,7 @@
 \alias{TS_LG_object}
 \title{Prepare a time series for a local Gaussian inspection}
 \usage{
-TS_LG_object(TS_data, details = NULL, main_dir = "~/LG_DATA",
+TS_LG_object(TS_data, details = NULL, main_dir = c("~", "LG_DATA"),
   save_dir = NULL, .remove_ties = TRUE)
 }
 \arguments{
