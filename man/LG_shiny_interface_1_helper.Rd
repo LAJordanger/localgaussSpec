@@ -18,7 +18,7 @@ LG_shiny_interface_1_helper(.env, .approx, .iterated = FALSE)
 included since this function will call itself when an
 approx-node contains bootstrap-information.  (There are some
 minor differences with regard to how the result should be
-returned in these to cases.)}
+returned in these two cases.)}
 }
 \value{
 This helper function finds the parameters to use when
