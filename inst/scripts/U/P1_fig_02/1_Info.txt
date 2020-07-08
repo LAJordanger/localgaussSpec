@@ -1,0 +1,7 @@
+This folder contains the code needed for the reproduction of figure 2 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+
+This investigates the dmbp-data, i.e. the "Deutschemark/British pound Exchange Rate" that was used by Bollerslev, and Ghysels in their paper "Periodic Autoregressive Conditional Heteroscedasticity", 1996, Journal of Business and Economic Statistics, *14*, 139-151.  The data-set used here has been copied from the version used in the rugarch-package (Alexios Ghalanos, https://cran.r-project.org/web/packages/rugarch), since a user might like to test this script without having to install that package first.
+
+The content of this figure is a simple comparisson of the original dmbp-data and the pseudo-normalised version that the local Gaussian autocorrelations are computed from.  Note that it is not necessary to compute any local Gaussian autocorrelations for this example, and there are thus no files "2_Data.R" and "3_Shiny.R" in this folder.
+
+The file "4_Plot.R" contains all the code needed for the reproduction of figure 2 in paper P1.  Note that the user in this case must specify where the resulting pdf-file should be saved (it will save to the working directory of R if unspecified).

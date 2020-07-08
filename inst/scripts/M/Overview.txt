@@ -1,0 +1,25 @@
+The intention behind these scripts is that they should be used while having a copy of the relevant paper at hand, but it might still be of interest to have a brief overview of the content hiding behind the different keys.  See the "1_Info.txt"-files in the relevant folders for more information.
+
+P2_fig_01: Local Gaussian cross-spectra for bivariate Gaussian white noise.
+      
+P2_fig_02: Local Gaussian cross-spectra for bivariate "phase shifted cosine with some noise".
+
+P2_fig_03: A complex valued presentation of the data from P2_fig_02.
+
+P2_fig_04: Local Gaussian cross-spectra for a "local trigonometric" example, based on P1_fig_07, with a common phase shift for all the four cosine-components.  Inspection along diagonal points.
+
+P2_fig_05: The same example as in P2_fig_05, but now inspected for non-diagonal points.
+
+P2_fig_06: Local Gaussian cross-spectra for a "local trigonometric" example, based on P1_fig_07, with individual phase shift for the four cosine-components.  Inspection along diagonal points.
+
+P2_fig_07: The pseudo-normalised version of the log-returns of the EuStockMarkets-data, focusing on the DAX and CAC variables.
+
+P2_fig_08: The first 200 local Gaussian cross-correlations, based on the pseudo-normalised version of the log-returns of the EuStockMarkets-data, focusing on the DAX and CAC variables.
+
+P2_fig_09: Local Gaussian cross-spectra based on the pseudo-normalised version of the log-returns of the EuStockMarkets-data, focusing on the DAX and CAC variables.
+
+P2_fig_10: The pseudo-normalised version of a multivariate GARCH-type model fitted to the log-returns of the EuStockMarkets-data, focusing on the variables corresponding to the original DAX and CAC variables.
+
+P2_fig_11: The first 20 local Gaussian cross-correlations, based on a multivariate GARCH-type model fitted to the log-returns of the EuStockMarkets-data, focusing on the variables corresponding to the original DAX and CAC variables.
+
+P2_fig_12: Local Gaussian cross-spectra based on a multivariate GARCH-type model fitted to the log-returns of the EuStockMarkets-data, focusing on the variables corresponding to the original DAX and CAC variables.

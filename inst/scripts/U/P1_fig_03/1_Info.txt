@@ -1,0 +1,7 @@
+This folder contains the code needed for the reproduction of figure 3 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+
+This investigates the dmbp-data, i.e. the "Deutschemark/British pound Exchange Rate" that was used by Bollerslev, and Ghysels in their paper "Periodic Autoregressive Conditional Heteroscedasticity", 1996, Journal of Business and Economic Statistics, *14*, 139-151.  The data-set used here has been copied from the version used in the rugarch-package (Alexios Ghalanos, https://cran.r-project.org/web/packages/rugarch), since a user might like to test this script without having to install that package first.
+
+The content of this figure shows how things change for the lag 1 pairs (of the pseudo-normalised version of the dmbp-data) given different points and a selected bandwidth.  In particular, the point is to observe "how many" lag 1 pairs that will contribute to the estimation of the local Gaussian autocorrelations for the different cases.  Note that it is not necessary to compute any local Gaussian autocorrelations for this example, and there are thus no files "2_Data.R" and "3_Shiny.R" in this folder.
+
+The file "4_Plot.R" contains all the code needed for the reproduction of figure 3 in paper P1.  Note that the user in this case must specify where the resulting pdf-file should be saved (it will save to the working directory of R if unspecified).

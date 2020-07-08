@@ -1,0 +1,55 @@
+The intention behind these scripts is that they should be used while having a copy of the relevant paper at hand, but it might still be of interest to have a brief overview of the content hiding behind the different keys.  See the "1_Info.txt"-files in the relevant folders for more information.
+
+P1_fig_01: The GARCH(1,1)-example in the introduction, that shows the local Gaussian spectral densities can detect structures invisible to the ordinary spectral densities.
+
+P1_fig_02: Original and pseudo-normalised versions of the dmbp-data.
+
+P1_fig_03: The pseudo-normalised dmbp-data with an investigation of its lag 1 pairs.
+
+P1_fig_04: The first 200 local Gaussian autocorrelations, based on the pseudo-normalised version of the dmbp-data.  See also P1_fig_D8.
+
+P1_fig_05: Local Gaussian auto-spectra for Gaussian white noise.
+
+P1_fig_06: Local Gaussian auto-spectra for a cosine with some noise.  See also P1_fig_G4.
+
+P1_fig_07: Local Gaussian auto-spectra for a "local trigonometric" example.  See also P1_fig_G3.
+
+P1_fig_08: Heatmap- and distance-based plot for the "local trigonometric" example.  Focus on points along diagonal versus local Gaussian auto-spectra.  See also P1_fig_G2
+
+P1_fig_09: Local Gaussian auto-spectra based on the pseudo-normalised version of the dmbp-data.
+
+P1_fig_10: Heatmap- and distance-based plot based on the pseudo-normalised version of the dmbp-data.  Focus on points along diagonal versus local Gaussian auto-spectra.
+
+P1_fig_11: Local Gaussian auto-spectra for an apARCH(2,3)-model fitted to the pseudo-normalised version of the dmbp-data.
+
+P1_fig_D1: Heatmap- and distance-based plot based on apARCH(2,3)-model fitted to the pseudo-normalised version of the dmbp-data.  Focus on points along diagonal versus local Gaussian auto-spectra.
+
+P1_fig_D2: Heatmap- and distance-based plot based on apARCH(2,3)-model fitted to the pseudo-normalised version of the dmbp-data.  Focus on points along diagonal versus local Gaussian autocorrelations.
+
+P1_fig_D3: Heatmap- and distance-based plot based on the pseudo-normalised version of the dmbp-data.  Focus on points along diagonal versus local Gaussian autocorrelations.
+ 
+P1_fig_D4: Heatmap- and distance-based plot for the "local trigonometric" example.  Focus on points along diagonal versus local Gaussian autocorrelations.
+
+P1_fig_D5: Heatmap- and distance-based plot based on the pseudo-normalised version of the dmbp-data.  Focus on bandwidth versus local Gaussian auto-spectra.  See also P1_fig_D7.
+
+P1_fig_D6: Heatmap- and distance-based plot based on the pseudo-normalised version of the dmbp-data.  Focus on bandwidth versus local Gaussian autocorrelations.
+
+P1_fig_D7: Distance-based plot based on the pseudo-normalised version of the dmbp-data, for the three standard points along the diagonal..  Focus on bandwidth versus local Gaussian auto-spectra.  See also P1_fig_D5.
+
+P1_fig_D8: Distance based Investigation of the truncation level, using the first 200 local Gaussian autocorrelations from the pseudo-normalised version of the dmbp-data.  See also P1_fig_D8.
+
+P1_fig_F1: Comparison of the local Gaussian spectra (for points on and off diagonal) based on the pseudo-normalised dmbp-data, and those based on the apARCH(2,3)-model that was fitted to the pseudo-normalised dmbp-data.
+
+P1_fig_F2: Distance-based box-plots that investigates the sensitivity of the block length for the circular index-based block bootstrap for tuples strategy.  Based on the pseudo-normalised dmbp-data.
+
+P1_fig_F3: Local Gaussian auto-spectra that compares four different block lengths L, based on the data computed for P1_fig_F2.
+
+P1_fig_F4: Local Gaussian auto-spectra that compares four different block lengths L, similar to P1_fig_F3, but in this case based on an investigation of a single sample from the "local trigonometric" model.
+
+P1_fig_G1: A simple plot that "justifies" the heuristic argument related to the use of the "local trigonometric" example.
+
+P1_fig_G2: Heatmap- and distance-based plot for the "local trigonometric" example, detect the elusive component for a point in the lower tail.  Focus on points along diagonal versus local Gaussian auto-spectra.  See also P1_fig_08.
+
+P1_fig_G3: Local Gaussian auto-spectra for a "local trigonometric" example, detect the elusive component for a point in the lower tail.  See also P1_fig_07.
+
+P1_fig_G4: Local Gaussian auto-spectra for a cosine with small noise.  See also P1_fig_05.
