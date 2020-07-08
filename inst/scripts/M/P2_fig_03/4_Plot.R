@@ -127,11 +127,11 @@ input <- list(TCS_type = "S",
                           .keep_attributes = FALSE)
 
 ##  Create a data frame to plot the points in the (complex) plane,
-##  keep in mind the need for a sign change for the negIm-part.
+##  keep in mind the need for a sign change for the Quad-part.
 
 points_df <- data.frame(
     x = ..arr["Co", ],
-    y = ..arr["Quad",])
+    y = - ..arr["Quad",])
 
 ##  Want limits that gives a rectangular plot, since a circle is to be
 ##  added later on.
@@ -186,7 +186,7 @@ rm(.CI_percentage, .lower, .upper)
 ..x_lines <- quantile(x = ..arr["Co", ],
                       probs = .probs)
 
-..y_lines <- quantile(x = ..arr["Quad", ],
+..y_lines <- quantile(x = - ..arr["Quad", ],
                       probs = .probs)
 
 ..radii <- quantile(x = ..arr["amplitude", ],
@@ -335,11 +335,12 @@ for (.i in seq_along(..radii))
 ##  Strategy, find the largest range, and use that to create limits
 ##  for the two plots that gives the same range on both axes.
 
-..range <- diff(range(..arr[c("Co", "Quad"), ]))
+..range <- max(diff(range(..arr["Co", ])),
+               diff(range(- ..arr["Quad", ])))
 
 ..x_limit <- mean(..arr["Co", ]) +
     c(-1, 1) * 0.5 * ..range
-..y_limit <- mean(..arr["Quad", ]) +
+..y_limit <- mean(- ..arr["Quad", ]) +
     c(-1, 1) * 0.5 * ..range
 
 ##  A revision of the basic annotated details is once more needed.
