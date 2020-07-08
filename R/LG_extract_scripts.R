@@ -1,52 +1,94 @@
 #' Extraction of scripts.
 #'
 #' This function extracts the scripts from the internal file hierarchy
-#' to a target directory selected by the user.  
+#' of the \code{localgaussSpec}-package to a target directory selected
+#' by the user.
 #'
 #' @param target_dir The path to the directory where the scripts are
-#'     to be added.  Note that the target directory must exist and be
-#'     empty in order for this function to work.  The
-#'     existence-requirement is included in order to avoid that
-#'     directories are accidentally created, and the empty-requirement
-#'     is included in order to avoid that previously extracted (and
-#'     potentially modified) versions of the scripts are overwritten.
+#'     to be stored.  The user will be asked for permission to create
+#'     the directory if it does not already exist.
 #'
-#' @return If successful, the scripts are moved into \code{target_dir},
-#'     and the user can then run them (or modify them) as desired.
+#' @param overwrite Logical value, default \code{FALSE}.  The default
+#'     behaviour will be that this function stops if it encounters a
+#'     non-empty directory.  This is done in order to avoid that
+#'     previously extracted (and potentially modified) versions of the
+#'     scripts are overwritten.  Set \code{overwrite} to \code{TRUE}
+#'     in order to override this requirement.
+#' 
+#' @return The result of this function is that copies of the scripts
+#'     occur in \code{target_dir}, and the user can then run them (or
+#'     modify them) as desired.  Read the \code{ReadMe.txt}-file in
+#'     the extracted folder for further details about the structure of
+#'     the extracted scripts.
 #'
 #' @export
 
-LG_extract_scripts <- function(target_dir) {
-    ##  Identify the source path.
-    .package <- "localgaussSpec"
-    .script_dir <- "scripts"
-    .source_path <- file.path(
-        find.package(package = .package),
-        .script_dir)
-    kill(.package, .script_dir)
-    ##  Check that there is a directory in the package with the
-    ##  desired name.
+LG_extract_scripts <- function(target_dir, overwrite = FALSE) {
+    ##  Return information about the help-documentation if this
+    ##  function is called without a 'target_dir'-argument.
+    if (missing(target_dir)) {
+        cat(sprintf(
+            "\n\nFor information about the extraction of scripts, use:\n\n%s",
+            "help(LG_extract_scripts)\n\n"))
+        return(invisible(NULL))
+    }
+    ##  Identify the internal source path.
+    .source_path <- local({
+        .package <- "localgaussSpec"
+        .script_dir <- "scripts"
+        file.path(
+            find.package(package = .package),
+            .script_dir)
+    })    
+    ##  Check that the internal source-path is found, and if not
+    ##  inform the user that this is a development problem.
     if (!dir.exists(paths = .source_path))
-        error(c("The specified internal source directory does not exist!",
-                "Please inform the package maintainer about the problem."))
+        error(c("Did not find the internal source folder that should contain the scripts!",
+                "Please inform the package maintainer, laj@hvl.no, about the problem."))
     ##  Check that 'target_dir' exists.
-    if (!dir.exists(paths = target_dir))
-        error(.argument = "target_dir",
-              c("The target directory",
-                sQuote(target_dir),
-                "does not exist!",
-                "Create it first, and then try again."))
+    if (!dir.exists(paths = target_dir)) {
+        cat(sprintf(
+            "\n\nThe directory %s does not exist.\nWould you like to create it now?\n",
+            sQuote(target_dir)))
+        .answer <- readline(
+            prompt = sprintf(
+                "Please enter %s if you want to create this directory.\n%s%s: ",
+                sQuote("yes"),
+                "Any other input will be considered as ",
+                sQuote("no")))
+        if (isTRUE(.answer == "yes")) {
+            dir.create(path = target_dir,
+                       recursive = TRUE)
+        } else {
+            return(cat("\n\nExtraction of scripts stopped.\n\n"))
+        }
+    }
     ##  Check that 'target_dir' is empty.
     .existing_content <- list.files(
         path = target_dir,
         full.names = TRUE,
         recursive = TRUE)
-    if (length(.existing_content)!=0)
-        error(.argument = "target_dir",
-              c("The target directory",
+    if (length(.existing_content)!=0) {
+        if (overwrite) {
+            cat(sprintf(
+                "\n\nThe directory %s exists, but it is not empty.\n%s %s was called with %s.",
                 sQuote(target_dir),
-                "must be empty!"))
-    kill(.existing_content)
+                "Will overwrite files since",
+                sQuote("LG_extract_scripts"),
+                sQuote(sprintf("%s = TRUE",
+                               "overwrite"))))
+        } else {
+            cat(sprintf(
+                "\n\nThe directory %s exists, but it is not empty.\n%s\nCall %s with %s to overwrite existing content.\n\n",
+                sQuote(target_dir),
+                "Extraction of scripts stopped.",
+                sQuote("LG_extract_scripts"),
+                sQuote(sprintf("%s = TRUE",
+                               "overwrite"))))
+            return(invisible(NULL))
+        }
+    }
+    kill(.existing_content, overwrite)
     ## Copy the required files.
     file.copy(
         from = .source_path,
@@ -58,12 +100,12 @@ LG_extract_scripts <- function(target_dir) {
         path = target_dir,
         full.names = TRUE,
         recursive = TRUE))
-    cat(sprintf("\n%i script-file%s copied to the directory %s.\n",
-                .nr_files,
-                ifelse(test = .nr_files>1,
-                       yes  = "s",
-                       no   = ""),
-                sQuote(target_dir)))
+    cat(sprintf(
+        "\n%i script-files copied to the directory %s.\nRead %s for further details.\n\n",
+        .nr_files,
+        sQuote(target_dir),
+        sQuote(file.path(target_dir,
+                         "ReadMe.txt"))))
 }
 
 ## Reminder from the testing:
