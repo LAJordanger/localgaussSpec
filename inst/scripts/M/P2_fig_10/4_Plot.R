@@ -45,7 +45,7 @@ uspec <- rugarch::multispec(replicate(n = dim(.TS)[2],
 
 nr_samples <- 1
 N <- dim(.TS)[1] ## = 1859
-TS_key <- "sample_rmgarch"
+TS_key <- "rmgarch"
 
 .seed_for_sample <- 245
 set.seed(.seed_for_sample)
