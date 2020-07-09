@@ -18,10 +18,10 @@ examples investigated in our local Gaussian spectral density papers
 https://arxiv.org/abs/1708.02495), and it will hopefully be a simple
 task to adjust these scripts to fit other use-cases.
 
-**Notice:** A major revision of the univariate paper has been done on
-the univariate paper, see https://arxiv.org/abs/1708.02166, and it is
-now possible to also investigate the local Gaussian spectral densities
-by means of heatmap-based and distance-based plots.  These new plots
-are not yet implemented in the interactive `shiny`-application, but
-the interested user can produce them by modifying the code in the
-relevant scripts.
+
+**Notice:** A major has been done on the univariate paper, see
+https://arxiv.org/abs/1708.02166, and it is now possible to also
+investigate the local Gaussian spectral densities by means of
+heatmap-based and distance-based plots.  These new plots are not yet
+implemented in the interactive `shiny`-application, but the interested
+user can produce them by modifying the code in the relevant scripts.
