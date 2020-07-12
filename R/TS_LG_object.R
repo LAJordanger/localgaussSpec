@@ -1,6 +1,3 @@
-################################################################################
-#####   2016-01-19
-
 #'  Prepare a time series for a local Gaussian inspection
 #'
 #' @details This function will for a given (sample from a) time series
@@ -24,7 +21,7 @@
 #'     it will be used to create \code{save_dir}.  Note that
 #'     \code{TS_data} can be univariate or multivariate.  A univariate
 #'     time series can be given as a vector, whereas a multivariate
-#'     must have the observations along the rows and the variates
+#'     must have the observations along the rows and the variables
 #'     along the columns.  (The program terminates if the number of
 #'     rows are lower than the number of columns.)
 #'
@@ -34,13 +31,17 @@
 #'     shown.
 #'
 #' @param main_dir The main directory into which the information will
-#'     be stored.  Default value \code{"~/LG_DATA"}, i.e. a specially
-#'     designed directory in the home directory of your file-system.
-#'     If the proposed default directory does not exists, then
-#'     \code{TS_LG_object} will create it, but otherwise it's a
-#'     requirement that only existing directories can be used.  This
-#'     is done as a precaution against accidentally ending up with
-#'     unintended data-directories all over the file-system.
+#'     be stored.  Default value \code{c("~", "LG_DATA")}, i.e. a
+#'     specially designed directory in the home directory of your
+#'     file-system.  If the proposed default directory does not
+#'     exists, then \code{TS_LG_object} will ask for permission to
+#'     create it, but otherwise it is a requirement that only existing
+#'     directories can be used.  This is done as a precaution against
+#'     accidentally ending up with unintended data-directories all
+#'     over the file-system. Note that the default value is given as a
+#'     vector in order to avoid issues related to operative system
+#'     dependent values for the file separator.  The argument can also
+#'     be given as a character-string.
 #' 
 #' @param save_dir The sub-directory of \code{main_dir} where all the
 #'     stuff related to \code{TS_data} will be saved.  Default value
@@ -61,30 +62,36 @@
 #' @inheritParams TS_LG_normalisation
 #' 
 #' @return This function will take care of some file-handling before
-#'     it returns a two-component list to the work-flow.  The first
-#'     component \code{TS_done_before} is a logic value to inform the
-#'     use whether or not the time series from \code{TS_data} already
-#'     was stored in the folder \code{main_dir}.  The second
-#'     component, \code{result}, is a list whose format depends upon
-#'     whether or not \code{TS_data} was created by \code{TS_sample}
-#'     -- and some of the content are only connected to the internal
-#'     work-flow of this function.  The four parts of \code{result}
-#'     that always is present is \code{TS_key} (the origin of the time
-#'     series), \code{TS} (the values), \code{N} (the number of
-#'     observations), and \code{save_dir} (the path to the
-#'     save-directory).  These four values will be used by the
-#'     functions that analyses \code{TS} based upon Local Gaussian
-#'     Approximations and Local Gaussian Spectral Densities.
+#'     it returns a two-component list to the work-flow, containing
+#'     the following nodes:
+#'
+#' \describe{
+#'
+#' \item{TS_done_before}{A logical value that reveals whether or not
+#'     the time series from \code{TS_data} already was stored in the
+#'     folder \code{main_dir}. }
+#'
+#' \item{result}{A list whose format depends upon whether or not
+#'     \code{TS_data} was created by \code{TS_sample} -- and some of
+#'     the content are only connected to the internal work-flow of
+#'     this function.  The four parts of \code{result} that always is
+#'     present is \code{TS_key} (the origin of the time series),
+#'     \code{TS} (the values), \code{N} (the number of observations),
+#'     and \code{save_dir} (the path to the save-directory).  These
+#'     four values will be used by the functions that analyses
+#'     \code{TS} based upon Local Gaussian Approximations and Local
+#'     Gaussian Spectral Densities.}
+#'
+#' }
 #' 
 #' @export
 
 TS_LG_object <- function (
     TS_data,
     details = NULL,
-    main_dir = c("~", "LG_DATA"),  # The value from 'LG_default'
+    main_dir = c("~", "LG_DATA"),
     save_dir = NULL,
     .remove_ties = TRUE) {
-###-------------------------------------------------------------------
     ##  A sanity check to see if multivariate 'TS_data' given as an
     ##  array looks like it should, i.e. fewer columns than rows.
     if (is.array(TS_data)) {
@@ -109,23 +116,16 @@ TS_LG_object <- function (
                     " rows..."))
         kill(.nrow, .ncol)
     }
-###-------------------------------------------------------------------
-    ##  Add sanity-checks?  Does 'main_dir' and 'save_dir' contain
-    ##  characters that creates problems when used with another
-    ##  operative system?
-###-------------------------------------------------------------------
     ##  Collect 'main_dir' to one string if it is given as a vector.
     if (length(main_dir) > 1) {
         main_dir <- paste(
             main_dir,
             collapse = .Platform$file.sep)
     }
-###-------------------------------------------------------------------
     ##  Extract a couple of Boolean objects related to 'main_dir'.
     main_dir_boolean <- {main_dir == paste(LG_default$main_dir,
                                            collapse = .Platform$file.sep)}
     main_dir_exists_boolean <- dir.exists(main_dir)
-###-------------------------------------------------------------------
     ##  If 'main_dir' does not exists: Create it if it is the default
     ##  directory, otherwise stop the program.
     if (! main_dir_exists_boolean)
@@ -140,15 +140,12 @@ TS_LG_object <- function (
                     "Create it and try once more."))
         }
     kill(main_dir_exists_boolean, main_dir_boolean)
-###-------------------------------------------------------------------
     ##  Construct the path to the content-file.
     content_path <-
         file.path(main_dir,
                   LG_default$content_file_name)
-###-------------------------------------------------------------------
     ##  Extract a Boolean object related to the content-file.
     content_boolean <- file.exists(content_path)
-###-------------------------------------------------------------------
     ##  Load the content file if it exists, in order to get hold of
     ##  'TS_content', otherwise initiate an empty content-list
     if (content_boolean) {
@@ -157,7 +154,6 @@ TS_LG_object <- function (
         TS_content <- list() #  First time initiation.
     }
     kill(content_boolean)
-###-------------------------------------------------------------------
     ##  Collect the arguments related to the adjustment.
     .comp_arg_names <- setdiff(
         x = names(formals(TS_LG_normalisation)),
@@ -167,21 +163,18 @@ TS_LG_object <- function (
                        FUN = function(x)
                            eval(bquote(get(.(x)))) ),
         .Names = .comp_arg_names)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  It's time to investigate closer the content of 'TS_data', in
-###  particular with regard to its origin.  Data simulated by
-###  'TS_sample' will in 'TS_content' be sorted in sub-lists based on
-###  the keys that generated them, whereas other data will be placed
-###  in a sub-list named with 'LG_default$other_TS_dir_prefix'.  The next
-###  level in the list-structure will be the lists that contains the
-###  interesting stuff derived from 'TS_data'.
-#############--------------------------------------------------------- 
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  Investigate the content of 'TS_data', in particular with
+    ##  regard to its origin.  Data simulated by 'TS_sample' will in
+    ##  'TS_content' be sorted in sub-lists based on the keys that
+    ##  generated them, while other data will be placed in a sub-list
+    ##  named with 'LG_default$other_TS_dir_prefix'.  The next level
+    ##  in the list-structure will be the lists that contains the
+    ##  interesting stuff derived from 'TS_data'.
+    ###------------------------------------------------------###
     ##  Create a Boolean object related to 'TS_data'.
     TS_simulated_boolean <- 
         any(class(TS_data) == LG_default$class$TS)
-###-------------------------------------------------------------------
     ##  Based on 'TS_simulated_boolean', extract the time series 'TS',
     ##  and record the 'TS_key' to be used as identification later on.
     if (TS_simulated_boolean) {
@@ -198,24 +191,9 @@ TS_LG_object <- function (
             expr_not_all_TRUE = FALSE)
         ##  Compute the dimension and the dimension-names
         .dim <- if (.multivariate_TS) {
-            ## dim(TS_data)
             c(dim(TS_data), 1)  ##  Add content as the last one...
         } else
-            ## c(length(TS_data), 1)
             c(length(TS_data), 1, 1)
-            ## .dimnames <- list(
-            ##     observations = paste(
-            ##         "t",
-            ##         1:.dim[1],
-            ##         sep = ""),
-            ##     content =
-            ##         if (.multivariate_TS) {
-            ##             paste(
-            ##                 "Y",
-            ##                 1:.dim[2],
-            ##                 sep = "")
-            ##         } else
-            ##             LG_default$sample.prefix)
         .dimnames <- list(
             observations = paste(
                 "t",
@@ -239,7 +217,6 @@ TS_LG_object <- function (
         kill(.dim, .dimnames)
         TS_key <- LG_default$other_TS_dir_prefix
     }
-###-------------------------------------------------------------------
     ##  Create attributes to simplify the code later on when dealing
     ##  with the different cases that must be investigated.  The
     ##  attributes should be added both to 'TS' and to the result to
@@ -288,7 +265,6 @@ TS_LG_object <- function (
     attributes(TS) <- c(
         attributes(TS),
         .variables_data)
-###-------------------------------------------------------------------
     ##  Investigate whether or not the time series already has been
     ##  registered in 'TS_content'.  Check everything, regardless of
     ##  source, record the sub_list if a match is obtained.  Check
@@ -316,20 +292,17 @@ TS_LG_object <- function (
             }
         }
     kill(TS_copy, old_TS, lev1, lev2, .comp_arg_old)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  Note: If no match for 'TS' where found in the loop above, then
-###  'result' will still not have been created _within_ this function
-###  frame.  A Boolean object can thus be created based on 'exists',
-###  but take care to specify 'inherits=FALSE' to avoid erroneous
-###  conclusions due to the existence of an object named 'result' in
-###  some frame at a higher level.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  Reminder: If no match for 'TS' where found in the loop above,
+    ##  then 'result' will still not have been created _within_ this
+    ##  function frame.  A Boolean object can thus be created based on
+    ##  'exists', but take care to specify 'inherits=FALSE' to avoid
+    ##  erroneous conclusions due to the existence of an object named
+    ##  'result' in some frame at a higher level.
+    ###------------------------------------------------------###
     ##  Create a Boolean object related to the test of 'TS'.
     TS_done_before <- 
         exists(x = "result", inherits = FALSE)    
-###-------------------------------------------------------------------
     ##  If no match where found for 'TS', we need to do a bunch of
     ##  stuff in order to create 'result' from scratch.
     if (! TS_done_before) {
@@ -358,27 +331,20 @@ TS_LG_object <- function (
                 details = details,
                 N = length(dimnames(TS)$observations)),
             .variables_data)
-###-------------------------------------------------------------------
         ##  Add more to 'result' based on 'TS_simulated_boolean'.
         if (TS_simulated_boolean) {
             ##  'TS_data' generated by 'TS_sample'.
-###-------------------------------------------------------------------
             ##  Add the rest of 'TS_data', except 'TS', to 'result'.
             result <- c(result,
                         TS_data[which(names(TS_data) != "TS")])
-###-------------------------------------------------------------------
             ##  Initiate 'save_dir' based on values from 'TS_data',
             ##  overwrite any values provided by lazy ignorant users
             ##  that didn't read the documentation.
-
-            
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  The case where 'TS_data' wasn't generated by 'TS_sample'.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+            ###------------------------------------------------------###
+            ##  The case when 'TS_data' was not generated by
+            ##  'TS_sample'.
+            ###------------------------------------------------------###
         } else {
-###-------------------------------------------------------------------
             ##  Check how many times the "other"-part of 'TS_content'
             ##  has recorded that a default has been used in the
             ##  creation of 'save_dir', remember that 'TRUE' is
@@ -388,7 +354,6 @@ TS_LG_object <- function (
                 previous_1 <-
                     previous_1 +
                         TS_content[[TS_key]][[index]][["default_used_for_dir"]]
-###-------------------------------------------------------------------
             ##  Create the proposed value for 'save_dir', that will be
             ##  used if the user didn't specify one.
             save_dir_default <- 
@@ -399,7 +364,6 @@ TS_LG_object <- function (
                                 sep = ""),
                           start = - 3),
                       sep = "")
-###-------------------------------------------------------------------
             ##  Investigate if the user did provide a value for
             ##  'save_dir' and update according to that.
             if (is.null(save_dir)) {
@@ -415,13 +379,11 @@ TS_LG_object <- function (
             }
         }
         kill(TS_simulated_boolean)
-###-------------------------------------------------------------------
         ##  Add a vector to the result with the directories needed in
         ##  order to create the path to our destination.
         result$save_dir <- structure(
             .Data = save_dir,
             .Names = "ts.dir")
-###-------------------------------------------------------------------
         ##  Create a normalised version 'TS_for_analysis'.
         TS_for_analysis <- TS_LG_normalisation(
             TS = TS,
@@ -438,18 +400,15 @@ TS_LG_object <- function (
                     ! names(attributes(TS)) %in% names(attributes(TS_for_analysis))
                 attributes(TS)[.include]
             }))
-###-------------------------------------------------------------------
-        ##  Extend the attributes of 'TS', in order to simplify
-        ##  the code later on.
+        ##  Extend the attributes of 'TS', in order to simplify the
+        ##  code later on.
         attributes(TS) <- c(
             attributes(TS),
             bootstrap = FALSE,
             list(TS_for_analysis = TS_for_analysis))
         kill(TS_for_analysis)
-###-------------------------------------------------------------------
         ##  Append 'result' to 'TS_content'.
         TS_content[[TS_key]][[save_dir]] <- result
-###-------------------------------------------------------------------
         ##  Create the new directory, and save 'TS'.
         dir.create(path = file.path(main_dir, save_dir))
         save(TS, file = paste(c(main_dir,
@@ -457,7 +416,6 @@ TS_LG_object <- function (
                               collapse = .Platform$file.sep))
         ##  Save the revised 'TS_content' to file.
         save(TS_content, file = content_path)
-###-------------------------------------------------------------------
         ##  Create an info-file in our new directory, and store an
         ##  'info'-object containing 'result'.
         info <- list(TS_info = result)
@@ -467,7 +425,6 @@ TS_LG_object <- function (
                            save_dir,
                            LG_default$info_file_name))
     }
-###-------------------------------------------------------------------
     ##  Return a list with the values 'TS_done_before' and an adjusted
     ##  version of 'result' (`main_dir` added at the end).
     return(
@@ -475,5 +432,3 @@ TS_LG_object <- function (
              TS_info = c(result,
                          list(main_dir = main_dir))))
 }
-
-##  LocalWords:  dir param inheritParams
