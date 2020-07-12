@@ -1,11 +1,8 @@
-################################################################################
-#####  2016-01-19
-
 #' Time Series Sample-Generator
 #'
 #' @details This function will create one or more time series based on
 #'     the "keys" stored in \code{TS_families}, with emphasis on also
-#'     storing the required arguments needed in order to re-create it
+#'     storing the required arguments needed in order to reproduce it
 #'     later on.
 #'
 #' @param TS_key A key, i.e. a \code{character}, corresponding to an
@@ -16,14 +13,14 @@
 #'     \code{500}.
 #' 
 #' @param nr_samples The desired number of independent samples to be
-#'     produced.  The default value \code{1} is the one to use when
-#'     testing for the effect of different settings for bootstrapping,
-#'     whereas (much) higher values is intented to be used to get an
-#'     idea about what the true behaviour should be when investigating
-#'     the Local Gaussian Spectral Density.  
+#'     produced.  The default value \code{1} gives a single sample,
+#'     which might be preferable for an initial investigation that
+#'     includes many different bandwidths and looks at a wide range of
+#'     points.  For pointwise confidence bands it might be preferable
+#'     to use at least 100 for this argument.
 #'
 #' @param ... \code{dotsMethods}-strategy for feeding parameters to
-#'     the function (identified by \code{TS_key} that generates the
+#'     the function (identified by \code{TS_key}) that generates the
 #'     time series.
 #' 
 #' @param .seed Use this to enable reproducible results.  Default value
@@ -36,23 +33,36 @@
 #'     imply that the function \code{set_seed} will be used to create
 #'     the required list based on the present settings.
 #' 
-#' @return This function returns a list with four parts \code{TS},
-#'     \code{TS_data}, \code{spy_report} and \code{seed_vec}.
-#'     \code{TS} contains an array with the time series generated
-#'     according to the specified arguments, whereas \code{TS_data}
-#'     includes some additional stuff that will be used when
-#'     \code{TS_LG_object} takes care of the saving of the data. The
-#'     arguments needed in order to redo the computation later on is
-#'     stored in \code{spy_report}.  The part \code{seed_vec} reflects
-#'     that the internal workings of the code creates a vector of
-#'     seeds (based on \code{.seed} that then can be used to create an
-#'     individual series later on (this is of course only of interest
-#'     when \code{nr_samples} is larger than one, and we for some
-#'     reason later on would like to do an in depth analysis of one of
-#'     the resulting time series.
+#' @return This function returns a list with the following four parts:
+#'
+#' \describe{
+#'
+#' \item{TS}{A 3-dimensional array with the resulting time series,
+#'     generated according to the specified arguments.  The array
+#'     contains three dimensions in order to have a unified solution
+#'     for univariate and multivariate solutions.  The first dimension
+#'     reflects the number of samples, as given by \code{nr_samples}.
+#'     The second dimension reflects the length of the samples, as
+#'     given by \code{N}.  The third dimension reflects the number of
+#'     variables in the time series, which is decided by \code{TS_key}
+#'     and the arguments given to \code{...}}
+#'
+#' \item{TS_data}{Additional details used by \code{TS_LG_object} when
+#'     the data is saved to disk.}
+#'
+#' \item{spy_report}{An environment that contains all the arguments
+#'     that was used for the present computation.}
+#' 
+#' \item{seed_vec}{This part reflects that the internal workings of
+#'     the code creates a vector of seeds (based on \code{.seed}) that
+#'     then can be used to reproduce an individual series later on.
+#'     This is of course only of interest when \code{nr_samples} is
+#'     larger than one, and we for some reason later on would like to
+#'     do an in depth analysis of one of the resulting time series.}
+#'
+#' }
 #' 
 #' @export
-
 
 TS_sample <- function (
     TS_key = "WNG",
@@ -61,7 +71,7 @@ TS_sample <- function (
     ...,
     .seed = NULL,
     .kind_vstr_list = NULL) {
-    ##  Use 'spy' to capture information needed for reproducibility.
+    ##  Capture the information needed for reproducibility.
     spy_report <- spy()
     ##  Use 'set_seed' to update '.kind_vstr_list'.
     spy_report$envir$.kind_vstr_list <- eval(
@@ -76,21 +86,15 @@ TS_sample <- function (
             .cc_fun = leanRcoding::seed_sample,
             spy_report$envir$.kind_vstr_list,
             .cc_list = TRUE))
-
-
     eval(create_call(
         .cc_fun = leanRcoding::set_seed,
         c(list(seed = .seed),
           spy_report$envir$.kind_vstr_list),
         .cc_list = TRUE))
-
-    
-#####  TASK: I guess there's more that should be done here.  My
-#####  present setup will require that stuff are computed within the
-#####  'expr'-argument, and it would be nice to have an argument that
-#####  opens up for the adjustment of the global RNG-settings too.
-
-    
+    ##  Reminder: More should be done here.  The present setup
+    ##  requires that stuff are computed within the 'expr'-argument,
+    ##  and it would be nice to have an argument that opens up for the
+    ##  adjustment of the global RNG-settings too.
     seed_vec <- if (nr_samples == 1) {
         .seed
     } else
@@ -101,26 +105,22 @@ TS_sample <- function (
                        collapse = ""))
                },
                FUN.VALUE = integer(1))
-
     eval(create_call(
         .cc_fun = leanRcoding::set_seed,
         c(list(seed = .seed),
           spy_report$envir$.kind_vstr_list),
         .cc_list = TRUE))
-
     ##  Create the values for dimensions "content" and "observations".
     .content <- if (nr_samples > 1) {
         paste(LG_default$sample.prefix, 1:nr_samples, sep = "")
     } else
         LG_default$sample.prefix
     .observations <- paste("t", 1:N, sep = "")
-
     ##   Generate the information required to generate the data.
     TS_data <- myTS(TS_key = TS_key,  ...)
     ##  Update the formals of the function with the value 'N'
     formals(TS_data$fun)[[TS_data$fun_data$size_name]] <- N
     ##  Generate the required time series sample(s).
-    ## TS <- if (TS_key %in% c("rmgarch", "sample_dccgarch")) {
     TS <- if (TS_key == "rmgarch") {
               ##  Generate the desired sample in a reproducible way:
               ##  Adjust formals to include nr_samples - and - update
@@ -149,8 +149,8 @@ TS_sample <- function (
               TS <- TS_data$fun()@path$seriesSim
               t(TS)
           } else
-              ##  Solution to deal with univariate and multivariate time
-              ##  series at the same time.
+              ##  Solution to deal with univariate and multivariate
+              ##  time series at the same time.
               aaply(.data = array(
                         data = 1:nr_samples,
                         dim = c(1, nr_samples),
@@ -174,7 +174,6 @@ TS_sample <- function (
                         .tmp
                     },
                     .drop = FALSE)
-    
     ##  'TS' will have two dimensions for the univariate cases and
     ##  three for the multivariate cases, and this will be used for
     ##  the tweaking of dimensions and dimension names.

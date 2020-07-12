@@ -16,14 +16,14 @@ i.e. "White Noise Gaussian".}
 \code{500}.}
 
 \item{nr_samples}{The desired number of independent samples to be
-produced.  The default value \code{1} is the one to use when
-testing for the effect of different settings for bootstrapping,
-whereas (much) higher values is intented to be used to get an
-idea about what the true behaviour should be when investigating
-the Local Gaussian Spectral Density.}
+produced.  The default value \code{1} gives a single sample,
+which might be preferable for an initial investigation that
+includes many different bandwidths and looks at a wide range of
+points.  For pointwise confidence bands it might be preferable
+to use at least 100 for this argument.}
 
 \item{...}{\code{dotsMethods}-strategy for feeding parameters to
-the function (identified by \code{TS_key} that generates the
+the function (identified by \code{TS_key}) that generates the
 time series.}
 
 \item{.seed}{Use this to enable reproducible results.  Default value
@@ -37,20 +37,34 @@ imply that the function \code{set_seed} will be used to create
 the required list based on the present settings.}
 }
 \value{
-This function returns a list with four parts \code{TS},
-    \code{TS_data}, \code{spy_report} and \code{seed_vec}.
-    \code{TS} contains an array with the time series generated
-    according to the specified arguments, whereas \code{TS_data}
-    includes some additional stuff that will be used when
-    \code{TS_LG_object} takes care of the saving of the data. The
-    arguments needed in order to redo the computation later on is
-    stored in \code{spy_report}.  The part \code{seed_vec} reflects
-    that the internal workings of the code creates a vector of
-    seeds (based on \code{.seed} that then can be used to create an
-    individual series later on (this is of course only of interest
-    when \code{nr_samples} is larger than one, and we for some
-    reason later on would like to do an in depth analysis of one of
-    the resulting time series.
+This function returns a list with the following four parts:
+
+\describe{
+
+\item{TS}{A 3-dimensional array with the resulting time series,
+    generated according to the specified arguments.  The array
+    contains three dimensions in order to have a unified solution
+    for univariate and multivariate solutions.  The first dimension
+    reflects the number of samples, as given by \code{nr_samples}.
+    The second dimension reflects the length of the samples, as
+    given by \code{N}.  The third dimension reflects the number of
+    variables in the time series, which is decided by \code{TS_key}
+    and the arguments given to \code{...}}
+
+\item{TS_data}{Additional details used by \code{TS_LG_object} when
+    the data is saved to disk.}
+
+\item{spy_report}{An environment that contains all the arguments
+    that was used for the present computation.}
+
+\item{seed_vec}{This part reflects that the internal workings of
+    the code creates a vector of seeds (based on \code{.seed}) that
+    then can be used to reproduce an individual series later on.
+    This is of course only of interest when \code{nr_samples} is
+    larger than one, and we for some reason later on would like to
+    do an in depth analysis of one of the resulting time series.}
+
+}
 }
 \description{
 Time Series Sample-Generator
@@ -58,6 +72,6 @@ Time Series Sample-Generator
 \details{
 This function will create one or more time series based on
     the "keys" stored in \code{TS_families}, with emphasis on also
-    storing the required arguments needed in order to re-create it
+    storing the required arguments needed in order to reproduce it
     later on.
 }
