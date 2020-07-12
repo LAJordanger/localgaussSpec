@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_approx_scribe.R
 \name{LG_approx_scribe}
 \alias{LG_approx_scribe}
-\title{Local Gaussian Approximations, scribe-function.}
+\title{Local Gaussian Approximations, scribe-function}
 \usage{
 LG_approx_scribe(main_dir, data_dir, TS, lag_max = ceiling(3 *
   sqrt(length(TS))), LG_points, .bws_mixture = c("mixture", "local",
@@ -94,38 +94,32 @@ five parameters or the simplified approach using only one
 parameter.  The default choice is \code{"par_five"}.}
 }
 \value{
-The result of this function will depend upon the value of
-    \code{bootstrap}.  The default case, \code{bootstrap=FALSE},
-    will create two files with respectively the zero-lag and
-    positive-lag estimated local Gaussian approximations, where we
-    later on in particular will use the parameters for the local
-    Gaussian auto-correlations and auto-covariances.  Furthermore,
-    the info-object corresponding to the time series will be
-    updated, and information about the new save-directory will be
-    returned to the work-flow.  Note that the info-object will
-    store information about all the previous computations, and a
-    check will be performed at the beginning in order to ensure
-    that we avoid identical computations.
+This function is a scribe that reads and records
+    information to info-files.  When a new computation is required,
+    the task is sent to \code{LG_approx}, and the result is then
+    saved to file.  A list containing the following key-information
+    is returned to the work.flow.
 
-    When \code{bootstrap=FALSE}, i.e. when this function is called
-    by \code{LG_boot_approx}, then the specified data will be
-    delivered directly to that function -- which then bundles
-    together all the parts to one larger object.  In this case
-    \code{LG_boot_approx} will take care of all the file-handling.
+\describe{
+
+\item{done_before}{Logical value that reveals if the computation
+has been performed before.}
+
+\item{main_dir}{The \code{main_dir}-argument is included here.}
+
+\item{data_dir}{The \code{data_dir}-argument is included here.}
+
+}
 }
 \description{
-This function takes care of the bookkeeping when we investigate a
-time series by means of Local Gaussian Approximations.
+Local Gaussian Approximations, scribe-function
 }
 \details{
-This function records its arguments and compares them to a
-    previously stored information-object for the time series, in
-    order to avoid redoing previously performed computations.  For
-    new computations, relevant data will be extracted from
-    \code{data_dir}, which then will be analysed in order to see if
-    memory issues requires that the computation should be performed
-    in smaller chunks.  The function calls \code{LG_approx} in
-    order to obtain the result, before it ads it to the
-    file-structure.  Finally the information-object will be updated
-    and a two component value is returned to the work-flow.
+This function takes care of the bookkeeping when the local
+    Gaussian correlations is computed for the lag-h pairs for a
+    time series.  It calls the function \code{LG_approx} when
+    required, and will then feed that function the relevant
+    arguments, the result is saved to file and the
+    information-object will be updated.  A list with key-details is
+    always returned to the work-flow.
 }
