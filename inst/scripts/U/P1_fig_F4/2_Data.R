@@ -83,10 +83,10 @@ attributes(.TS) <- NULL
 ##  Save to file and update file-hierarchy.
 
 set.seed(136)
-tmp_TS_LG_object <- TS_LG_object(
+.TS_LG_object <- TS_LG_object(
     TS_data = .TS,
     main_dir = main_dir)
-rm(.TS)
+rm(.TS, main_dir)
 
 ###----------------------------------------------------------------###
 
@@ -115,15 +115,15 @@ lag_max <- 10
 ##  Do the main computation.
 
 LG_AS <- LG_approx_scribe(
-    main_dir = main_dir,
-    data_dir = tmp_TS_LG_object$TS_info$save_dir,
-    TS = tmp_TS_LG_object$TS_info$TS,
+    main_dir = .TS_LG_object$TS_info$main_dir,
+    data_dir = .TS_LG_object$TS_info$save_dir,
+    TS = .TS_LG_object$TS_info$TS,
     lag_max = lag_max,
     LG_points = .LG_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
     LG_type = .LG_type)
-rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
+rm(.TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 
 ##  Specify the details needed for the construction of the
 ##  bootstrapped pointwise confidence intervals, and do the
@@ -137,8 +137,8 @@ block_length_vec <- 10:69
 for (block_length in block_length_vec) {
     set.seed(1421236)
     LG_BS <- LG_boot_approx_scribe(
-        main_dir        = main_dir,
-        data_dir         = LG_AS$data_dir,
+        main_dir        = LG_AS$main_dir,
+        data_dir        = LG_AS$data_dir,
         nb              = nb,
         boot_type       = "cibbb_tuples",
         block_length    = block_length,
@@ -169,11 +169,6 @@ rm(nb, block_length, block_length_vec, LG_AS)
 
 ###----------------------------------------------------------------###
 
-##  Extract the directory information needed for 'LG_shiny'.
-
-data_dir_for_LG_shiny <- LG_BS$data_dir
-rm(LG_BS)
-
 ##  Send code to terminal that can be used to start the interactive
 ##  inspection based on the shiny-application 'LG_shiny'.  It might be
 ##  of interest to save this to a file so an inspection later on does
@@ -183,15 +178,15 @@ rm(LG_BS)
 ##  '.TS_sample' will be performed every time this script is used.
 
 LG_shiny_writeLines(
-    main_dir = main_dir,
-    data_dir = data_dir_for_LG_shiny)
+    main_dir = LG_BS$main_dir,
+    data_dir = LG_BS$data_dir)
 
 ##  Start the shiny application for an interactive inspection of the
 ##  result.  The use of 'shiny::runApp' is needed in order to start
 ##  the shiny-application when this script is sourced.
 
 shiny::runApp(LG_shiny(
-    main_dir = main_dir,
-    data_dir = data_dir_for_LG_shiny))
+    main_dir = LG_BS$main_dir,
+    data_dir = LG_BS$data_dir))
 
 ###----------------------------------------------------------------###

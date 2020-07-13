@@ -54,7 +54,7 @@ data("dmbp")
 
 ##  Update the coefficients:
 rugarch::setfixed(.spec) <- rugarch::coef(.fitted)
-rm(.fitted)
+rm(.fitted, dmbp)
 
 ##  NOTE: The present code shows how one particular GARCH-type model
 ##  can be fitted to the 'dmbp'-data.  The original investigation
@@ -85,7 +85,7 @@ set.seed(.seed_for_sample)
     nr_samples = nr_samples,
     spec = .spec,
     .seed = NULL)
-rm(nr_samples, N, .seed_for_sample)
+rm(nr_samples, N, .seed_for_sample, .spec)
 
 ##  Create a unique 'save_dir' and save 'TS_sample' to the
 ##  file-hierarchy.  (Note: )
@@ -96,12 +96,12 @@ save_dir <- paste(TS_key,
 
 ##  Save to file and update file-hierarchy.
 
-tmp_TS_LG_object <- TS_LG_object(
+.TS_LG_object <- TS_LG_object(
     TS_data = .TS_sample,
     main_dir = main_dir,
     save_dir = save_dir,
     .remove_ties = TRUE)
-rm(TS_key, .TS_sample, save_dir)
+rm(TS_key, .TS_sample, save_dir, main_dir)
 
 ###----------------------------------------------------------------###
 
@@ -130,22 +130,17 @@ lag_max <- 20
 ##  Do the main computation.  
 
 LG_AS <- LG_approx_scribe(
-    main_dir = main_dir,
-    data_dir = tmp_TS_LG_object$TS_info$save_dir,
-    TS = tmp_TS_LG_object$TS_info$TS,
+    main_dir = .TS_LG_object$TS_info$main_dir,
+    data_dir = .TS_LG_object$TS_info$save_dir,
+    TS = .TS_LG_object$TS_info$TS,
     lag_max = lag_max,
     LG_points = .LG_points,
     .bws_fixed = .b,
     .bws_fixed_only = TRUE,
     LG_type = .LG_type)
-rm(tmp_TS_LG_object, lag_max, .LG_points, .b, .LG_type)
+rm(.TS_LG_object, lag_max, .LG_points, .b, .LG_type)
 
 ###----------------------------------------------------------------###
-
-##  Extract the directory information needed for 'LG_shiny'.
-
-data_dir_for_LG_shiny <- LG_AS$data_dir
-rm(LG_AS)
 
 ##  Send code to terminal that can be used to start the interactive
 ##  inspection based on the shiny-application 'LG_shiny'.  It might be
@@ -156,15 +151,15 @@ rm(LG_AS)
 ##  '.TS_sample' will be performed every time this script is used.
 
 LG_shiny_writeLines(
-    main_dir = main_dir,
-    data_dir = data_dir_for_LG_shiny)
+    main_dir = LG_AS$main_dir,
+    data_dir = LG_AS$data_dir)
 
 ##  Start the shiny application for an interactive inspection of the
 ##  result.  The use of 'shiny::runApp' is needed in order to start
 ##  the shiny-application when this script is sourced.
 
 shiny::runApp(LG_shiny(
-    main_dir = main_dir,
-    data_dir = data_dir_for_LG_shiny))
+    main_dir = LG_AS$main_dir,
+    data_dir = LG_AS$data_dir))
 
 ###----------------------------------------------------------------###
