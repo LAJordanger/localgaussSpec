@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_boot_approx_scribe.R
 \name{LG_boot_approx_scribe}
 \alias{LG_boot_approx_scribe}
-\title{Local Gaussian Approximations for bootstrap replicates,
-scribe-function.}
+\title{Local Gaussian Approximations for bootstrap replicates, scribe-function.}
 \usage{
 LG_boot_approx_scribe(main_dir, data_dir, lag_max = NULL,
   LG_points = NULL, content_details = NULL, LG_type = NULL,
@@ -108,39 +107,46 @@ are rather stupid such problems might still occur for long
 time-series where a huge number of lags are included.}
 }
 \value{
-This function will return a two component list to the
-    work-flow.  The first component is the logic value
-    \code{done_before} that reveals whether or not the result
-    already existed (in the specified file-structure), whereas the
-    second component \code{data_dir} gives the location of the
-    saved data.
+This function is a scribe that reads and records
+    information, whereas another function performs the actual
+    computation, see details for further information.  A list
+    containing the following key-information is always returned to
+    the workflow.
+
+\describe{
+
+\item{done_before}{Logical value that reveals if the computation
+has been performed before.}
+
+\item{main_dir}{The \code{main_dir}-argument is included here.}
+
+\item{data_dir}{The \code{data_dir}-argument is included here.}
+
+}
 }
 \description{
-This function takes care of the bookkeeping when we want to
-investigate a time series by means of local Gaussian Approximations
-used on bootstrapped replicates of the time series.
+This function takes care of the bookkeeping when the
+    local Gaussian (auto- and cross-) correlations are computed for
+    the lag-h pairs for bootstrapped replicates of a given time
+    series.
 }
 \details{
 This function records its arguments and compares them to a
     previously stored information-object for the time series under
     investigation, in order to avoid redoing previously performed
-    computations.  For new computations, relevant data will be
-    extracted from \code{data_dir}, which then will be analysed in
-    order to see if memory issues requires that the computation
-    should be performed in smaller chunks.  The function then calls
-    \code{LG_boot_approx} that does the computations, and the
-    result is then added to the file-structure.  Finally the
-    information-object will be updated and a two component value is
-    returned to the work-flow.
+    computations.  The function then calls \code{LG_boot_approx}
+    when a new computation is required, the result is then saved to
+    file, and the information-object is updated with the key
+    details.
 
-Note that no default values are given for any of the
-    arguments, and that solution is made in order to dissuade users
-    from calling this (often quite time consuming) function
-    directly from the work-space.  The intention is that the
-    bootstrap-wrapper should call this function, and then with
-    arguments inherited (restrictions are allowed) from those used
-    in a previous analysis of a time series.  This is done since
-    the main motivation for working with bootstrapped replicates of
-    our original time series is to obtain bootstrap-based
-    confidence intervals for the Local Gaussian Spectral Densities.
+Note that default values are not given for any of the
+    tuning parameters of the local Gaussian estimation algorithm.
+    The basic idea is that such arguments only should be specified
+    for the bootstrap-part if it is of interest to restrict the
+    attention to a subset of the tuning parameters that were used
+    for the local Gaussian investigation that was done on the
+    original sample.  When an argument is left unspecified, the
+    bookkeeping-system will look up the value that was used during
+    the investigation of the original sample, and that value will
+    then be inherited to the present investigation.
 }

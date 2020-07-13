@@ -95,10 +95,10 @@ parameter.  The default choice is \code{"par_five"}.}
 }
 \value{
 This function is a scribe that reads and records
-    information to info-files.  When a new computation is required,
-    the task is sent to \code{LG_approx}, and the result is then
-    saved to file.  A list containing the following key-information
-    is returned to the work.flow.
+    information, whereas another function performs the actual
+    computation, see details for further information.  A list
+    containing the following key-information is always returned to
+    the workflow.
 
 \describe{
 
@@ -112,14 +112,16 @@ has been performed before.}
 }
 }
 \description{
-Local Gaussian Approximations, scribe-function
+This function takes care of the bookkeeping when the
+    local Gaussian (auto- and cross-) correlations are computed for
+    the lag-h pairs for a single time series.  It can also digest a
+    collection of samples from a parametric time series model.
 }
 \details{
-This function takes care of the bookkeeping when the local
-    Gaussian correlations is computed for the lag-h pairs for a
-    time series.  It calls the function \code{LG_approx} when
-    required, and will then feed that function the relevant
-    arguments, the result is saved to file and the
-    information-object will be updated.  A list with key-details is
-    always returned to the work-flow.
+This function records its arguments and compares them to a
+    previously stored information-object for the time series under
+    investigation, in order to avoid redoing previously performed
+    computations.  This function calls \code{LG_approx} when a new
+    computation is required, the result is then saved to file, and
+    the information-object is updated with the key details.
 }
