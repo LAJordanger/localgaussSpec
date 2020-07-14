@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_extract_scripts.R
 \name{LG_extract_scripts}
 \alias{LG_extract_scripts}
-\title{Extraction of scripts.}
+\title{Extraction of scripts}
 \usage{
 LG_extract_scripts(target_dir, overwrite = FALSE)
 }
@@ -26,7 +26,16 @@ The result of this function is that copies of the scripts
     the extracted scripts.
 }
 \description{
-This function extracts the scripts from the internal file hierarchy
-of the \code{localgaussSpec}-package to a target directory selected
-by the user.
+This function extracts the scripts from the internal
+    file hierarchy of the \code{localgaussSpec}-package to a target
+    directory selected by the user.
+}
+\details{
+If the \code{target_dir}-argument is missing, then the
+    function will print a message that points to this help-page.
+    If \code{target_dir} is a non-existing directory, then the user
+    will be asked for permission to create it.  If
+    \code{target_dir} exists but are non-empty, then it is required
+    that the \code{overwrite}-argument must be \code{TRUE} in order
+    for the scripts to be extracted.
 }

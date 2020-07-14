@@ -1,8 +1,16 @@
-#' Extraction of scripts.
+#' Extraction of scripts
 #'
-#' This function extracts the scripts from the internal file hierarchy
-#' of the \code{localgaussSpec}-package to a target directory selected
-#' by the user.
+#' @description This function extracts the scripts from the internal
+#'     file hierarchy of the \code{localgaussSpec}-package to a target
+#'     directory selected by the user.
+#'
+#' @details If the \code{target_dir}-argument is missing, then the
+#'     function will print a message that points to this help-page.
+#'     If \code{target_dir} is a non-existing directory, then the user
+#'     will be asked for permission to create it.  If
+#'     \code{target_dir} exists but are non-empty, then it is required
+#'     that the \code{overwrite}-argument must be \code{TRUE} in order
+#'     for the scripts to be extracted.
 #'
 #' @param target_dir The path to the directory where the scripts are
 #'     to be stored.  The user will be asked for permission to create
@@ -113,5 +121,3 @@ LG_extract_scripts <- function(target_dir, overwrite = FALSE) {
 ## dir.create(path = target_dir)
 ## LG_extract_scripts(target_dir = target_dir)
 ## unlink(x = target_dir, recursive = TRUE, force = TRUE)
-
-
