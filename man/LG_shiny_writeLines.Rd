@@ -26,5 +26,8 @@ This function writes a few lines of code that contains the
     terminal or it will be saved to file.
 }
 \description{
-Writes the code needed for the calling of \code{LG_shiny}
+The task of this function is to create a tiny script
+    that can be used to call the \code{LG_shiny}-function, with the
+    arguments \code{main_dir} and \code{data_dir} that is needed
+    for the example under investigation.
 }

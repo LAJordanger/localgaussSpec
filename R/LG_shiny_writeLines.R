@@ -1,5 +1,10 @@
 #' Writes the code needed for the calling of \code{LG_shiny}
 #'
+#' @description The task of this function is to create a tiny script
+#'     that can be used to call the \code{LG_shiny}-function, with the
+#'     arguments \code{main_dir} and \code{data_dir} that is needed
+#'     for the example under investigation.
+#'
 #' @template main_dir_arg
 #'
 #' @param data_dir The directory-component of the result from
