@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_shiny.R
 \name{LG_shiny}
 \alias{LG_shiny}
-\title{Shiny app for a local Gaussian inspection of time series.}
+\title{Shiny app for a local Gaussian inspection of time series}
 \usage{
 LG_shiny(main_dir, data_dir = NULL, default_type = "par_five")
 }
@@ -28,6 +28,12 @@ An interactive shiny application will be loaded (if
     desired data).
 }
 \description{
-This function opens an interactive Shiny-application that enables
-an inspection of the stored data.
+This function opens a \code{shiny}-application, which
+    enables an interactive inspection of the estimated local
+    Gaussian (auto- and cross-) correlations.
+}
+\details{
+The \code{shiny}-investigation has access to all the data
+    stored in the \code{main_dir} folder, i.e. it reads the
+    complete file-hierarchy stored in the local info-file.
 }
