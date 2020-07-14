@@ -1,20 +1,23 @@
-#' Explain the content of a plot.
+#' Explain the content of a plot
 #'
-#' This function gives information about the different plots created
-#' by this package.  It is used internally in the
-#' \code{shiny}-application, and it can also be used when a plot is
-#' desired included in an article/presentation.  In the latter case
-#' the plot must first be saved to an object, and that object can then
-#' be given to this function in the argument \code{.plot_details}.
-#' Note that the returned text is based on the information that the
-#' saved plot-object has in the attribute named \code{details}, and it
-#' is thus of course possible to create customised presentations
-#' directly based on the information found there.
+#' @description This function gives information about the content of
+#'     the different plots created by this package.
+#'
+#' @details This function is used as an internal function by
+#'     \code{LG_shiny}, but it can also be used when a plot is to be
+#'     included in an article/presentation.  In the latter case the
+#'     plot must first be saved to an object, and that object can then
+#'     be given to this function in the argument \code{.plot_details}.
+#'     The returned text is based on the information stored in the
+#'     attribute named \code{details}, and an advanced user can of
+#'     course opt for a solution where the relevant information is
+#'     extracted directly from \code{details} and presented according
+#'     to his/hers own preferences,
 #' 
-#' @param .plot_details This can either be a saved plot created by this
-#'     package, or it can be the details-list directly.  (The latter
-#'     alternative is included to simplify the use of this function
-#'     inside of the internal \code{shiny}-application.)
+#' @param .plot_details This can either be a saved plot created by
+#'     this package, or it can be the details-list directly.  (The
+#'     latter alternative is included to simplify the use of this
+#'     function inside of \code{LG_shiny}.)
 #'
 #' @param .mode Specify the mode that the result will be returned in.
 #'     Two modes are supported, "markdown" and "latex".  The default
@@ -23,9 +26,14 @@
 #'     whereas "markdown" will be selected when \code{.plot_details}
 #'     is given as a list.
 #'
-#' @param .digits_for_points An integer that specifies the number of
-#'     decimals to include when presenting a point.  The default value
-#'     is \code{2}.
+#' @param .digits_for_points An integer (default value \code{2}) that
+#'     specifies the number of decimals to include when presenting the
+#'     coordinates of the point corresponding to the percentiles of
+#'     the coordinates.  Note: A plot contains information about the
+#'     coordinates of the point under investigation, but those are
+#'     presented as percentiles of the standard normal distribution,
+#'     and it is thus of interest to also know the actual coordinates
+#'     of the point.
 #'
 #' @param .digits_for_percentiles An integer that specifies the number
 #'     of decimals to include when presenting the percentiles (of the
@@ -37,21 +45,18 @@
 #'
 #' @export
 
-
 LG_explain_plot <- function(.plot_details,
                             .mode = NULL,
                             .digits_for_points = 2,
                             .digits_for_percentiles = 0) {
-###-------------------------------------------------------------------
     ##  Check the properties of '.plot_details', and extract the
     ##  details-attribute if necessary.
-    .plot_argument <- "ggplot" %in% class(.plot_details)
+    .plot_argument <- {"ggplot" %in% class(.plot_details)}
     if (.plot_argument) {
         details <- attributes(.plot_details)$details
     } else
         details <- .plot_details
     kill(.plot_details)
-###-------------------------------------------------------------------
     ##  Check if the mode must be updated (based on '.plot_details')
     ##  or if it is given check that it is a valid alternative.
     if (is.null(.mode)) {
@@ -66,12 +71,9 @@ LG_explain_plot <- function(.plot_details,
                   "The mode must be one of: NULL, markdown, latex.")
     }
     kill(.plot_argument)
-######################################################################
     ##  Reminder of temporary solution for the case not implemented
     if (details$TCS_type == "T")
         return("Sorry: This has not been implemented yet")
-######################################################################
-###-------------------------------------------------------------------
     ##  Create helper functions to take care of the selected values.
     ##  These must be adjusted depending on the mode.
     if (.mode == "markdown") {
@@ -178,7 +180,6 @@ LG_explain_plot <- function(.plot_details,
           if (.mode == "latex")
               "\\end{itemize}  ")
     }
-###-------------------------------------------------------------------
     ##  Fix the details needed for the points and percentiles, with
     ##  the desired level of digits.
     .points <- list(
@@ -191,17 +192,13 @@ LG_explain_plot <- function(.plot_details,
                 digits = .digits_for_percentiles)),
             sep = ""))
     kill(.digits_for_percentiles, .digits_for_points)
-###-------------------------------------------------------------------
-    ##  Note that some of the details already has been stored in a
-    ##  somewhat crude form in 'details$text', but that the present
-    ##  function nevertheless will produce a full collection.  The
-    ##  idea is to produce an output based on an itemised
-    ##  presentation, so the pieces will be configured with that in
-    ##  mind.
-###-------------------------------------------------------------------
-    ##  Collect information about source, content, computations,
-    ##  confidence intervals and so on (depending on what has been
-    ##  selected.)
+    ##  Some of the details have already been stored in a somewhat
+    ##  crude form in 'details$text', but the present function will
+    ##  nevertheless produce a full collection.  The idea is to
+    ##  produce an output based on an itemised presentation, so the
+    ##  pieces will be configured with that in mind.  Collect
+    ##  information about source, content, computations, confidence
+    ##  intervals and so on (depending on what has been selected.)
     plot_info <- list()
     plot_info$Source <- paste(
         ifelse(test = details$is_block,
@@ -231,15 +228,9 @@ LG_explain_plot <- function(.plot_details,
                   sep = ""),
         ".",
         sep = "")
-###-------------------------------------------------------------------
     ##  Information about the content, with details about variables
     ##  and the point, and a comment that states that only the
     ##  positive lags are needed.
-
-    ## capture_env() 
-
-    ## toTitleCase
-
     plot_info$Content <-  paste(
         c("A ",
           ifelse(test = all(details$TCS_type == "C",
@@ -347,15 +338,10 @@ LG_explain_plot <- function(.plot_details,
                       sep = ""),
             sep = "")
     }
-###-------------------------------------------------------------------
     ##  Add information about 'trustworthiness', i.e. if numerical
     ##  convergence for the five parameter local Gaussian approach was
     ##  obtained.
     plot_info$Numerical_convergence <- details$text$trust_the_result
-#####  REMINDER, 2017-04-21: This is at the moment only a placeholder.
-#####  Need to tweak the basic storage to the info-object before this
-#####  can be properly presented.
-###-------------------------------------------------------------------
     ##  A description of the colours/graphical cues.
     if (details$TCS_type == "S") {
         ##  Information about colours
@@ -418,12 +404,10 @@ LG_explain_plot <- function(.plot_details,
                     ").")),
             collapse  = "")
     }
-###-------------------------------------------------------------------
     ##  Add information when 'details$details' (from the inital
     ##  setup) is considered.
     if (! is.null(details$details))
         plot_info$Details <- "TEXT TO BE ADDED HERE!"
-###-------------------------------------------------------------------
     ##  Create a vector with the desired result.
     .result <- c(.header("Explanation of plot"),
       .itemising(
@@ -437,9 +421,8 @@ LG_explain_plot <- function(.plot_details,
           .item(plot_info$Lines, .head = "Lines:"),
           .item(plot_info$Details, .head = "Details:"),
           .item(plot_info$Numerical_convergence, .head = "Trustworthiness:")))
-###-------------------------------------------------------------------
-    ##  Collapse it to a single character string if it is to be used
-    ##  in latex (to get it included using '\Sexpr{}')
+    ##  Collapse to a single character string if it is to be used in a
+    ##  Rnw-document (in order to get it included using '\Sexpr{}').
     if (.mode == "latex")
         .result <- paste(.result, collapse = " ")
     ##  Return the result to the workflow.

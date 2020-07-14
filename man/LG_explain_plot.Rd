@@ -2,16 +2,16 @@
 % Please edit documentation in R/LG_explain_plot.R
 \name{LG_explain_plot}
 \alias{LG_explain_plot}
-\title{Explain the content of a plot.}
+\title{Explain the content of a plot}
 \usage{
 LG_explain_plot(.plot_details, .mode = NULL, .digits_for_points = 2,
   .digits_for_percentiles = 0)
 }
 \arguments{
-\item{.plot_details}{This can either be a saved plot created by this
-package, or it can be the details-list directly.  (The latter
-alternative is included to simplify the use of this function
-inside of the internal \code{shiny}-application.)}
+\item{.plot_details}{This can either be a saved plot created by
+this package, or it can be the details-list directly.  (The
+latter alternative is included to simplify the use of this
+function inside of \code{LG_shiny}.)}
 
 \item{.mode}{Specify the mode that the result will be returned in.
 Two modes are supported, "markdown" and "latex".  The default
@@ -20,9 +20,14 @@ value \code{NULL} will trigger the selection of "latex" if
 whereas "markdown" will be selected when \code{.plot_details}
 is given as a list.}
 
-\item{.digits_for_points}{An integer that specifies the number of
-decimals to include when presenting a point.  The default value
-is \code{2}.}
+\item{.digits_for_points}{An integer (default value \code{2}) that
+specifies the number of decimals to include when presenting the
+coordinates of the point corresponding to the percentiles of
+the coordinates.  Note: A plot contains information about the
+coordinates of the point under investigation, but those are
+presented as percentiles of the standard normal distribution,
+and it is thus of interest to also know the actual coordinates
+of the point.}
 
 \item{.digits_for_percentiles}{An integer that specifies the number
 of decimals to include when presenting the percentiles (of the
@@ -34,14 +39,18 @@ The returned result will be a description of the plot in
     \code{.plot_details}, in the mode specified by \code{.mode}.
 }
 \description{
-This function gives information about the different plots created
-by this package.  It is used internally in the
-\code{shiny}-application, and it can also be used when a plot is
-desired included in an article/presentation.  In the latter case
-the plot must first be saved to an object, and that object can then
-be given to this function in the argument \code{.plot_details}.
-Note that the returned text is based on the information that the
-saved plot-object has in the attribute named \code{details}, and it
-is thus of course possible to create customised presentations
-directly based on the information found there.
+This function gives information about the content of
+    the different plots created by this package.
+}
+\details{
+This function is used as an internal function by
+    \code{LG_shiny}, but it can also be used when a plot is to be
+    included in an article/presentation.  In the latter case the
+    plot must first be saved to an object, and that object can then
+    be given to this function in the argument \code{.plot_details}.
+    The returned text is based on the information stored in the
+    attribute named \code{details}, and an advanced user can of
+    course opt for a solution where the relevant information is
+    extracted directly from \code{details} and presented according
+    to his/hers own preferences,
 }
