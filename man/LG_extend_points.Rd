@@ -17,9 +17,10 @@ An extended version of the array from \code{LG_points} will
     duplicates, and only contains unique points.
 }
 \description{
-This function is an internal helper function, that adds diagonally
-related points to the computation.  In paticular if a point (v1,v2)
-is present, then this function will add the three points (v1,v1),
-(v2,v2) and (v2,v1).
+This internal function adds diagonally related points
+    to the computation of the local Gaussian (auto- and cross-)
+    correlations.  If a point (v1,v2) is present, then this
+    function will ensure that the three points (v1,v1), (v2,v2) and
+    (v2,v1) also will be included in the analysis.
 }
 \keyword{internal}

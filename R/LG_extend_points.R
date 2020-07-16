@@ -1,11 +1,10 @@
-################################################################################
-
-#' Extend select points for the local Gaussian inspections.
+#' Extend select points for the local Gaussian inspections
 #'
-#' This function is an internal helper function, that adds diagonally
-#' related points to the computation.  In paticular if a point (v1,v2)
-#' is present, then this function will add the three points (v1,v1),
-#' (v2,v2) and (v2,v1). 
+#' @description This internal function adds diagonally related points
+#'     to the computation of the local Gaussian (auto- and cross-)
+#'     correlations.  If a point (v1,v2) is present, then this
+#'     function will ensure that the three points (v1,v1), (v2,v2) and
+#'     (v2,v1) also will be included in the analysis.
 #' 
 #' @param LG_points The result of the function \code{LG_select_points}.
 #'
