@@ -197,12 +197,12 @@ heatmap_plot <-
 
 ##  Strategy: Extract the data.
 
-.extracted <- LG_plot_helper(main_dir = ..main_dir, 
-                             input = input,
-                             input_curlicues = list(
-                                 x.label_low_high = c(0, 1),
-                                 NC_value = list(short_or_long_label = "short")),
-                             .extract_LG_data_only = TRUE)
+.extracted <- localgaussSpec:::LG_plot_helper_extract_data_only(
+        main_dir = ..main_dir,
+        input = input,
+        input_curlicues = list(
+            x.label_low_high = c(0, 1),
+            NC_value = list(short_or_long_label = "short")))
 
 ##  Get hold of some internal details.
 
@@ -432,7 +432,7 @@ rm(..main_dir, ..TS)
 .z <- 4
 
 .heatmap.pos.row <- 1:.y
-.plot.pos.row <- .y + 1:.z
+.distance.pos.row <- .y + 1:.z
 
 pdf(.save_file)
 
@@ -447,7 +447,7 @@ print(heatmap_plot  +
           layout.pos.col = 1:2))
 print(distance_plot,
       vp = viewport(
-          layout.pos.row = .plot.pos.row,
+          layout.pos.row = .distance.pos.row,
           layout.pos.col = 1:2))
 
 dev.off()

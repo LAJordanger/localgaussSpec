@@ -134,18 +134,17 @@ for (.levels_Diagonal in .levels) {
     ##  since it is based on code extracted from other functions.
     ##  This will hopefully be resolved in a future update.
 
-    .extracted <- LG_plot_helper(
-        main_dir = ..main_dir,
-        input =
-            c(input_common,
-              list(L2_distance_normal = TRUE,
-                   L2_inspection_vbmL = "b",
-                   levels_Diagonal = .levels_Diagonal)),
-        input_curlicues = list(
-            x.label_low_high = c(0, 1.5),
-            b_value = list(include = FALSE),
-            NC_value = list(short_or_long_label = "short")),
-        .extract_LG_data_only = TRUE)
+    .extracted <- localgaussSpec:::LG_plot_helper_extract_data_only(
+            main_dir = ..main_dir,
+            input =
+                c(input_common,
+                  list(L2_distance_normal = TRUE,
+                       L2_inspection_vbmL = "b",
+                       levels_Diagonal = .levels_Diagonal)),
+            input_curlicues = list(
+                x.label_low_high = c(0, 1.5),
+                b_value = list(include = FALSE),
+                NC_value = list(short_or_long_label = "short")))
 
     distance_annotations[[.name]] <-
         .extracted$look_up$curlicues$text
@@ -434,7 +433,7 @@ rm(..main_dir, ..TS)
 .z <- 4
 
 .heatmap.pos.row <- 1:.y
-.plot.pos.row <- .y + 1:.z
+.distance.pos.row <- .y + 1:.z
 
 pdf(.save_file1)
 
@@ -449,7 +448,7 @@ print(heatmap_plots$lower  +
           layout.pos.col = 1:2))
 print(distance_plots$lower,
       vp = viewport(
-          layout.pos.row = .plot.pos.row,
+          layout.pos.row = .distance.pos.row,
           layout.pos.col = 1:2))
 
 dev.off()

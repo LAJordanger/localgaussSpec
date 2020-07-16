@@ -98,13 +98,12 @@ input <- list(TCS_type = "S",
 
 ##  Do not create the plot, but extract the underlying data instead. 
 
-.LG_data_only <- LG_plot_helper(
+.LG_data_only <- localgaussSpec:::LG_plot_helper_extract_data_only(
     main_dir = ..main_dir, 
     input = input,
     input_curlicues= list(
         NC_value = list(
-            short_or_long_label = "short")),
-    .extract_LG_data_only=TRUE)
+            short_or_long_label = "short")))
 
 ##  Extract from this internal object the required 'bookmarks'
 
@@ -385,8 +384,8 @@ rm(points_df, ..x_limit, ..y_limit, ..imaginary)
 rm(..main_dir, ..TS)
 
 pdf(file = .save_file) 
-grid.newpage()
 
+grid.newpage()
 pushViewport(viewport(
     layout = grid.layout(1, 3)))
 print(..plot$polar,

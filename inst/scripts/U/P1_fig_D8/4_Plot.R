@@ -84,15 +84,14 @@ library(grid)
 
 for (.level in 1:3) {
         .name <- .names[.level]
-        .env_list[[.name]]  <- LG_plot_helper(
-            main_dir = ..main_dir, 
-            input = c(.input_common,
-                      list(levels_Diagonal = .level,
-                           L2_distance_normal = TRUE)),
-            input_curlicues = list(
-                x.label_low_high = c(0, 200),
-                NC_value = list(short_or_long_label = "short")),
-            .extract_LG_data_only = TRUE)
+        .env_list[[.name]]  <- localgaussSpec:::LG_plot_helper_extract_data_only(
+                main_dir = ..main_dir,
+                input = c(.input_common,
+                          list(levels_Diagonal = .level,
+                               L2_distance_normal = TRUE)),
+                input_curlicues = list(
+                    x.label_low_high = c(0, 200),
+                    NC_value = list(short_or_long_label = "short")))
 }
 
 ##  Create a list with the annotated labels, as these will be needed

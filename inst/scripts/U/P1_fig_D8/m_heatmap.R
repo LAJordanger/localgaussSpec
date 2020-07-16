@@ -53,8 +53,7 @@ for (.level in 1:3) {
                            heatmap_m_restrict = list(m = as.character(1:50)),
                            L2_distance_normal = FALSE)),
             input_curlicues = list(
-                NC_value = list(short_or_long_label = "short")),
-            .extract_LG_data_only = FALSE)
+                NC_value = list(short_or_long_label = "short")))
 }
 
 .env_list[[1]]
@@ -330,6 +329,7 @@ system(.crop_code)
 
 ##  The plots showing the distances.
 pdf(file = .file)
+
 grid.newpage()
 pushViewport(viewport(
     layout = grid.layout(16, 2)))
@@ -349,6 +349,7 @@ print(.distance_plots$upper,
       vp = viewport(
           layout.pos.row = 4:6,
           layout.pos.col = 2))
+
 dev.off()
 
 ## ##  Crop the result.  This approach requires that 'pdfcrop' is

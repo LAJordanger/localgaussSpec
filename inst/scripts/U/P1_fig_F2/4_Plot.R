@@ -124,16 +124,15 @@ for (i in seq_along(block_length_vec)) {
                             i)
     input <- c(
         input_common,
-        list(
-            Boot_Approx = .Boot_Approx,
-            L2_distance_normal = TRUE))
+        list(Boot_Approx = .Boot_Approx,
+             L2_distance_normal = TRUE))
     ##  Extract the data, adjust it to the required format.
-    .zzz <- LG_plot_helper(main_dir = ..main_dir, 
-                           input = input,
-                           input_curlicues = list(
-                               x.label_low_high = x.label_low_high_norm,
-                               NC_value = list(short_or_long_label = "short")),
-                           .extract_LG_data_only = TRUE)
+    .zzz <- localgaussSpec:::LG_plot_helper_extract_data_only(
+            main_dir = ..main_dir,
+            input = input,
+            input_curlicues = list(
+                x.label_low_high = x.label_low_high_norm,
+                NC_value = list(short_or_long_label = "short")))
     .env <- .zzz$..env
     .env$look_up <- .zzz$look_up
     env_list[[as.character(block_length)]] <- .env
@@ -150,12 +149,12 @@ input <- c(
     list(
         Boot_Approx = .Boot_Approx,
         L2_distance_percentages = TRUE))
-.tmp <- LG_plot_helper(main_dir = ..main_dir, 
-                       input = input,
-                       input_curlicues = list(
-                           x.label_low_high = x.label_low_high_percentages,
-                           NC_value = list(short_or_long_label = "short")),
-                       .extract_LG_data_only = TRUE)
+.tmp <- localgaussSpec:::LG_plot_helper_extract_data_only(
+        main_dir = ..main_dir,
+        input = input,
+        input_curlicues = list(
+            x.label_low_high = x.label_low_high_percentages,
+            NC_value = list(short_or_long_label = "short")))
 annotation_for_percentages <- .tmp$look_up$curlicues$text
 
 ##  Collect all the relevant details in one list.
@@ -537,21 +536,17 @@ for (..type in c("norms", "changes_in_norms")) {
 ###----------------------------------------------------------------###
 
 ##  Scale down the size of the labels before shrinking stuff in the
-##  grid-setup.
+##  grid-setup, and tweak the position of the plot-stamp
 
 for (..type in c("norms", "changes_in_norms")) {
     .annotations_text[[..type]]$annotated$size <- 
-        0.4 * .annotations_text[[..type]]$annotated$size 
+        0.4 * .annotations_text[[..type]]$annotated$size
+    .annotations_text[[..type]]$annotated$vjust[1] <-
+        2 * .annotations_text[[..type]]$annotated$vjust[1]
 }
-
-
 
 size_L <- .annotations_text[[1]]$annotated_df["NC_value", "size"] * 0.4
 v_just_L <- .annotations_text[[1]]$annotated_df["NC_value", "vjust"]
-
-## Tweak the position of the plot stamp.
-
-annotate_heatmap$annotated$vjust[1] <- 2 * annotate_heatmap$annotated$vjust[1]
 
 for (..type in c("norms", "changes_in_norms")) {
     .the_plots_list[[..type]] <-
