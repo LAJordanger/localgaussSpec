@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_plot_load.R
 \name{LG_plot_load}
 \alias{LG_plot_load}
-\title{Load files to be used during the interactive inspection.}
+\title{Load files to be used during the interactive inspection of the plots}
 \usage{
 LG_plot_load(look_up, .env, .extract_LG_data_only)
 }
@@ -10,15 +10,16 @@ LG_plot_load(look_up, .env, .extract_LG_data_only)
 \item{look_up}{A list created by \code{LG_lookup} (in the function
 \code{LG_plot_helper}), where the key details have been
 extracted (or constructed) from a (non-reactive copy) of the
-values defined by the \code{shiny}-interface.}
+values defined by the \code{shiny}-interface of
+\code{LG_shiny}.}
 
-\item{.env}{The environment in which the loaded stuff should be
+\item{.env}{The environment in which the loaded data will be
 stored.}
 
-\item{.extract_LG_data_only}{Logical argument, inherited from
-\code{LG_plot_helper}.  The value \code{FALSE} will ensure that
-a plot is created, whereas the value \code{TRUE} is used when
-the desired outcome is an object containing the estimated local
+\item{.extract_LG_data_only}{Logical argument, default value
+\code{FALSE}.  The value \code{FALSE} will ensure that a plot
+is created, whereas the value \code{TRUE} is used when the
+desired outcome is an object containing the estimated local
 Gaussian values.}
 }
 \value{
@@ -28,8 +29,12 @@ The required data will be loaded from files into
     calling function under the name given by \code{.result}.
 }
 \description{
-This helper function that takes care of some details related to the
-loading of files, i.e. with regard to the interactive inspection
-required by \code{shiny}.
+This internal function takes care of some details
+    related to the loading of files needed for the creation of a
+    plot, and it then stores the result in the environment given to
+    the \code{.env}-argument.  It does this both for the
+    interactive solution in \code{LG_shiny} and for the
+    non-reactive solution used when plots are created for the use
+    in papers/presentations.
 }
 \keyword{internal}

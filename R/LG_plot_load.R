@@ -1,21 +1,26 @@
-#' Load files to be used during the interactive inspection.
+#' Load files to be used during the interactive inspection of the plots
 #'
-#' This helper function that takes care of some details related to the
-#' loading of files, i.e. with regard to the interactive inspection
-#' required by \code{shiny}.
+#' @description This internal function takes care of some details
+#'     related to the loading of files needed for the creation of a
+#'     plot, and it then stores the result in the environment given to
+#'     the \code{.env}-argument.  It does this both for the
+#'     interactive solution in \code{LG_shiny} and for the
+#'     non-reactive solution used when plots are created for the use
+#'     in papers/presentations.
 #'
 #' @param look_up A list created by \code{LG_lookup} (in the function
 #'     \code{LG_plot_helper}), where the key details have been
 #'     extracted (or constructed) from a (non-reactive copy) of the
-#'     values defined by the \code{shiny}-interface.
+#'     values defined by the \code{shiny}-interface of
+#'     \code{LG_shiny}.
 #'
-#' @param .env The environment in which the loaded stuff should be
+#' @param .env The environment in which the loaded data will be
 #'     stored.
 #'
-#' @param .extract_LG_data_only Logical argument, inherited from
-#'     \code{LG_plot_helper}.  The value \code{FALSE} will ensure that
-#'     a plot is created, whereas the value \code{TRUE} is used when
-#'     the desired outcome is an object containing the estimated local
+#' @param .extract_LG_data_only Logical argument, default value
+#'     \code{FALSE}.  The value \code{FALSE} will ensure that a plot
+#'     is created, whereas the value \code{TRUE} is used when the
+#'     desired outcome is an object containing the estimated local
 #'     Gaussian values.
 #' 
 #' @return The required data will be loaded from files into
@@ -33,7 +38,6 @@ LG_plot_load <- function(look_up,
     env_name <- cache$env_name
     global_name <- look_up$global_name
     local_name <- look_up$local_name
-    ###-------------------------------------------------------------------
     ##  Check if existing data has been loaded already.  If necessary
     ##  load the data from files.  Reminder: The strategy is based on
     ##  the existence of an environment inside of '.env'.  If that
@@ -108,7 +112,8 @@ LG_plot_load <- function(look_up,
     ##  the environment that we want to update.
     ..env <- .env[[env_name]]
     kill(.env, env_name)
-    ###-------------------------------------------------------------------
+    ##  Call different functions depending on the type of plot that
+    ##  should be created.
     if (look_up$TCS_type == "S") {
         ##  The extractions and computations required for the
         ##  inspection of the local Gaussian spectra are taken care of
@@ -128,28 +133,15 @@ LG_plot_load <- function(look_up,
         LG_create_plot_df(look_up = look_up,
                           ..env = ..env)
     }
-    ###-------------------------------------------------------------------
+    ##  Return the underlying data when required.
     if (.extract_LG_data_only) {
-        ##  Rename the content of '..env', so it becomes easier to
-        ##  inspect during development/updates.
-        ## for (i in seq_along(cache)) {
-        ##     .name  <- cache[[i]]
-        ##     if (exists(x = .name, envir = ..env)) {
-        ##         .new_name <- names(cache)[i]
-        ##         assign(x = .new_name,
-        ##                value = ..env[[.name]],
-        ##                envir = ..env)
-        ##         eval(bquote(rm(.(.name),
-        ##                        envir = ..env)))
-        ##     }
-        ## }
         return(list(..env = ..env,
                     look_up = look_up))
-    }
-    ###-------------------------------------------------------------------
+    } 
     ##  Create the plot
     ..env$.lag_plot<- LG_plot(look_up = look_up,
                               ..env = ..env)
     ##   Return the plot to the workflow.
     ..env$.lag_plot
+    
 }
