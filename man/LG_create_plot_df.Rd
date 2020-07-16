@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_create_plot_df.R
 \name{LG_create_plot_df}
 \alias{LG_create_plot_df}
-\title{Create the data needed when plotting the local Gaussian
-correlations and spectra.}
+\title{Create the data needed when plotting the local Gaussian correlations and spectra.}
 \usage{
 LG_create_plot_df(look_up, ..env)
 }
@@ -22,9 +21,11 @@ This function adds a new environment to the environment
     \code{LG_plot} to work as desired.
 }
 \description{
-This function created an environment with the data needed for the
-plots of the estimated local Gaussian correlations and spectra.  A
-simple caching is performed in order to avoid having computations
-more than once.
+This internal function updates the environment given
+    to the \code{.env}-argument with the data needed for the plots
+    of the estimated local Gaussian correlations and spectra.  A
+    simple caching is performed in order to avoid computations
+    being done more than once when this is used in the interactive
+    setting of \code{LG_shiny}.
 }
 \keyword{internal}

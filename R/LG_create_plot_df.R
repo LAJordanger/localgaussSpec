@@ -1,10 +1,11 @@
-#' Create the data needed when plotting the local Gaussian
-#' correlations and spectra.
+#' Create the data needed when plotting the local Gaussian correlations and spectra.
 #'
-#' This function created an environment with the data needed for the
-#' plots of the estimated local Gaussian correlations and spectra.  A
-#' simple caching is performed in order to avoid having computations
-#' more than once.
+#' @description This internal function updates the environment given
+#'     to the \code{.env}-argument with the data needed for the plots
+#'     of the estimated local Gaussian correlations and spectra.  A
+#'     simple caching is performed in order to avoid computations
+#'     being done more than once when this is used in the interactive
+#'     setting of \code{LG_shiny}.
 #'
 #' @param look_up The list created by \code{LG_lookup}, containing
 #'     the information needed in order to decide what kind of
@@ -101,7 +102,6 @@ LG_create_plot_df <- function(look_up,
         .aes_list <- list(xy = .aes_xy,
                           min_max = .aes_min_max)
     }
-    ###-------------------------------------------------------------------    
     ##  The investigation of the local Gaussian spectra, will be based
     ##  on the estimates of the global and local estimates that have
     ##  been done in the earlier functions.  In particular, it only
@@ -111,7 +111,7 @@ LG_create_plot_df <- function(look_up,
     ##  different pointwise confidence intervals (when that is
     ##  required), and a second step that extracts the final
     ##  data-frame from this.  Note that some configurations of the
-    ##  input parameters requires that minor tweaks (originating from
+    ##  input parameters require that minor tweaks (originating from
     ##  an underlying complex conjugation) must be done in order to
     ##  get the correct sign.
     if  (look_up$TCS_type == "S") {
