@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_extend_points.R
 \name{LG_extend_points}
 \alias{LG_extend_points}
-\title{Extend select points for the local Gaussian inspections.}
+\title{Extend select points for the local Gaussian inspections}
 \usage{
 LG_extend_points(LG_points)
 }
