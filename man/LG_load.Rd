@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_load.R
 \name{LG_load}
 \alias{LG_load}
-\title{Load objects into environments.}
+\title{Load an object into an environment}
 \usage{
 LG_load(.file, .env = parent.frame(), .name = NULL,
   .attributes_extra = NULL)
@@ -27,11 +27,12 @@ will skip this part.}
 \value{
 An object named \code{.name} will be added from
     \code{.file} to \code{.env}, with the possible extension of
-    attributes as given to \code{.attributes_extra}.
+    attributes as given by \code{.attributes_extra}.
 }
 \description{
-This function loads a file into an environment, and gives the
-content the specified name.  It's required that the file only
-contains one single object.
+This internal function loads the content of a file
+    into an environment, and it gives it the name specified in the
+    \code{.name}-argument.  It is required that the file only
+    contains one single object.
 }
 \keyword{internal}

@@ -1,10 +1,9 @@
-################################################################################
+ #' Load an object into an environment
 #'
-#' Load objects into environments.
-#'
-#' This function loads a file into an environment, and gives the
-#' content the specified name.  It's required that the file only
-#' contains one single object.
+#' @description This internal function loads the content of a file
+#'     into an environment, and it gives it the name specified in the
+#'     \code{.name}-argument.  It is required that the file only
+#'     contains one single object.
 #'
 #' @param .file The path to the file to be loaded.  An error will be
 #'     returned if more than one object is contained in \code{.file}.
@@ -24,7 +23,7 @@
 #'
 #' @return An object named \code{.name} will be added from
 #'     \code{.file} to \code{.env}, with the possible extension of
-#'     attributes as given to \code{.attributes_extra}.
+#'     attributes as given by \code{.attributes_extra}.
 #'
 #' @keywords internal
 
