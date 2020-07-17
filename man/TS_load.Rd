@@ -8,21 +8,25 @@ TS_load(.TS_info, save_dir = TRUE)
 }
 \arguments{
 \item{.TS_info}{A list containing the three components \code{TS},
-\code{main_dir} and \code{save_dir}.}
+\code{main_dir} and \code{save_dir}.  The \code{TS}-component
+can either be the time series of interest, or it could be the
+filename used to store the time series.}
 
 \item{save_dir}{Logical value, default \code{TRUE}.  To be used
-when it's of interest to have a path at which the next step in
+when it is of interest to have a path at which the next step in
 the computation should be stored.}
 }
 \value{
-This function will add objects to the calling environment.
+This function will always add an object named \code{TS} to
+    the environment of the calling function.  Depending on the
+    logical value given by \code{save_dir}, it might also add a
+    character-valued \code{save_dir} to this environment.
 }
 \description{
-This is an internal helper-function that takes care of some pesky
-details when loading and saving arrays related to time series.  The
-point is that regardless of the name used upon the stored array, it
-will be returned to the calling environment with the name
-\code{TS}, and it's also possible to get information required for
-the saving of the results to be computed from \code{TS}.
+This internal function takes care of some pesky
+    details when a local Gaussian investigation is to be performed
+    on a time series.  It can also compute the \code{save_dir} that
+    should be used when saving the results based on the given time
+    series \code{TS}.
 }
 \keyword{internal}
