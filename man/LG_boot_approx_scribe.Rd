@@ -150,3 +150,14 @@ Note that default values are not given for any of the
     the investigation of the original sample, and that value will
     then be inherited to the present investigation.
 }
+\note{
+Regarding the case where the \code{LG_type}-argument is equal
+    to "par_one": The author of this package has always considered
+    the "par_one"-approach to be reasonable when the aim of the
+    investigation is to estimate a density at a given point.
+    However, the extraction of the correlation value from the
+    resulting density-estimate will in general not capture the
+    local geometrical properties of the targeted distribution at
+    the point of investigation.  The "par_one"-approach is as such
+    (in general) a complete waste of computation resources.
+}
