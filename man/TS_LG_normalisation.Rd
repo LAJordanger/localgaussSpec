@@ -2,12 +2,12 @@
 % Please edit documentation in R/TS_LG_normalisation.R
 \name{TS_LG_normalisation}
 \alias{TS_LG_normalisation}
-\title{Create a normalised time series from the original ones.}
+\title{Create a normalised time series from the original ones}
 \usage{
 TS_LG_normalisation(TS, .remove_ties = TRUE)
 }
 \arguments{
-\item{TS}{The time series object to normalise.  It's assumed that
+\item{TS}{The time series object to normalise.  It is assumed that
 this is structured in an array, with one dimension-name being
 "content".}
 
@@ -20,18 +20,17 @@ will be used in order to ensure reproducibility.}
 A normalised version of the time series of interest.
 }
 \description{
-Create a normalised time series from the original ones.
+A normalisation of the time series under consideration
+    is preferable when an analysis based on the local Gaussian
+    approximations is of interest.
 }
 \details{
-A normalisation of the time series under consideration is
-    preferable when an analysis based on the local Gaussian
-    approximations are of interest.  The intention of this function
-    is to allow for easier adjustment of the normalisation regime,
-    i.e if the normalisation should be based on the cumulative
-    density function (or other options that might be added later
-    on).  This function will also add some attributes to the
-    result, with the required instruction for the finite-sample
-    adjustments to be used when computing the local Gaussian
-    autocorrelations.
+The intention of this function is to allow for easier
+    adjustment of the normalisation regime, i.e if the
+    normalisation should be based on the cumulative density
+    function (or other options that might be added later on).  This
+    function will also add some attributes to the result, with the
+    required instruction for the finite-sample adjustments to be
+    used when computing the local Gaussian autocorrelations.
 }
 \keyword{internal}

@@ -1,17 +1,18 @@
-#' Create a normalised time series from the original ones.
+#' Create a normalised time series from the original ones
 #'
-#' @details A normalisation of the time series under consideration is
-#'     preferable when an analysis based on the local Gaussian
-#'     approximations are of interest.  The intention of this function
-#'     is to allow for easier adjustment of the normalisation regime,
-#'     i.e if the normalisation should be based on the cumulative
-#'     density function (or other options that might be added later
-#'     on).  This function will also add some attributes to the
-#'     result, with the required instruction for the finite-sample
-#'     adjustments to be used when computing the local Gaussian
-#'     autocorrelations.
+#' @description A normalisation of the time series under consideration
+#'     is preferable when an analysis based on the local Gaussian
+#'     approximations is of interest.
 #'
-#' @param TS The time series object to normalise.  It's assumed that
+#' @details The intention of this function is to allow for easier
+#'     adjustment of the normalisation regime, i.e if the
+#'     normalisation should be based on the cumulative density
+#'     function (or other options that might be added later on).  This
+#'     function will also add some attributes to the result, with the
+#'     required instruction for the finite-sample adjustments to be
+#'     used when computing the local Gaussian autocorrelations.
+#'
+#' @param TS The time series object to normalise.  It is assumed that
 #'     this is structured in an array, with one dimension-name being
 #'     "content".
 #' 
@@ -24,9 +25,7 @@
 #'
 #' @keywords internal
 
-TS_LG_normalisation <- function(
-             TS,
-             .remove_ties = TRUE) {
+TS_LG_normalisation <- function(TS, .remove_ties = TRUE) {
     ##  Perform the desired normalisation for each combination of
     ##  variable and content.
     .not_observations <- ! names(dimnames(TS)) %in% "observations"
@@ -67,9 +66,7 @@ TS_LG_normalisation <- function(
     TS_new <- restrict_array(
         .arr = TS_new,
         .restrict = dimnames(TS),
-        ## .restrict = dimnames(TS_new)[c("observations", "variables", "content")],
     .permute = TRUE)
-###-------------------------------------------------------------------
     ##  Add additional attributes to 'TS_new'.
     attributes(TS_new) <- c(
         attributes(TS_new),
