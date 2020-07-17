@@ -176,21 +176,6 @@ LG_default <-
 #####  sanity-check to see if the argument of the functions are like
 #####  we want them to be.
 ###-------------------------------------------------------------------
-        ##  Stems to be used when saving objects
-        approx_save =
-            c(par_one  = "par_one_approx",
-              par_five = "par_five_approx"),
-        spectra_save =
-            c(par_one  = "par_one_spectra",
-              par_five = "par_five_spectra"),
-#############---------------------------------------------------------
-###  Note that the stems above will be prefixed with 'type' (and when
-###  necessary with the 'boot.prefix' too) in the saving process, and
-###  that the file-names that will be used will be created by
-###  suffixing with ".Rda" (eventually also with an added
-###  "part_a_of_b" if memory-issues require the computation to be
-###  partitioned into several chunks.
-###-------------------------------------------------------------------
         ##  Create function to initial data-frame for saving of
         ##  file-related information.  'object_size' is included since
         ##  some latter computations might have to be partitioned due

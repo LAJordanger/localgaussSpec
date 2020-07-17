@@ -141,7 +141,6 @@ LG_boot_approx_scribe <- function(
             ##  Save data for 'par_one', register the file-name.
             save_files.par_one <- LG_save(
                 data = result$par_one_data,
-                data_type = "approx_save",
                 LG_type = "par_one",
                 bootstrap = TRUE,
                 part = part,
@@ -165,7 +164,6 @@ LG_boot_approx_scribe <- function(
             ##  Save data for 'par_five', register the file-name.
             save_files.par_five <- LG_save(
                 data = result$par_five_data,
-                data_type = "approx_save",
                 LG_type = "par_five",
                 bootstrap = TRUE,
                 part = part,

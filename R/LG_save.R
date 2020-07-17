@@ -1,37 +1,38 @@
-################################################################################
+#' Save function for local Gaussian related information
 #'
-#' Save function for different Local Gaussian Information
-#'
-#' This function is primarily intended to simplify the code of the
-#' wrapper-functions.  It will ensure that the data we want to store
-#' will be saved with informative names that reveals what part of the
-#' code the data originates from.
+#' @description This internal function simplifies the code of the
+#'     scribe-functions.  It will ensure that the data will be saved
+#'     with informative names that reveals what part of the code the
+#'     data originates from.
 #'
 #' @param data The data we want to store.
 #'
 #' @param save_file.Rda A file name to be used when saving
 #'     \code{data}.  The default value \code{NULL} will imply that a
 #'     name is computed based on the values given to the arguments
-#'     \code{data_type}, \code{LG_type}, code{bootstrap} and
-#'     \code{part}.
+#'     \code{LG_type}, \code{bootstrap} and \code{part}.
 #'  
-#' @param data_type One of \code{data_type = c("approx_save",
-#'     "spectra_save")}.  This tells us whether \code{data} comes from
-#'     the intermediate step where the Local Gaussian Approximations
-#'     are computed, or if \code{data} concerns the estimates of the
-#'     Local Gaussian Spectral Densities.  This argument will be
-#'     ignored when \code{save_file.Rda} is different from
-#'     \code{NULL}.
-#' 
-#' @param LG_type One of \code{c("par_five", "par_one")}, only used
-#'     when \code{data_type="spectra_save"}. This tells us whether the
-#'     data is dealing with local Gaussian auto-correlations
-#'     ("par_five") or with local Gaussian auto-covariances
+#' @param LG_type One of \code{c("par_five", "par_one")}.  This tells
+#'     us whether the data is based on the local Gaussian
+#'     autocorrelations estimated from the five parameter bivariate
+#'     Gaussian probability density distribution ("par_five"), or if
+#'     they have been obtained by the help of the simplified one
+#'     parameter bivariate Gaussian probability density distribution
 #'     ("par_one").  This argument will be ignored when
 #'     \code{save_file.Rda} is different from \code{NULL}.
 #'
+#' @note Regarding the case where the \code{LG_type}-argument is equal
+#'     to "par_one": The author of this package has always considered
+#'     the "par_one"-approach to be reasonable when the aim of the
+#'     investigation is to estimate a density at a given point.
+#'     However, the extraction of the correlation value from the
+#'     resulting density-estimate will in general not capture the
+#'     local geometrical properties of the targeted distribution at
+#'     the point of investigation.  The "par_one"-approach is as such
+#'     (in general) a complete waste of computation resources.
+#'
 #' @param bootstrap This tells us whether our data have been computed
-#'     from the original time series or from bootstrap-replicates of
+#'     from an original time series, or from bootstrap-replicates of
 #'     it.  Default value \code{FALSE}.  This argument will be ignored
 #'     when \code{save_file.Rda} is different from \code{NULL}.
 #'
@@ -64,7 +65,6 @@
 LG_save <- function(
     data,
     save_file.Rda = NULL,
-    data_type = c("approx_save", "spectra_save"),
     LG_type = c("par_five", "par_one"),
     bootstrap = FALSE,
     part = " ",
@@ -81,26 +81,16 @@ LG_save <- function(
         dir.create(save_dir)
     ##  Compute `save_dir.Rda` when necessary.
     if (is.null(save_file.Rda)) {
-        ##  Look up 'LG_default' for the stem of the save information.
-        save_info <- LG_default[[c(data_type, LG_type)]]
-        ##  Add information based on 'bootstrap', and 'part'.
-        save_info <-
-            paste(ifelse(test = bootstrap,
-                         yes =
-                             paste(LG_default$boot.prefix,
-                                   "_",
-                                   sep = ""),
-                         no = ""),
-                  save_info,
-                  ifelse(test = (part == " "),
-                         yes = "",
-                         no =
-                             paste("_",
-                                   part,
-                                   sep = "")),
-                  sep = "")
         ##  Create the name of the save-file.
-        save_file.Rda <- paste(save_info, ".Rda", sep = "")
+        save_file.Rda <- sprintf(
+            "%s%s_approx%s.Rda",
+            ifelse(test = bootstrap,
+                   yes  = sprintf("%s_", LG_default$boot.prefix),
+                   no   = ""),
+            LG_type,
+            ifelse(test = {part == " "},
+                   yes = "",
+                   no  = sprintf("_%s", part)))
     } else {
         ##  Use the stem of `save_file.Rda` as `save_info`.
         save_info <- gsub(
