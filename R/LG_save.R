@@ -79,20 +79,24 @@ LG_save <- function(
     ##  Create the directory if it does not already exists.
     if (! file.exists(save_dir))
         dir.create(save_dir)
-    ##  Compute `save_dir.Rda` when necessary.
+    ##  Compute 'save_dir.Rda' when necessary.
     if (is.null(save_file.Rda)) {
+        ##  Compute the 'save_info'
+        save_info <- sprintf(
+            "%s_approx",
+            LG_type)
         ##  Create the name of the save-file.
         save_file.Rda <- sprintf(
-            "%s%s_approx%s.Rda",
+            "%s%s%s.Rda",
             ifelse(test = bootstrap,
                    yes  = sprintf("%s_", LG_default$boot.prefix),
                    no   = ""),
-            LG_type,
+            save_info,
             ifelse(test = {part == " "},
                    yes = "",
                    no  = sprintf("_%s", part)))
     } else {
-        ##  Use the stem of `save_file.Rda` as `save_info`.
+        ##  Use the stem of 'save_file.Rda' as 'save_info'.
         save_info <- gsub(
             pattern = ".Rda$",
             replacement = "",
