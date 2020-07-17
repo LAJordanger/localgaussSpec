@@ -1,65 +1,73 @@
-################################################################################
-#'
 #' Autocovariances and autocorrelations the old-fashioned way.
 #'
-#' This function use the "old-fashioned" way to compute the
-#' autocorrelations for a given time series, i.e. the
-#' summation-approach.  This is much slower than the fast Fourier
-#' transform approach used by \code{acf}, but it seems more natural to
-#' use this when computing the ordinary spectral density in the old
-#' fashioned way (using window-functions instead of periodograms).
+#' @description This internal function use the "old-fashioned" way to
+#'     compute the autocorrelations (and cross-correlations) for a
+#'     given time series, i.e. the summation-approach.  This is much
+#'     slower than the fast Fourier transform approach used by
+#'     \code{acf}, but it seems more natural to use this when
+#'     computing the ordinary spectral density in the old fashioned
+#'     way (using lag-window functions instead of periodograms).
 #'
 #' @param .TS_info A list containing the three components \code{TS},
 #'     \code{main_dir} and \code{save_dir}.
 #'
 #' @template lag_max_arg
 #' 
+#' @description The \code{.TS_info}-argument is given to the internal
+#'     function \code{TS_load}, which loads the \code{TS}-part from
+#'     file when required. \code{TS_load} will also compute the name
+#'     of the directory in which the result should be stored.
+#' 
 #' @return A file will be created containing an array with the
-#'     (ordinary) autocorrelations of \code{TS}.  If \code{save_dir}
-#'     is \code{NULL}, then the array will be returned to the workflow
-#'     directly, otherwise it will be saved to disk.
+#'     (ordinary) autocorrelations (and cross-correlations) of
+#'     \code{TS}.  A list with the following to components will be
+#'     returned to the internal workflow, in order to be added to the
+#'     'info'-object.
+#'
+#' \describe{
+#'
+#' \item{.acr_type}{This will either simply be "acr" or "acr_boot".
+#'    The suffix "boot" is added when the computations are based on
+#'    bootstrapped replicates of an original time series.  (The
+#'    information about the bootstrap-status is available as an
+#'    attribute of the \code{TS}-object the computation is based on.)}
+#'
+#' \item{.acr_content}{This will be a vector with the components
+#'     needed in order to load the saved result back into the
+#'     workflow.}
+#'
+#' }
 #' 
 #' @keywords internal
 
-
-#####  2017-01-05, Reminder: The code for this setup might most likely
-#####  be simplified a bit by applying the "folding property" of the
-#####  cross-correlations, i.e. an approach like the one used for the
-#####  local Gaussian correlations might lead to a leaner setup.  Does
-#####  not have time to mess around with this modification at the
-#####  moment.
-
 TS_acr <- function(.TS_info,
                    lag_max = quote(ceiling(3*sqrt(length(TS))))) {
-###-------------------------------------------------------------------
-    ##  Load `TS` and `save_dir` from the information in `.TS_info`.
+    ##  Load 'TS' and 'save_dir' from the information in '.TS_info'.
     TS_load(.TS_info,
             save_dir = TRUE)
-    ##  Identify if `TS` is related to bootstrapping.
+    ##  Identify if 'TS' is related to bootstrapping.
     .bootstrap <-
         if (is.null(attributes(TS)$bootstrap)) {
             FALSE
         } else
             attributes(TS)$bootstrap
-    ##  Identify the type based on `.bootstrap` (needed in order to
+    ##  Identify the type based on '.bootstrap' (needed in order to
     ##  identify the correct path into the saved file-hierarchy).
     .acr_type <- paste("acr",
                        ifelse(
                            test = .bootstrap,
-                               yes  = "_boot",
-                               no   = ""),
+                           yes  = "_boot",
+                           no   = ""),
                        sep = "")
     kill(.bootstrap)
-###-------------------------------------------------------------------
-    ##  If `lag_max` is the default call, then the `length(TS)`-part
+    ##  If 'lag_max' is the default call, then the 'length(TS)'-part
     ##  should be replaced with the length of the dimension
-    ##  `observations` (from `TS`), before it is evaluated.
+    ##  'observations' (from 'TS'), before it is evaluated.
     if (is.call(lag_max)) {
         lag_max[[c(2, 3, 2)]] <-
             length(dimnames(TS)$observations)
         lag_max <- eval(lag_max)
     }
-###-------------------------------------------------------------------
     ##  Extract relevant attributes from 'TS'.
     .attr_from_TS <- local({
         .ignore <- c("dim", "dimnames", "TS_for_analysis")
@@ -81,7 +89,6 @@ TS_acr <- function(.TS_info,
                 .Dim = c(dim(TS), 1),
                 .Dimnames = c(dimnames(TS),
                               list(TS = "TS_original")))
-###-------------------------------------------------------------------
     ##  Help function to compute the auto- and cross-correlations on
     ##  each component. Reminder: The 'vec'-argument is based on the
     ##  rows of the 'arg_grid' defined below.
@@ -172,7 +179,6 @@ TS_acr <- function(.TS_info,
                 .Names = 0:lag_max))
         }
     }
-###-------------------------------------------------------------------
     ##  Compute the desired autocorrelations.
     arg_grid <- expand.grid(
         pairs = .attr_from_TS$.variable_pairs,
@@ -192,12 +198,11 @@ TS_acr <- function(.TS_info,
     attributes(.acr) <- c(
         attributes(.acr),
         .attr_from_TS)
-###-------------------------------------------------------------------
     ##  Save the result to file.
     LG_save(data = .acr,
             save_file.Rda = LG_default$global[.acr_type],
             save_dir = save_dir)
-    ##  Return information to be added to the `info`-object.
+    ##  Return information to be added to the 'info'-object.
     list(.acr_type = .acr_type,
          .acr_content = c(.TS_info$save_dir, LG_default$global[.acr_type]))
 }

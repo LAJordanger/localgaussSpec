@@ -18,16 +18,37 @@ value can be used instead.}
 }
 \value{
 A file will be created containing an array with the
-    (ordinary) autocorrelations of \code{TS}.  If \code{save_dir}
-    is \code{NULL}, then the array will be returned to the workflow
-    directly, otherwise it will be saved to disk.
+    (ordinary) autocorrelations (and cross-correlations) of
+    \code{TS}.  A list with the following to components will be
+    returned to the internal workflow, in order to be added to the
+    'info'-object.
+
+\describe{
+
+\item{.acr_type}{This will either simply be "acr" or "acr_boot".
+   The suffix "boot" is added when the computations are based on
+   bootstrapped replicates of an original time series.  (The
+   information about the bootstrap-status is available as an
+   attribute of the \code{TS}-object the computation is based on.)}
+
+\item{.acr_content}{This will be a vector with the components
+    needed in order to load the saved result back into the
+    workflow.}
+
+}
 }
 \description{
-This function use the "old-fashioned" way to compute the
-autocorrelations for a given time series, i.e. the
-summation-approach.  This is much slower than the fast Fourier
-transform approach used by \code{acf}, but it seems more natural to
-use this when computing the ordinary spectral density in the old
-fashioned way (using window-functions instead of periodograms).
+This internal function use the "old-fashioned" way to
+    compute the autocorrelations (and cross-correlations) for a
+    given time series, i.e. the summation-approach.  This is much
+    slower than the fast Fourier transform approach used by
+    \code{acf}, but it seems more natural to use this when
+    computing the ordinary spectral density in the old fashioned
+    way (using lag-window functions instead of periodograms).
+
+The \code{.TS_info}-argument is given to the internal
+    function \code{TS_load}, which loads the \code{TS}-part from
+    file when required. \code{TS_load} will also compute the name
+    of the directory in which the result should be stored.
 }
 \keyword{internal}
