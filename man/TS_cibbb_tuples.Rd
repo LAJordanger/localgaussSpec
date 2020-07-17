@@ -18,6 +18,8 @@ This helper function returns a list with two vectors, one
     tuples.
 }
 \description{
-Circular index-based block bootstrap for tuples
+This internal function creates the bivariate pairs of
+    indices needed in order for the circular index-based block
+    bootstrap for tuples to be used in the computations
 }
 \keyword{internal}
