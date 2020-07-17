@@ -41,16 +41,29 @@ selected for this value (that then will be recorded in case a
 reproduction of the result is desired later on).}
 }
 \value{
-The result of this function will be a matrix with \code{nb}
-    rows and \code{length(TS)} columns, i.e.  each row is a
-    bootstrapped replicate of \code{TS}.
+A list with the following three components is returned to
+    the internal workflow.
+
+\describe{
+
+\item{main_dir}{The path (to the hierarchy) given by the
+    \code{main_dir}-argument.}
+
+\item{TS}{The internal (in-hierarchy) path to the saved data.}
+
+\item{save_dir}{The (in-hierarchy) name of the directory that the
+    files are saved into.}
+
+}
 }
 \description{
-Based on some algorithm for bootstrapping of a time series, a
-matrix of bootstrapped series are returned.  The returned object
-does also include an attribute specifying the adjustment-terms
-needed to shift from estimates of covariances and correlations for
-the lagged pairs to the estimates of autocovariances and
-autocorrelations.
+This internal function will, based on the specified
+    bootstrapping-algorithm and the given time series, create and
+    save a matrix of bootstrapped time series.
+}
+\details{
+The bootstrapped replicates are stored in a matrix with
+    \code{nb} rows and \code{length(TS)} columns, i.e.  each row is
+    a bootstrapped replicate of \code{TS}.
 }
 \keyword{internal}

@@ -1,13 +1,8 @@
-################################################################################
-#'
 #' Create bootstrap-replicates of a time series.
 #'
-#' Based on some algorithm for bootstrapping of a time series, a
-#' matrix of bootstrapped series are returned.  The returned object
-#' does also include an attribute specifying the adjustment-terms
-#' needed to shift from estimates of covariances and correlations for
-#' the lagged pairs to the estimates of autocovariances and
-#' autocorrelations.
+#' @description This internal function will, based on the specified
+#'     bootstrapping-algorithm and the given time series, create and
+#'     save a matrix of bootstrapped time series.
 #'
 #' @param TS The original time series that we want to create
 #'     bootstrap-replicates of.
@@ -19,9 +14,24 @@
 #' @template block_length_boot
 #' @template boot_seed_boot
 #'
-#' @return The result of this function will be a matrix with \code{nb}
-#'     rows and \code{length(TS)} columns, i.e.  each row is a
-#'     bootstrapped replicate of \code{TS}.
+#' @details The bootstrapped replicates are stored in a matrix with
+#'     \code{nb} rows and \code{length(TS)} columns, i.e.  each row is
+#'     a bootstrapped replicate of \code{TS}.
+#'
+#' @return A list with the following three components is returned to
+#'     the internal workflow.
+#'
+#' \describe{
+#'
+#' \item{main_dir}{The path (to the hierarchy) given by the
+#'     \code{main_dir}-argument.}
+#'
+#' \item{TS}{The internal (in-hierarchy) path to the saved data.}
+#'
+#' \item{save_dir}{The (in-hierarchy) name of the directory that the
+#'     files are saved into.}
+#'
+#' }
 #'
 #' @keywords internal
 
@@ -33,14 +43,11 @@ TS_boot_sample <- function(
     boot_type = c("cibbb_tuples", "block"),
     block_length = 20,
     boot_seed = NULL) {
-###-------------------------------------------------------------------
-    ##  Sanity checks not included here, assumes everything has been
-    ##  tested in the calling function.  Restrict the 'boot_type' to
-    ##  its first argument if it is longer than one.
+    ##  Restrict 'boot_type' to its first argument if it is longer
+    ##  than one.
     if (length(boot_type) > 1) 
         boot_type <- boot_type[1]
-###-------------------------------------------------------------------
-    ##  Update `TS` with the object from file
+    ##  Update 'TS' with the object from file
     load(file = paste(c(main_dir, TS),
                       collapse = .Platform$file.sep))
     ##  If 'TS' originates from 'TS_LG_object', it should have an
@@ -48,7 +55,6 @@ TS_boot_sample <- function(
     if (! identical(x = attributes(TS)$TS_for_analysis,
                     y = NULL))
         TS <- attributes(TS)$TS_for_analysis
-###-------------------------------------------------------------------
     ##  Check that 'TS' has the correct properties.
     .OK_TS <- nested_if(
         if_list = list(
@@ -73,12 +79,10 @@ TS_boot_sample <- function(
                 sQuote("content"),
                 "dimension must be one."))
     kill(.OK_TS)
-###-------------------------------------------------------------------
     ##  Set the seed, if it is given
     if (! is.null(boot_seed))
         set.seed(seed = boot_seed)
     kill(boot_seed)
-###-------------------------------------------------------------------
     ##  Extract the attributes to be reinserted later on.
     TS_attributes_to_keep <-
         attributes(TS)[!names(attributes(TS))%in%c("dim", "dimnames")]
@@ -137,13 +141,12 @@ TS_boot_sample <- function(
             b = block_length,
             type = "block")$statistic))
     })
-################################################################################
     ##  Create the desired 'TS_boot', by exploiting the format that
     ##  'TS' has been converted to.  There are (for the time being)
     ##  two options here, one based on the block-bootstrap, and one
     ##  based on the circular index-based block bootstrap for tuples.
-    ##  Reminder: In the latter case it is the "starting-indicies"
-    ##  that are stored, and the extraction is taken care of in other
+    ##  Reminder: In the latter case it is the "starting-indices" that
+    ##  are stored, and the extraction is taken care of in other
     ##  functions later on.
     TS_boot <- if (boot_type == "cibbb_tuples") {
                    structure(
@@ -168,7 +171,6 @@ TS_boot_sample <- function(
              boot_type = boot_type),
         TS_attributes_to_keep)
     kill(TS, nb, block_length, TS_attributes_to_keep, .boot_indices)
-###-------------------------------------------------------------------
     ##  Save the result to file.
     save_file.Rda <- LG_default$global["TS_boot"]
     LG_save(data = TS_boot,
@@ -184,7 +186,7 @@ TS_boot_sample <- function(
             x = save_dir),
         split = .Platform$file.sep)[[1]]
     ##  Return data needed for the next function in line, and for the
-    ##  update of the `info`-object in the calling function.
+    ##  update of the 'info'-object in the calling function.
     list(main_dir = main_dir,
          TS = c(save_dir, save_file.Rda),
          save_dir = save_dir)
