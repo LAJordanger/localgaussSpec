@@ -306,5 +306,5 @@ LG_lookup <- function(input,
     ##  to the final plot.
     look_up$curlicues = LG_lookup_curlicues(look_up = look_up)
     ##  Return the result to the workflow.
-    return(look_up)
+    return(as.environment(look_up))
 }

@@ -114,9 +114,9 @@ LG_spectrum_norm <- function(C1_env=NULL,
             "is_lag_zero_needed",
             "is_cross_pair",
             "is_off_diagonal")
-        .res$local <- c(
-            .res$local,
-            .env$look_up[.logical_values])
+        for (i in .logical_values) {
+            .res$local[[i]] <- .env$look_up[[i]]
+        }
         ##  Create a copy of '.W' that can be adjusted to deal with
         ##  the different structures that occurs in the data that has
         ##  been stored for the global and local cases.  Reminder:
