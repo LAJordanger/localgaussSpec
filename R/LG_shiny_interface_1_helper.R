@@ -1,4 +1,7 @@
-#' Find the parameters to be used in the \code{LG_shiny}-interface.
+#' Helper-function for \code{LG_shiny_interface_1_TS_info_scribe}
+#'
+#' @description This internal function finds the parameters needed for
+#'     the \code{LG_shiny}-interface.
 #'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -13,7 +16,7 @@
 #'     minor differences with regard to how the result should be
 #'     returned in these two cases.)
 #'
-#' @return This helper function finds the parameters to use when
+#' @return This helper-function finds the parameters to be use when
 #'     \code{LG_shiny} shall visualise the content of interest.
 #'
 #' @keywords internal
@@ -28,18 +31,18 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
     ##  and sliderInputs that they contain data for.  These lists will
     ##  be used to create the interface, and they will also be used as
     ##  a memory to ensure that we get back to the last visited
-    ##  parameter-configuration when we returns to a previously
-    ##  visited branch.  The stored environment will in addition also
-    ##  contain some lists that helps keep track of the status of some
-    ##  of the actionButtons, in order to keep track of which one that
-    ##  were used the last time around.
-###-------------------------------------------------------------------    
+    ##  parameter-configuration when we return to a previously visited
+    ##  branch.  The stored environment will in addition also contain
+    ##  some lists that help keep track of the status of some of the
+    ##  actionButtons, in order to keep track of which one that were
+    ##  used the last time around.
+    ###------------------------------------------------------###
     ##  Note that this function also must deal with the case that an
     ##  approx node contains additional bootstrap-nodes, and this is
     ##  done by the function being called iteratively when it is
     ##  discovered from '.env$info' that there are such
     ##  bootstrap-nodes.
-###-------------------------------------------------------------------    
+    ###------------------------------------------------------###
     ##  Create a few shortcuts in order to compactify the code.
     .info_part <- .env$info[[.approx]]
     ##  Note that '.info_part' in fact might be 'NULL' if no
@@ -76,7 +79,6 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
             details[[.arg]] <- ..env[[.arg]]
         kill(.arg)
     }
-###-------------------------------------------------------------------
     ##  Add information about where data are stored.  Reminder: At
     ##  this step paths relative to the actual OS is added.
     details$data_dir <- paste(c(.env$main_dir,
@@ -94,14 +96,12 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
         .Data = file.path(details$data_dir,
                           .info_part$data_files_df$data_files),
         .Names = .info_part$data_files_df$content)
-###-------------------------------------------------------------------    
     ##  Add information about the convergence status for the
     ##  'par_five'-case, i.e. a summary of the 'eflag'-status from the
     ##  computations by the 'localgauss'-package.
     details$convergence <- .info_part$convergence
     ##  Extract information about 'type'
     details$type <- ..env$LG_type
-###-------------------------------------------------------------------
     ##  Identify details related to the points under investigation,
     ##  i.e. inspect the attributes of the 'LG_points'-argument.
     details$.Horizontal <- attributes(..env$LG_points)$Horizontal
@@ -135,7 +135,6 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
     } else
         details$.dimnames <- .info_part[[.dn]]$par
     kill(.dn)
-###-------------------------------------------------------------------
     ##  Create a list with logical values that can be used when the
     ##  interface is to be created, i.e. the purpose is to simplify
     ##  the interface by removing selections where only one value is
@@ -167,7 +166,6 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
         .simplify_text$bw_points <-
             sprintf("Bandwidth: %s<br>",
                     details$.dimnames$bw_points)
-###-------------------------------------------------------------------
     ##  Find the values for the radioButtons
     .radioButtons <- list(
         ##  The value for the first variable:
@@ -220,7 +218,6 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
             label = "Select estimated pointwise confidence interval",
             choices = c("min_max", "99", "95", "90"),
             selected = "95"))
-###-------------------------------------------------------------------
     ##  Find the values for the sliderInputs.  This contains the
     ##  information related to the selection of the points/levels, the
     ##  selection of truncation point 'cut' and a specification of the
@@ -390,7 +387,6 @@ LG_shiny_interface_1_helper <- function(.env, .approx, .iterated=FALSE) {
             .res$last <- "Nothing here to select"
             .res$header <- "Nothing here to select"
         }
-###-------------------------------------------------------------------
         ##  Use this function iteratively to add information about
         ##  the bootstrap-nodes (when they are present).
         for (.node in .res$names)

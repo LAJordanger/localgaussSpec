@@ -22,6 +22,7 @@ This interface-function adds some explanations to the
     \code{LG_shiny}-interface.
 }
 \description{
-Create the part of the \code{LG_shiny}-interface that explains it.
+This internal function calls the functions that print
+    the explanations of the interface and the plots.
 }
 \keyword{internal}

@@ -1,6 +1,10 @@
-#' Create \code{radioButtons} and \code{sliderInputs} for the
-#' \code{LG_shiny}-interface.
+#' Create \code{radioButtons} and \code{sliderInputs} for the \code{LG_shiny}-interface.
 #'
+#' @description This internal function creates the
+#'     \code{LG_shiny}-interface.  It does also deal with details
+#'     related to the internal logs, which enables switching between
+#'     different branch to work better.
+#' 
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.
@@ -12,19 +16,16 @@
 #'     "levels")}.  This decides which parts of the
 #'     interface that should be updated.
 #'
-#' @return This function takes contains the code that creates the
-#'     \code{radioButtons} and \code{sliderInputs} for the
-#'     \code{LG_shiny}-interface.
+#' @return This function creates the \code{radioButtons} and
+#'     \code{sliderInputs} for the \code{LG_shiny}-interface.
 #'
 #' @keywords internal
-
 
 LG_shiny_CS_input <- function(.env,
                               .env2,
                               .part = c("var_local", "p_diag_bw",
                                         "levels")) {
     on.exit({.env$TS_logging$update$worker$plots <- TRUE})
-###-------------------------------------------------------------------
     ##  The internal workings of this function requires a comparison
     ##  of old and new input-parameters.  Note that all of these are
     ##  equal in the initiation phase.
@@ -32,14 +33,12 @@ LG_shiny_CS_input <- function(.env,
     ##  Log the information from 'input' when not '.initial'.
     if (!.initial)
         LG_shiny_interface_0_RW_log(.env, .env2, .RW = "W")
-###-------------------------------------------------------------------
     ##  Create a link to the environment of interest, where the
     ##  information needed for the fine tuning of the interface can be
     ##  found.  (Needed in order to simplify the interface when
     ##  e.g. only one value is present.)
     ..env <- LG_shiny_interface_0_RW_log(.env, .env2, .RW = "L")
     .input_triggers <- .env$TS_logging$update$input_triggers
-###-------------------------------------------------------------------
     ##  Check if some parts of the interface should be removed, and
     ##  use the 'eval' + 'bquote' + '.()' construction to update the
     ##  'output'-list in '.env2' when required.
@@ -49,14 +48,12 @@ LG_shiny_CS_input <- function(.env,
                  envir = .env2)
         kill(.node)
     }
-###-------------------------------------------------------------------    
     ##  Initiate the structures to contain information about the
     ##  desired 'radioButtons' and 'sliderInputs', and include a
     ##  structure to specify if some parts of the interface can be
     ##  simplified.
     .new_radioButtons <- list()
     .new_sliderInputs <- list()
-###-------------------------------------------------------------------    
     ##  Work through the different cases to figure out what parts that
     ##  should be updated.  Modifications should only be done when
     ##  required.
@@ -104,7 +101,6 @@ LG_shiny_CS_input <- function(.env,
         }
     }
     kill(.part, .initial, .update)
-###-------------------------------------------------------------------
     ## For the '.radioButtons': Start out by first creating all the
     ## interfaces, then check to see if simplifications are possible.
     for (.name in names(.new_radioButtons)) {
@@ -150,7 +146,6 @@ LG_shiny_CS_input <- function(.env,
     }
     kill(.i, .name, .simpl, .value, .stored_values, .new_radioButtons,
          .result)
-###-------------------------------------------------------------------
     ## Add the '.sliderInputs' (when required)
     if (length(.new_sliderInputs)>0) {
         .stored_values <- ..env$.sliderInputs[.new_sliderInputs]
@@ -177,7 +172,6 @@ LG_shiny_CS_input <- function(.env,
              envir = .env2)
     }
     kill(.stored_values, .result, .new_sliderInputs)
-###-------------------------------------------------------------------
     ##  Call the next function depending on the value of the graphical
     ##  trigger.  Reminder: This function is only called if the
     ##  trigger is 'C' or S', so we do not need to worry about the

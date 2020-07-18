@@ -1,5 +1,7 @@
-#' Update logged values related to the spectrum-type that is
-#' investigated in the interactive \code{LG_shiny}-interface.
+#' Update logged values related to the spectrum-type
+#'
+#' @description This internal function updates the logged values when
+#'     the \code{LG_shiny}-investigation focus on the spectra.
 #'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -19,7 +21,6 @@ LG_shiny_S_update <- function(
                               .env2) {
     on.exit(expr = {
         .env$TS_logging$update$worker$spectrum_type <- FALSE})
-    ###-------------------------------------------------------------------
     ##  Create links to the environments of interest.
     ..env <- LG_shiny_interface_0_RW_log(.env, .env2, .RW = "L")
     .input_triggers <- .env$TS_logging$update$input_triggers
@@ -36,13 +37,11 @@ LG_shiny_S_update <- function(
     ##  want the "initiation" of the selected spectrum to carry over.
     .GL_change <- all(.env$input$Vi != .env$input$Vj,
                       .env$xyz$var_local["global_local"])
-    ###-------------------------------------------------------------------
     ##  Identify old and new values for the triggers.
     .old_values <- .input_triggers$spectrum_type
     .new_values <- .env$input[names(.old_values)]
     ##  Update the stored values.
     .input_triggers$spectrum_type <- .new_values
-    ###-------------------------------------------------------------------    
     ##  In the initiation-phase everything will be '0' in
     ##  '.new_values', and we do not need to update the logged values
     ##  in that case.
@@ -55,7 +54,6 @@ LG_shiny_S_update <- function(
             .newest,
             ..env$.Spectrum_type[[.bm]][1])
     }
-    ###-------------------------------------------------------------------
     ##  Update the 'S_type'-part of '.derived_graphical', with the
     ##  twist that we for the cross-spectra stays at the same
     ##  selection if we change between global and local
@@ -80,7 +78,6 @@ LG_shiny_S_update <- function(
     ##  'plots'-worker should be called to duty.
     if (length(unique(..env$.derived_graphical$S_type)) == 2)
         .env$TS_logging$update$worker$plots <- TRUE
-    ###-------------------------------------------------------------------    
     ##  Update the information in the input_trigger.
     .input_triggers$derived_graphical$S_type <- ..env$
         .derived_graphical$S_type[1]

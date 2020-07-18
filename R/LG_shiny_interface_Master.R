@@ -1,12 +1,13 @@
 #' Master for the creation of the dynamic \code{LG_shiny}-interface.
 #'
-#' The dynamic structure of the \code{LG_shiny}-application requires
-#' some bookkeeping, and this function is the master for that
-#' task. Depending on the status of the application, it will either
-#' initiate the log, or it will update the log and allow different
-#' workers to do the tasks of loading files, fine-tuning different
-#' parts of the interface, and calling the functions that presents the
-#' plots and the explanations of the plots..
+#' @description This internal function is the master-function that
+#'     calls different helper-functions required for the dynamic
+#'     \code{LG_shiny}-interface and the associated bookkeeping.
+#'     Depending on the status of the application, it will either
+#'     initiate the log, or it will update the log and allow different
+#'     workers to do the tasks of loading files, fine-tuning different
+#'     parts of the interface, and calling the functions that presents
+#'     the plots and the explanations of the plots.
 #'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -23,7 +24,6 @@
 #' @keywords internal
 
 LG_shiny_interface_Master <- function(.env, .env2) {
-###-------------------------------------------------------------------
     ##  Create an updated nonreactive version of the 'input'-values.
     .env$input <- reactiveValuesToList(x = .env2$input,
                                        all.names = TRUE)
@@ -38,7 +38,6 @@ LG_shiny_interface_Master <- function(.env, .env2) {
         CS = c("var_local", "p_diag_bw",  "levels"),
         S = c("spectrum_type", "spectrum_arguments"),
         ass = c("graphs", "graphs_call", "Explain_Plot"))
-###-------------------------------------------------------------------
     ##  The first time this function is called, it workers will create
     ##  the object 'TS_logging' (in '.env').  This object is central
     ##  for the dynamic interface to work properly, since residual
@@ -61,8 +60,8 @@ LG_shiny_interface_Master <- function(.env, .env2) {
             eval(expr = bquote(output$Hoodwinked <- .(.Hoodwinked_text)),
                  envir = .env2)
             return(NULL)
-            #####  REMINDER: Need to tweak this Hoodwinked-text later
-            #####  on if it is to look decent when ##... printed.
+            ##  REMINDER: Need to tweak this Hoodwinked-text later on
+            ##  if it is to look decent when printed.
         } else {
             ##  Create the 'TS_logging' object, and add the initial
             ##  values to the 'input'-object in order for the logical
@@ -72,8 +71,6 @@ LG_shiny_interface_Master <- function(.env, .env2) {
         }
     } else {
         .env$counter <- .env$counter + 1
-        ###-------------------------------------------------------------------
-        ##... print(sprintf("Updating worker-status at counter %s", .env$counter))
         ##  Create a list that detects the differences between stored
         ##  and logged input-parameters.  Reminder: The 'xyz'-list is
         ##  used in some of the functions in order to keep track of
@@ -116,7 +113,6 @@ LG_shiny_interface_Master <- function(.env, .env2) {
         ##  none of the workers should be called, and the following
         ##  termination procedure is thus included.
         if (!any(unlist(.env$TS_logging$update$worker))) {
-            ##... print("**************************************************")
             return(NULL)
         }
         ##  Reminder: If the test above did not terminate this
@@ -127,7 +123,6 @@ LG_shiny_interface_Master <- function(.env, .env2) {
         ##  the workers will hand the task of creating the
         ##  interface/plots onwards as far as possible.
     }
-    ###-------------------------------------------------------------------
     ##  Reorder the content of the input-copy in order to make it
     ##  easier to inspect during development/updates.
     .names_from_input_triggers <- 
@@ -139,55 +134,42 @@ LG_shiny_interface_Master <- function(.env, .env2) {
     .env$input <- c(.env$input[.names_from_input_triggers],
                     .env$input[.other_names])
     kill(.names_from_input_triggers, .other_names) 
-    ###-------------------------------------------------------------------
     ##  When required call the 'TS_info'-worker.  This function
     ##  creates the interface for 'TS_key', 'TS', 'Approx', and
     ##  'Boot_Approx'.  If sufficient information is available, then
     ##  it will also create the 'TCS_type'-output and trigger the
     ##  'TCS_type'-worker to perform further updates of the interface.
     if (.env$TS_logging$update$worker$TS_info) {
-        ##... print(sprintf("TS_info-worker at counter %s", .env$counter))
         LG_shiny_interface_1_TS_info(.env, .env2)
     }
-###-------------------------------------------------------------------
     ##  When required call the 'TCS_type'-worker.  This function
     ##  creates the buttons and sliders that describes the plot to be
     ##  investigated.
     if (.env$TS_logging$update$worker$TCS_type) {
-        ##... print(sprintf("TCS_input-worker at counter %s", .env$counter))
         LG_shiny_TCS_input(.env, .env2)
     }
     if (.env$TS_logging$update$worker$var_local) {
-        ##... print(sprintf("CS-worker with 'p_diag_bw', at counter %s", .env$counter))
         LG_shiny_CS_input(.env, .env2, .part = "p_diag_bw")
     }
     if (.env$TS_logging$update$worker$p_diag_bw) {
-        ##... print(sprintf("CS-worker with 'levels', at counter %s", .env$counter))
         LG_shiny_CS_input(.env, .env2, .part = "levels")
     }
-###-------------------------------------------------------------------
     ##  When required call the 'S_update'-worker, which takes care of
     ##  the effects due to the actionButtons that selects the type of
     ##  spectrum to investigate.
     if (.env$TS_logging$update$worker$spectrum_type) {
-        ##... print(sprintf("S_update at counter %s", .env$counter))
         LG_shiny_S_update(.env, .env2)
     }
-###-------------------------------------------------------------------
     ##  When required call the 'plots'-worker.  This function creates
     ##  the plot (or the code needed to re-create the )
     if (.env$TS_logging$update$worker$plots) {
-        ##... print(sprintf("plot-worker at counter %s", .env$counter))
         LG_shiny_interface_plots(.env, .env2)
     }
-###-------------------------------------------------------------------
     ##  When required call the 'explanation'-worker.
     if (.env$input$explain_interface) {
-        ##... print(sprintf("explain-interface-worker at counter %s", .env$counter))
         LG_shiny_interface_explanations(.env, .env2, .explain="interface")
     }
     if (.env$input$explain_plot) {
-        ##... print(sprintf("explain-plot-worker at counter %s", .env$counter))
         LG_shiny_interface_explanations(.env, .env2, .explain="plot")
     }
     if (isTRUE(.env$input$show_shiny)) 

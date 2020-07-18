@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_shiny_set_values.R
 \name{LG_shiny_set_values}
 \alias{LG_shiny_set_values}
-\title{Set some values in the \code{shiny}-application}
+\title{Set some values in the \code{LG_shiny}-application}
 \usage{
 LG_shiny_set_values(.env, .env2, .part = c("TS_info", "TCS_type",
   "var_local", "p_diag_bw", "spectrum_type", "second_graphical", "plots",
@@ -23,12 +23,14 @@ updating.  The possible values are \code{c("TS_info",
 that all these will be updated.}
 }
 \value{
-This helper-function will take values found in the
+This helper-function will take the values found in the
     \code{TS_logging}-object and use them to update both the
     reactive and non-reactive copies of the \code{input}-list that
-    lives in the \code{shiny}-application.
+    lives in the \code{LG_shiny}-application.
 }
 \description{
-Set some values in the \code{shiny}-application
+This internal function is used to update the values of
+    the \code{LG_shiny}-application based on the content of the
+    \code{TS_logging}-object.
 }
 \keyword{internal}

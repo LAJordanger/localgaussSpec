@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_shiny_interface_1_TS_info_scribe.R
 \name{LG_shiny_interface_1_TS_info_scribe}
 \alias{LG_shiny_interface_1_TS_info_scribe}
-\title{A scribe for the "old-branch"-parameters from the
-\code{LG_shiny}-interface.}
+\title{The scribe-function for \code{LG_shiny_interface_1_TS_info}}
 \usage{
 LG_shiny_interface_1_TS_info_scribe(.env, .env2)
 }
@@ -15,6 +14,15 @@ lives.}
 and \code{output}.}
 }
 \value{
+This scribe-function reads and writes to the internal
+    \code{TS_logging}-object that keeps track of the
+    \code{LG_shiny}-interface.
+}
+\description{
+This internal function is a scribe for the
+    "old-branch"-parameters from the \code{LG_shiny}-interface.
+}
+\details{
 This helper-function will check if any changes in the top
     level of the interface for the \code{LG_shiny}-function implies
     that an update of stored values should be undertaken.  In
@@ -22,9 +30,5 @@ This helper-function will check if any changes in the top
     \code{TS_info} part of the \code{input_triggers}, in order for
     the possibility of auto-select to work as intended in the main
     function.
-}
-\description{
-A scribe for the "old-branch"-parameters from the
-\code{LG_shiny}-interface.
 }
 \keyword{internal}

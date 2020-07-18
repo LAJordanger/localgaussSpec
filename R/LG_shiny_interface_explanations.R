@@ -1,5 +1,8 @@
 #' Create the part of the \code{LG_shiny}-interface that explains it.
 #'
+#' @description This internal function calls the functions that print
+#'     the explanations of the interface and the plots.
+#'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.
@@ -14,7 +17,6 @@
 #'     \code{LG_shiny}-interface.
 #'
 #' @keywords internal
-
 
 LG_shiny_interface_explanations <- function(
     .env,
@@ -31,7 +33,6 @@ LG_shiny_interface_explanations <- function(
                     .env2 = .(.env2))
             })),
             envir = .env2)
-###-------------------------------------------------------------------
     if (.explain == "plot") 
         eval(bquote(
             output$Explain_Plot  <- renderPrint({
@@ -40,11 +41,10 @@ LG_shiny_interface_explanations <- function(
                     .env = .(.env))
             })),
             envir = .env2)
-###-------------------------------------------------------------------
     if (.explain == "show_shiny") {
-        ##  This is only intended to be shown during development,
-        ##  i.e. the button that can be used to select should not be a
-        ##  part of the final package.
+        ##  This is only intended to be used during development,
+        ##  i.e. the button that can be used to select this will not
+        ##  be a part of the final package.
         .result <- paste("\n\t",
                          paste(names(.env$input), " = ", .env$input, collapse = "\n\t"),
                          sep = "")

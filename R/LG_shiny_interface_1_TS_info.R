@@ -1,4 +1,7 @@
-#' Create the TS-info part of the dynamic \code{LG_shiny}-interface.
+#' Create the \code{TS-info}-part of the dynamic \code{LG_shiny}-interface
+#'
+#' @description This internal function creates the \code{TS-info}-part
+#'     of the dynamic \code{LG_shiny}-interface.
 #'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -7,17 +10,14 @@
 #' @param .env2 The environment containing the two lists \code{input}
 #'     and \code{output}.
 #'
-#' @return This interface-function creates the \code{TS_info}-part of
-#'     the dynamic structure of the \code{LG_shiny}-application, and
-#'     it also loads the required \code{info}-object.
+#' @return The \code{TS_info}-part of the dynamic structure of the
+#'     \code{LG_shiny}-application is created.
 #'
 #' @keywords internal
 
-LG_shiny_interface_1_TS_info <- function(
-    .env,
-    .env2) {
+LG_shiny_interface_1_TS_info <- function(.env,
+                                         .env2) {
     on.exit(expr = {.env$TS_logging$update$worker$TS_info <- FALSE})
-###-------------------------------------------------------------------
     ##  Let the scribe take care of the updating of the
     ##  'TS_logging'-information.
     LG_shiny_interface_1_TS_info_scribe(.env, .env2)
@@ -29,7 +29,6 @@ LG_shiny_interface_1_TS_info <- function(
     ##  set the values of all the workers to 'FALSE', and let the
     ##  chain of interface-functions take care of the rest.
     .env$TS_logging$update$worker[] <- FALSE
-###-------------------------------------------------------------------
     ##  Use 'input_triggers' and 'select_names' to create the
     ##  'selectInputs'.  Reminder: The presence of 'NA'-values in the
     ##  'input_triggers$TS_info' implies that parts of the interface
@@ -52,7 +51,6 @@ LG_shiny_interface_1_TS_info <- function(
             }),
         .Names = .names)
     kill(.names)
-###-------------------------------------------------------------------
     ##  Use the 'bquote' + '.()' construction to update the
     ##  'output'-list that lives in '.env2'
     for (.name in names(.result))
@@ -60,7 +58,6 @@ LG_shiny_interface_1_TS_info <- function(
                                renderUI(.(bquote(.(.result)[[.(.name)]])))),
              envir = .env2)
     kill(.name, .result)
-###-------------------------------------------------------------------
     ##  If enough information is present, we should now update the
     ##  'input_triggers' and the 'input'-lists with information from
     ##  the newly selected branch.  We should also add the top-level
@@ -100,7 +97,6 @@ LG_shiny_interface_1_TS_info <- function(
         ##  'TCS_type' information can be used.
         .env$TS_logging$update$ worker$TCS_type <- TRUE
     }
-###-------------------------------------------------------------------
     ##  It might happen that we have a configuration of the above
     ##  interface where a "Select..."-option is present, waiting for
     ##  further selections from the user.  In this case the desired

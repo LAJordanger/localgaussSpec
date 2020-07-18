@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_shiny_CS_input.R
 \name{LG_shiny_CS_input}
 \alias{LG_shiny_CS_input}
-\title{Create \code{radioButtons} and \code{sliderInputs} for the
-\code{LG_shiny}-interface.}
+\title{Create \code{radioButtons} and \code{sliderInputs} for the \code{LG_shiny}-interface.}
 \usage{
 LG_shiny_CS_input(.env, .env2, .part = c("var_local", "p_diag_bw",
   "levels"))
@@ -21,12 +20,13 @@ and \code{output}.}
 interface that should be updated.}
 }
 \value{
-This function takes contains the code that creates the
-    \code{radioButtons} and \code{sliderInputs} for the
-    \code{LG_shiny}-interface.
+This function creates the \code{radioButtons} and
+    \code{sliderInputs} for the \code{LG_shiny}-interface.
 }
 \description{
-Create \code{radioButtons} and \code{sliderInputs} for the
-\code{LG_shiny}-interface.
+This internal function creates the
+    \code{LG_shiny}-interface.  It does also deal with details
+    related to the internal logs, which enables switching between
+    different branch to work better.
 }
 \keyword{internal}

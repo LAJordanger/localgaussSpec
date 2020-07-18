@@ -28,6 +28,8 @@ When the \code{.RW}-argument is \code{L}, the function will
     \code{W} instead writes from these objects to the environment.
 }
 \description{
-Link, read, or write, to the deep levels of \code{TS_logging}
+This internal function takes care of the logging that
+    is required in order for the \code{LG_shiny}-interface to
+    update properly.
 }
 \keyword{internal}

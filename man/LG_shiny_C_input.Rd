@@ -20,6 +20,8 @@ This function removes those parts of the
     of the investigation is the correlations.
 }
 \description{
-Create the correlation-specific part of the \code{LG_shiny}-interface.
+This internal function is used to update the interface
+    created by \code{LG_shiny}, in order for the investigation to
+    focus on the local Gaussian (auto- and cross-) correlations.
 }
 \keyword{internal}

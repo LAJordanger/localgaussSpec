@@ -19,9 +19,9 @@ This interface-function creates another graphical
     parameters part of the \code{LG_shiny}-application.
 }
 \description{
-This function is an internal worker that based on the values in the
-\code{TCS_type} part of the \code{input_triggers} will create
-the next part which is \code{var_local}.  This function will
-also take care of some of the bookkeeping.
+This internal function will, based on the values in
+    the \code{TCS_type} part of the \code{input_triggers}, create
+    the next part which is \code{var_local}.  This function will
+    also take care of some of the bookkeeping.
 }
 \keyword{internal}

@@ -15,12 +15,14 @@ This argument can be skipped when called in a non-interactive
 setting.}
 }
 \value{
-An explanation will be returned.
+An explanation of the plot under investigation will be
+    added to the \code{LG_shiny}-interface.
 }
 \description{
-This helper function for \code{LG_shiny} creates text that can
-explain the content of the plots, i.e. details related to whether
-the data is simulated or based on observations, and some summaries
-with regard to the parameters used in the computation.
+This internal helper function for \code{LG_shiny}
+    creates text that can explain the content of the plots,
+    i.e. details related to whether the data is simulated or based
+    on observations, and some summaries with regard to the
+    parameters used in the computation.
 }
 \keyword{internal}

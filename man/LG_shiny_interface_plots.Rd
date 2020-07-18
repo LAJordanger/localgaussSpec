@@ -19,6 +19,6 @@ This function creates the plot (or the code to create it
     outside of the \code{LG_shiny}-application).
 }
 \description{
-Create the plot-related part of the \code{LG_shiny}-interface.
+This internal function calls \code{LG_plot_helper}.
 }
 \keyword{internal}

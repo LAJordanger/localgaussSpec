@@ -1,4 +1,8 @@
-#' Set some values in the \code{shiny}-application
+#' Set some values in the \code{LG_shiny}-application
+#'
+#' @description This internal function is used to update the values of
+#'     the \code{LG_shiny}-application based on the content of the
+#'     \code{TS_logging}-object.
 #'
 #' @param .env The environment where the \code{TS_logging}-object
 #'     lives.
@@ -13,10 +17,10 @@
 #'     "plots", "explanations", "derived_graphical")}.  The default is
 #'     that all these will be updated.
 #'
-#' @return This helper-function will take values found in the
+#' @return This helper-function will take the values found in the
 #'     \code{TS_logging}-object and use them to update both the
 #'     reactive and non-reactive copies of the \code{input}-list that
-#'     lives in the \code{shiny}-application.
+#'     lives in the \code{LG_shiny}-application.
 #'
 #' @keywords internal
 
@@ -29,7 +33,6 @@ LG_shiny_set_values <- function(.env, .env2,
                                           "second_graphical",
                                           "plots", "explanations",
                                           "derived_graphical")) {
-    ###-------------------------------------------------------------------
     ## Reminder: In order for the updating to work, it was necessary
     ## to do the trick with an 'as.environment'-copy of '.env2$input',
     ## otherwise the updating of the reactive 'input'-version failed

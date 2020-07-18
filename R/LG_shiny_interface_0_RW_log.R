@@ -1,5 +1,9 @@
 #' Link, read, or write, to the deep levels of \code{TS_logging}
 #'
+#' @description This internal function takes care of the logging that
+#'     is required in order for the \code{LG_shiny}-interface to
+#'     update properly.
+#'
 #' @param .env The environment where \code{TS_logging} lives.
 #'
 #' @param .env2 The environment containing the two lists \code{input}
@@ -18,13 +22,12 @@
 #'     stored data will be used to update the internal
 #'     \code{input_triggers} and \code{input}-lists, whereas the value
 #'     \code{W} instead writes from these objects to the environment. 
+#'
 #' @keywords internal
 
-
-
-LG_shiny_interface_0_RW_log <- function(.env, .env2,
+LG_shiny_interface_0_RW_log <- function(.env,
+                                        .env2,
                                         .RW = c("L", "R", "W")) {
-###-------------------------------------------------------------------
     ##  Restrict '.RW' to length one (default "L") if not specified.
     .RW <- .RW[1]
     ##  Create a shortcut to the environment of interest, by first
@@ -96,7 +99,6 @@ LG_shiny_interface_0_RW_log <- function(.env, .env2,
             .Names = names(..env$.sliderInputs))
         ##  Loop over '.targets' and update the content in the
         ##  'input_triggers'.
-    
         for (.t in .targets) {
             for (.n in names(.input_triggers[[.t]])) {
                 if (.n == "get_code")
@@ -117,7 +119,6 @@ LG_shiny_interface_0_RW_log <- function(.env, .env2,
         LG_shiny_set_values(.env, .env2)
         return(NULL)
     }
-###-------------------------------------------------------------------
     ##  Still running: Then we need to write to the environment based
     ##  on the values from 'input' that are different from 'NA'.
     ##  (Reminder: This 'NA'-part is included in order to avoid

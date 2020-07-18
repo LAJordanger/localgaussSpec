@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_shiny_interface_1_helper.R
 \name{LG_shiny_interface_1_helper}
 \alias{LG_shiny_interface_1_helper}
-\title{Find the parameters to be used in the \code{LG_shiny}-interface.}
+\title{Helper-function for \code{LG_shiny_interface_1_TS_info_scribe}}
 \usage{
 LG_shiny_interface_1_helper(.env, .approx, .iterated = FALSE)
 }
@@ -21,10 +21,11 @@ minor differences with regard to how the result should be
 returned in these two cases.)}
 }
 \value{
-This helper function finds the parameters to use when
+This helper-function finds the parameters to be use when
     \code{LG_shiny} shall visualise the content of interest.
 }
 \description{
-Find the parameters to be used in the \code{LG_shiny}-interface.
+This internal function finds the parameters needed for
+    the \code{LG_shiny}-interface.
 }
 \keyword{internal}

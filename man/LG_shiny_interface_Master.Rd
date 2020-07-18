@@ -21,12 +21,13 @@ This function governs the workers that provides the dynamic
     \code{.env2}.)
 }
 \description{
-The dynamic structure of the \code{LG_shiny}-application requires
-some bookkeeping, and this function is the master for that
-task. Depending on the status of the application, it will either
-initiate the log, or it will update the log and allow different
-workers to do the tasks of loading files, fine-tuning different
-parts of the interface, and calling the functions that presents the
-plots and the explanations of the plots..
+This internal function is the master-function that
+    calls different helper-functions required for the dynamic
+    \code{LG_shiny}-interface and the associated bookkeeping.
+    Depending on the status of the application, it will either
+    initiate the log, or it will update the log and allow different
+    workers to do the tasks of loading files, fine-tuning different
+    parts of the interface, and calling the functions that presents
+    the plots and the explanations of the plots.
 }
 \keyword{internal}

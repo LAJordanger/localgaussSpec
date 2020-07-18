@@ -1,9 +1,9 @@
 #' Create graphical parameters for the \code{LG_shiny}-interface.
 #'
-#' This function is an internal worker that based on the values in the
-#' \code{TCS_type} part of the \code{input_triggers} will create
-#' the next part which is \code{var_local}.  This function will
-#' also take care of some of the bookkeeping.
+#' @description This internal function will, based on the values in
+#'     the \code{TCS_type} part of the \code{input_triggers}, create
+#'     the next part which is \code{var_local}.  This function will
+#'     also take care of some of the bookkeeping.
 #' 
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -21,7 +21,6 @@ LG_shiny_TCS_input  <- function(
     .env,
     .env2) {
     on.exit(expr = {.env$TS_logging$update$worker$TCS_type <- FALSE})
-###-------------------------------------------------------------------
     ##  In order to avoid unnecessary updates when an actionButton has
     ##  been pushed more than once, it is necessary to have a logical
     ##  value that decides if an update should be performed.
@@ -31,13 +30,11 @@ LG_shiny_TCS_input  <- function(
     .remove_these_nodes <- c()
     ##  Create a shortcut to the environment of interest.
     ..env <- LG_shiny_interface_0_RW_log(.env, .env2, .RW="L")
-###-------------------------------------------------------------------
     ##  Identify old and new values for the triggers.
     .old_values <- .env$TS_logging$update$input_triggers$TCS_type
     .new_values <- .env$input[names(.old_values)]
     ##  Update the stored values.
     .env$TS_logging$update$input_triggers$TCS_type <- .new_values
-###-------------------------------------------------------------------    
     ##  In the initiation-phase everything will be '0' in
     ##  '.new_values', and the desired trigger must then be extracted
     ##  from 'TS_logging'. This will be 'NA' the first time around,
@@ -90,9 +87,6 @@ LG_shiny_TCS_input  <- function(
         if (! identical(x = ..env$.derived_graphical$TCS_type[1],
                         y = ..env$.derived_graphical$TCS_type[2])) {
             .update_required  <- TRUE
-            ## ## ## ..env$.derived_graphical$TCS_type <- c(
-            ## ## ##     .trigger,
-            ## ## ##     ..env$.derived_graphical$TCS_type[1])
          }
     }
     ##  Update the information in the input-lists too.
@@ -100,17 +94,14 @@ LG_shiny_TCS_input  <- function(
         .trigger
     LG_shiny_set_values(.env, .env2,
                         .part = "derived_graphical")
-###-------------------------------------------------------------------    
-    ##  Return if nothing should be done else continue.
+    ##  Terminate if nothing should be done, otherwise continue.
     if (!.update_required) {
         return(NULL)
     } else
         kill(.update_required, .old_values, .new_values)
-###-------------------------------------------------------------------
     ##  Still running?  Then a switch has happened, and it is (most
     ##  likely) necessary to update the log-information.
     LG_shiny_interface_0_RW_log(.env, .env2, .RW = "W")
-###-------------------------------------------------------------------
     ##  Use '.trigger'-value to call the functions that creates the
     ##  required trigger-specific interfaces.
     if (.trigger != "T") {
@@ -120,6 +111,5 @@ LG_shiny_TCS_input  <- function(
         ##  Initiate the 'T'-part of the interface.
         LG_shiny_T_input(.env, .env2)
     }
-###-------------------------------------------------------------------
     return(invisible(NULL))
 }

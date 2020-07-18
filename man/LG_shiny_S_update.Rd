@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_shiny_S_update.R
 \name{LG_shiny_S_update}
 \alias{LG_shiny_S_update}
-\title{Update logged values related to the spectrum-type that is
-investigated in the interactive \code{LG_shiny}-interface.}
+\title{Update logged values related to the spectrum-type}
 \usage{
 LG_shiny_S_update(.env, .env2)
 }
@@ -21,7 +20,7 @@ This function is a bookkeeping function that deals with
     spectrum to investigate.
 }
 \description{
-Update logged values related to the spectrum-type that is
-investigated in the interactive \code{LG_shiny}-interface.
+This internal function updates the logged values when
+    the \code{LG_shiny}-investigation focus on the spectra.
 }
 \keyword{internal}

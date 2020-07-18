@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_shiny_T_input.R
 \name{LG_shiny_T_input}
 \alias{LG_shiny_T_input}
-\title{Create the spectrum-specific part of the \code{LG_shiny}-interface.}
+\title{Create the time-series specific part of the \code{LG_shiny}-interface.}
 \usage{
 LG_shiny_T_input(.env, .env2)
 }
@@ -16,10 +16,12 @@ and \code{output}.}
 }
 \value{
 This function creates the \code{actionButtons} needed for
-    the spectrum-specific part of the \code{LG_shiny}-interface.
-    (Not implemented yet.)
+    the time-series specific part of the \code{LG_shiny}-interface.
 }
 \description{
-Create the spectrum-specific part of the \code{LG_shiny}-interface.
+This internal function changes the
+    \code{LG_shiny}-interface in order for the investigation to
+    focus on the time series themselves. (Note: The required
+    plot-functions must be implemented first.)
 }
 \keyword{internal}

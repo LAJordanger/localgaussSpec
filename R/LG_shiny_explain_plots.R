@@ -1,9 +1,10 @@
 #' Explain details about the plots created by \code{LG_shiny}.
 #'
-#' This helper function for \code{LG_shiny} creates text that can
-#' explain the content of the plots, i.e. details related to whether
-#' the data is simulated or based on observations, and some summaries
-#' with regard to the parameters used in the computation.
+#' @description This internal helper function for \code{LG_shiny}
+#'     creates text that can explain the content of the plots,
+#'     i.e. details related to whether the data is simulated or based
+#'     on observations, and some summaries with regard to the
+#'     parameters used in the computation.
 #'
 #' @param input A list containing the arguments needed in order to
 #'     perform the extraction.
@@ -12,13 +13,13 @@
 #'     This argument can be skipped when called in a non-interactive
 #'     setting.
 #'
-#' @return An explanation will be returned.
+#' @return An explanation of the plot under investigation will be
+#'     added to the \code{LG_shiny}-interface.
 #'
 #' @keywords internal
 
 LG_shiny_explain_plots <- function(input,
                                    .env) {
-###-------------------------------------------------------------------    
     ##  This function will be triggered when the 'checkboxInput' for
     ##  it is 'TRUE'.  However, no plots will exist in the
     ##  intermediate states that occur when the investigation switches
@@ -38,7 +39,6 @@ LG_shiny_explain_plots <- function(input,
     ##  Terminate if a select or 'NA' problem is present.
     if (any(.Select_problem))
         return(invisible(NULL))
-    ###-------------------------------------------------------------------
     ##  Create a link to the 'Approx'-level environment, and use
     ##  'LG_lookup' to create the lookup-information.
     .AB_env <- .env$TS_logging[[unlist(.env$input[c("TS_key", "TS", "Approx")])]]

@@ -1,11 +1,24 @@
 #' Create the spectrum-specific part of the \code{LG_shiny}-interface.
 #'
+#' @description This internal function is used to update the interface
+#'     created by \code{LG_shiny}, in order for the investigation to
+#'     focus on the local Gaussian (auto- and cross-) spectra.
+#' 
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.
 #'
 #' @param .env2 The environment containing the two lists \code{input}
 #'     and \code{output}.
+#' 
+#' @note This function creates the two output-nodes, "spectrum_type"
+#'     and "spectrum_arguments".  Both nodes will be created in the
+#'     initial phase, whereas only the "spectrum_type" needs to be
+#'     updated later on (since different spectra will occur depending
+#'     on auto- and cross-versions of the spectra, and points on or
+#'     off the diagonal).  The internal workings of this function thus
+#'     requires a comparison of old and new input-parameters.  Note
+#'     that all of these are equal in the initiation phase.
 #'
 #' @return This function creates the \code{actionButtons} needed for
 #'     the spectrum-specific part of the \code{LG_shiny}-interface.
@@ -18,21 +31,10 @@
 #' @keywords internal
 
 LG_shiny_S_input <- function(.env,.env2) {
-    ###-------------------------------------------------------------------
-    ##  This function creates the two output-nodes, "spectrum_type"
-    ##  and "spectrum_arguments".  Both nodes will be created in the
-    ##  initial phase, whereas only the "spectrum_type" needs to be
-    ##  updated later on (since different spectra will occur depending
-    ##  on auto- and cross-versions of the spectra, and points on or
-    ##  off the diagonal).  The internal workings of this function
-    ##  thus requires a comparison of old and new input-parameters.
-    ##  Note that all of these are equal in the initiation phase.
-    ###-------------------------------------------------------------------
     ##  Create links to the environments of interest, where the
     ##  information needed for the interfaces can be found.
     ..env <- LG_shiny_interface_0_RW_log(.env, .env2, .RW = "L")
     .input_triggers <- .env$TS_logging$update$input_triggers
-    ###-------------------------------------------------------------------
     ##  The internal workings of this function requires a comparison
     ##  of some old and new input-parameters.  Note that all of these
     ##  are equal in the initiation phase.  Reminder: The basic idea
@@ -76,7 +78,6 @@ LG_shiny_S_input <- function(.env,.env2) {
         ##  Update the 'input'-lists too.
         LG_shiny_set_values(.env, .env2, .part = "plots")
         kill(.v, .value_part, .s, .selected_part)
-        ###-------------------------------------------------------------------
         ##  Create the 'frequency_arguments'-interface.
         .result <- list()
         for (x in .spectrum_interface$.sliderInputs) {
@@ -118,7 +119,6 @@ LG_shiny_S_input <- function(.env,.env2) {
              envir = .env2)
         kill(.result, .spectrum_interface, .stored_values, x)
     }
-    ###-------------------------------------------------------------------    
     ##  The next part will be performed regardless of the value of
     ##  '.initial', i.e. it is the creation of the 'actionButtons'
     ##  needed for the selection of the "spectrum_type".  We need to
@@ -126,7 +126,7 @@ LG_shiny_S_input <- function(.env,.env2) {
     ##  between a global or a local investigation, or if we have moved
     ##  between univariate or bivariate.  For the local case it is
     ##  also of necessary to see if we are on or off the diagonal.
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Find the names of the IDs to be used for the actionButtons of
     ##  interest for the present configuration.
     .ID  <- paste(
@@ -186,4 +186,3 @@ LG_shiny_S_input <- function(.env,.env2) {
     ##  the logging-structure can be performed in the next function.
     .env$TS_logging$update$worker$spectrum_type <- TRUE
 }
-

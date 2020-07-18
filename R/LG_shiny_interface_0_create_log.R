@@ -1,11 +1,12 @@
-#' Create \code{TS_logging}-object for the dynamic
+#' Create the \code{TS_logging}-object for the dynamic
 #' \code{LG_shiny}-interface.
 #'
-#' This function initiates the \code{TS_logging}-object needed in
-#' order for the dynamic structure of the \code{LG_shiny}-application
-#' to work without any glitches.  Moreover, it does also adds a bunch
-#' of values to the reactive \code{input}-object in the
-#' \code{shiny}-application started by \code{LG_shiny}.
+#' @description This function initiates the \code{TS_logging}-object
+#'     needed for the dynamic structure of the
+#'     \code{LG_shiny}-application to work properly.  Moreover, it
+#'     does also adds a bunch of values to the reactive
+#'     \code{input}-object in the \code{shiny}-application started by
+#'     \code{LG_shiny}.
 #'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
@@ -35,7 +36,7 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
     ##  of available values at different levels.  This is done in
     ##  order to avoid updating issues when switching between
     ##  different branches of the available data.
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Use a 'with'-construction for the updating, in order to avoid
     ##  all the '.env$'-references that otherwise would be needed.
     ##  Reminder: The new objects defined in this setup will be added
@@ -60,7 +61,6 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
                              .Names = names(TS_content[[i]]))
                      }),
                  .Names = names(TS_content))
-###-------------------------------------------------------------------
              ##  Add the nodes to the first level too, in order to
              ##  simplify the code later on.
              TS_logging$names <- sort(names(TS_logging))
@@ -107,7 +107,6 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
                  }
              }
              kill(.name)
-###-------------------------------------------------------------------
              ##  Add a top level 'update'-node, with the information
              ##  required in order for the master function to know
              ##  when different workers are required.  Reminder: The
@@ -211,7 +210,6 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
                               selected = NA_character_)),
                  .Names = names(TS_logging$update$input_triggers$TS_info))
              TS_logging$update$is_bootstrap = FALSE
-###-------------------------------------------------------------------
              ##  Figure out if any pre-selected values are present
              ##  in 'data_dir'
              pre_selected <- structure(
@@ -271,11 +269,9 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
              ##  added the first time an info object is loaded.
              .first_time <- TRUE
          })
-###-------------------------------------------------------------------
     ## Add the initial values to the 'input'-object in order for the
     ## logical tests to become simpler during the initiation phase.
     LG_shiny_set_values(.env, .env2)
-###-------------------------------------------------------------------    
     ##  Instruct the first worker-function that it is time to act.
     .env$TS_logging$update$worker$TS_info <- TRUE
 }

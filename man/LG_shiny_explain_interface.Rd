@@ -10,18 +10,20 @@ LG_shiny_explain_interface(input, .env, .env2)
 \item{input}{A list containing the arguments needed in order to
 perform the extraction.}
 
-\item{.env}{An environment in which \code{.arr} will be updated.
-This argument can be skipped when called in a non-interactive
-setting.}
+\item{.env}{The environment where the original arguments given to
+\code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
+\code{data_dir}.}
 
-\item{.env2}{Another environment...}
+\item{.env2}{The environment containing the two lists \code{input}
+and \code{output}.}
 }
 \value{
 An explanation will be returned.
 }
 \description{
-This helper function for \code{LG_shiny} should return some
-explanations that can be added to the interface.  This version is
-still in its infancy, i.e. it is mostly a placeholder.
+This internal function is a helper-function for
+    \code{LG_shiny}, that creates some explanations that can be
+    added to the interface.  This version is still in its infancy,
+    i.e. it is mostly a placeholder.
 }
 \keyword{internal}

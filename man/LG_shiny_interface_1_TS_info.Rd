@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_shiny_interface_1_TS_info.R
 \name{LG_shiny_interface_1_TS_info}
 \alias{LG_shiny_interface_1_TS_info}
-\title{Create the TS-info part of the dynamic \code{LG_shiny}-interface.}
+\title{Create the \code{TS-info}-part of the dynamic \code{LG_shiny}-interface}
 \usage{
 LG_shiny_interface_1_TS_info(.env, .env2)
 }
@@ -15,11 +15,11 @@ LG_shiny_interface_1_TS_info(.env, .env2)
 and \code{output}.}
 }
 \value{
-This interface-function creates the \code{TS_info}-part of
-    the dynamic structure of the \code{LG_shiny}-application, and
-    it also loads the required \code{info}-object.
+The \code{TS_info}-part of the dynamic structure of the
+    \code{LG_shiny}-application is created.
 }
 \description{
-Create the TS-info part of the dynamic \code{LG_shiny}-interface.
+This internal function creates the \code{TS-info}-part
+    of the dynamic \code{LG_shiny}-interface.
 }
 \keyword{internal}

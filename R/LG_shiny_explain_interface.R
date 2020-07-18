@@ -1,18 +1,20 @@
 #' Create the instructions for \code{LG_shiny}.
 #'
-#' This helper function for \code{LG_shiny} should return some
-#' explanations that can be added to the interface.  This version is
-#' still in its infancy, i.e. it is mostly a placeholder.
+#' @description This internal function is a helper-function for
+#'     \code{LG_shiny}, that creates some explanations that can be
+#'     added to the interface.  This version is still in its infancy,
+#'     i.e. it is mostly a placeholder.
 #'
 #' @param input A list containing the arguments needed in order to
 #'     perform the extraction.
 #'
-#' @param .env An environment in which \code{.arr} will be updated.
-#'     This argument can be skipped when called in a non-interactive
-#'     setting.
+#' @param .env The environment where the original arguments given to
+#'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
+#'     \code{data_dir}.
 #'
-#' @param .env2 Another environment...
-#' 
+#' @param .env2 The environment containing the two lists \code{input}
+#'     and \code{output}.
+#'
 #' @return An explanation will be returned.
 #'
 #' @keywords internal
@@ -26,13 +28,9 @@ LG_shiny_explain_interface <- function(
     ### As an intermezzo between old and new solution, some stuff must
     ### be extracted from '.env' and 'env2'.
 
-    
-
-    
-###-------------------------------------------------------------------
     ##  Create assorted information about the interface.  Strategy:
     ##  Create a vector and convert it to html.
-###-------------------------------------------------------------------
+
     ##  Create helper functions for the markdown-syntax.
     .italics <- function(.text) paste("_", .text, "_", sep = "")
     .bold <- function(.text) paste("__", .text, "__", sep = "")
@@ -54,7 +52,6 @@ LG_shiny_explain_interface <- function(
             " ",
             .text,
             sep = "")
-###-------------------------------------------------------------------
     ##  Create information about the interface.
     .main_header <- .header(
         n = 3,
@@ -66,7 +63,6 @@ LG_shiny_explain_interface <- function(
             "Properties of the (pseudo-normalised) time series"))
     TS_sub_item <- .item(n=2,
                         .text = "This is a test...  ")
-###-------------------------------------------------------------------
     ##  Create  the desired info-vector.
     .info_vector <- c(
         .main_header,
@@ -77,7 +73,6 @@ LG_shiny_explain_interface <- function(
     .result <- HTML(renderMarkdown(
         text = .info_vector,
         encoding = "UTF-8"))
-
     
     return(.result)
     
@@ -89,18 +84,10 @@ LG_shiny_explain_interface <- function(
         "of time series under investigation.",
         "()")
 
-    
     .result <- HTML(renderMarkdown(
         text = .info_vector,
         encoding = "UTF-8"))
 
-    
-
-
     return(cat("Select a component to inspect!"))
-
-    
-
-    
 
 }

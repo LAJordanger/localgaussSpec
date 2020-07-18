@@ -1,5 +1,9 @@
 #' Create the correlation-specific part of the \code{LG_shiny}-interface.
 #'
+#' @description This internal function is used to update the interface
+#'     created by \code{LG_shiny}, in order for the investigation to
+#'     focus on the local Gaussian (auto- and cross-) correlations.
+#' 
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.
@@ -15,7 +19,6 @@
 #' @keywords internal
 
 LG_shiny_C_input <- function(.env,.env2) {
-###-------------------------------------------------------------------
     ##  Hide those parts of the interface that are related to the
     ##  investigation of the spectra.
     .hide_these <- c("spectrum_arguments", "spectrum_type")

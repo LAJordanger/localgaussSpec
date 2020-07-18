@@ -1,5 +1,7 @@
 #' Create the plot-related part of the \code{LG_shiny}-interface.
 #'
+#' @description This internal function calls \code{LG_plot_helper}.
+#'
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.

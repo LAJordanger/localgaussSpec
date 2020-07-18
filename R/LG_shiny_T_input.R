@@ -1,5 +1,10 @@
-#' Create the spectrum-specific part of the \code{LG_shiny}-interface.
+#' Create the time-series specific part of the \code{LG_shiny}-interface.
 #'
+#' @description This internal function changes the
+#'     \code{LG_shiny}-interface in order for the investigation to
+#'     focus on the time series themselves. (Note: The required
+#'     plot-functions must be implemented first.)
+#' 
 #' @param .env The environment where the original arguments given to
 #'     \code{LG_shiny} lives, i.e. arguments like \code{main_dir} and
 #'     \code{data_dir}.
@@ -8,8 +13,7 @@
 #'     and \code{output}.
 #'
 #' @return This function creates the \code{actionButtons} needed for
-#'     the spectrum-specific part of the \code{LG_shiny}-interface.
-#'     (Not implemented yet.)
+#'     the time-series specific part of the \code{LG_shiny}-interface.
 #'
 #' @keywords internal
 
@@ -27,7 +31,6 @@ LG_shiny_T_input <- function(.env,.env2) {
     for (.node in .remove_these_nodes) 
         eval(expr = bquote(output[[.(.node)]] <- NULL),
              envir = .env2)
-###-------------------------------------------------------------------
     ##  Create a link to the environment of interest, where the
     ##  information needed for the fine tuning of the interface can be
     ##  found.  (Needed in order to simplify the interface when

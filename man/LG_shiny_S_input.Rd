@@ -24,6 +24,18 @@ This function creates the \code{actionButtons} needed for
     point and lag-window-function).
 }
 \description{
-Create the spectrum-specific part of the \code{LG_shiny}-interface.
+This internal function is used to update the interface
+    created by \code{LG_shiny}, in order for the investigation to
+    focus on the local Gaussian (auto- and cross-) spectra.
+}
+\note{
+This function creates the two output-nodes, "spectrum_type"
+    and "spectrum_arguments".  Both nodes will be created in the
+    initial phase, whereas only the "spectrum_type" needs to be
+    updated later on (since different spectra will occur depending
+    on auto- and cross-versions of the spectra, and points on or
+    off the diagonal).  The internal workings of this function thus
+    requires a comparison of old and new input-parameters.  Note
+    that all of these are equal in the initiation phase.
 }
 \keyword{internal}

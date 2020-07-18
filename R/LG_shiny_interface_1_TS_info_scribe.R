@@ -1,5 +1,7 @@
-#' A scribe for the "old-branch"-parameters from the
-#' \code{LG_shiny}-interface.
+#' The scribe-function for \code{LG_shiny_interface_1_TS_info}
+#'
+#' @description This internal function is a scribe for the
+#'     "old-branch"-parameters from the \code{LG_shiny}-interface.
 #'
 #' @param .env The environment where the \code{TS_logging}-object
 #'     lives.
@@ -7,7 +9,7 @@
 #' @param .env2 The environment containing the two lists \code{input}
 #'     and \code{output}.
 #'
-#' @return This helper-function will check if any changes in the top
+#' @details This helper-function will check if any changes in the top
 #'     level of the interface for the \code{LG_shiny}-function implies
 #'     that an update of stored values should be undertaken.  In
 #'     addition it will perform the initial adjustments of the
@@ -15,10 +17,13 @@
 #'     the possibility of auto-select to work as intended in the main
 #'     function.
 #'
+#' @return This scribe-function reads and writes to the internal
+#'     \code{TS_logging}-object that keeps track of the
+#'     \code{LG_shiny}-interface.
+#'
 #' @keywords internal
 
 LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
-###-------------------------------------------------------------------
     ##  The first time this function is called, it might be some
     ##  'pre-selected values that still ought to be added to the
     ##  selected values.  This should only happen once.
@@ -33,7 +38,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         } else
             ! stringr::str_detect(string = .x, pattern = "[Ss]elect")
     }
-###-------------------------------------------------------------------
     ##  Check the information in the 'TS_info'-part of
     ##  'input_triggers', and figure out if a valid
     ##  environment-bookmark can be constructed.
@@ -55,7 +59,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
                             .part =c("TCS_type", "second_graphical"))
     }
     kill(.valid_bm)
-###-------------------------------------------------------------------    
     ##  Identify the position where the 'input'-value differs from the
     ##  value registered in the 'input_trigger'.
     .new_values <- unlist(.env$input[names(.bm)])
@@ -82,7 +85,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
                 break
         }
     }
-###-------------------------------------------------------------------                 
     ## Update the 'TS_info'-part of '.env$TS_logging' (using the '.bm'
     ##  as intermediate to get more compact code).  Start by setting
     ##  all the parts of '.bm' that are going to be updated to 'NA'.
@@ -113,7 +115,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         .env$TS_logging$update$input_triggers$TS_info[] <- .bm
         return(NULL)
     }
-###-------------------------------------------------------------------    
     ##  Still running?  If so we need to see how much of the interface
     ##  that can be extracted from the available data.  First of all:
     ##  If '.pos' is '1', then use the 'last'-node to fill in the
@@ -124,8 +125,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         ##  Update 'input_triggers' and 'select_names' for 'TS'
         .env$TS_logging$update$select_names$TS <-
             .env$TS_logging[[.bm[1:.pos]]]$names
-################################################################################
-        ## ## ##  Hopefully the above part will soon be obsolete.
         .env$TS_logging$update$select_Input$TS$label <- 
             .env$TS_logging[[.bm[1:.pos]]]$label
         .env$TS_logging$update$select_Input$TS$selected <- 
@@ -133,7 +132,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         .env$TS_logging$update$select_Input$TS$choices <- 
             c(.env$TS_logging[[.bm[1:.pos]]]$header,
               .env$TS_logging[[.bm[1:.pos]]]$names)
-################################################################################
         .bm[.pos+1] <- .env$TS_logging[[.bm[1:.pos]]]$last
         if (!.not_na_select(.pos+1)) {
             .env$TS_logging$update$input_triggers$TS_info[] <- .bm
@@ -145,7 +143,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
             .pos <- .pos + 1
         }
     }
-###-------------------------------------------------------------------    
     ##  The case where '.pos' is equal to '2' implies a new value for
     ##  "TS".  In this case we might need to load the relevant
     ##  info-object (if it is the first time that TS-node is being
@@ -205,8 +202,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         ##  Update the 'select_names' for "Approx".
         .env$TS_logging$update$select_names$Approx <-
             .env$TS_logging[[.TS_node]]$names
-################################################################################
-        ## ## ##  Hopefully the above part will soon be obsolete.
         .env$TS_logging$update$select_Input$Approx$label <- 
             .env$TS_logging[[.TS_node]]$label
         .env$TS_logging$update$select_Input$Approx$selected <- 
@@ -214,7 +209,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         .env$TS_logging$update$select_Input$Approx$choices <- 
             c(.env$TS_logging[[.TS_node]]$header,
               .env$TS_logging[[.TS_node]]$names)
-################################################################################
         ##  The first time this function is used, it might be some
         ##  'pre-selected values hanging around.
         if (all(.env$.first_time,
@@ -236,7 +230,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
             return(NULL)
         kill(.TS_node)
     }
-###-------------------------------------------------------------------    
     ##  The case where '.pos' is equal to '3' indicates that it might
     ##  or might not be bootstrap-values available.  For simulated
     ##  data there never will be any bootstrap-nodes, whereas it for
@@ -249,18 +242,13 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         ##  Update the 'select_names' for "Boot_Approx".
         .env$TS_logging$update$select_names$Boot_Approx <-
             .env$TS_logging[[.TS_node]]$names
-################################################################################
-        ## ## ##  Hopefully the above part will soon be obsolete.
         .env$TS_logging$update$select_Input$Boot_Approx$label <- 
             .env$TS_logging[[.TS_node]]$label
-        ###  REMINDER: The value above is 'NULL'. Why? Did I leave a
-        ###  test for that case somewhere.  I doubt so...
         .env$TS_logging$update$select_Input$Boot_Approx$selected <- 
             .env$TS_logging[[.TS_node]]$last
         .env$TS_logging$update$select_Input$Boot_Approx$choices <- 
             c(.env$TS_logging[[.TS_node]]$header,
               .env$TS_logging[[.TS_node]]$names)
-################################################################################
         ##  Register if we do have an actual bootstrap-node
         .env$TS_logging$update$is_bootstrap <-
             .env$TS_logging[[.TS_node]]$is_bootstrap
@@ -271,7 +259,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         LG_shiny_interface_0_RW_log(.env, .env2, .RW="R")
         return(NULL)
     }
-###-------------------------------------------------------------------    
     ##  The case where '.pos' is equal to '4' indicates that we have
     ##  an actual bootstrap-node.  The only thing that is required now
     ##  is to update the 'input_triggers' and return.
@@ -288,35 +275,3 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
         return(NULL)
     }
 }
-
-##### REMINDER FROM THE INITIATION PHASE OF THIS FUNCTION
-## In this case the scribe should ensure that the input-settings is
-## stored before there is a change to a new branch.  The point of
-## interest is that the 'TS_info' part of the 'input_triggers' in
-## 'TS_logging' should work as a bookmark to the node that should be
-## updated.  However, there are some situations where nothing should
-## be done.  In particular, during the initiation phase where
-## 'input'-contains 'NULL'-values.  The idea is to compare the
-## relevant parts of input with the information stored in 'TS_info',
-## and if there is a difference then the relevant old input-values are
-## stored at the node specified by 'TS_info'.  There are however some
-## cases where an attempt at using 'TS_node' as a bookmark would fail,
-## since there can be "Select..." and "NA"-values stored there (occurs
-## when a curious user for some stupid reason selects the option
-## "Select..." from the interface).
-###-------------------------------------------------------------------
-## The initiation-phase, figure out if there are some 'NA'-values
-## present in the 'input', and if so there should be no saving.  Only
-## update the relevant part of 'TS_info' and return.  Reminder: This
-## updating is based on the principle that a comparison is made from
-## the start of 'TS_logging' in order to figure out the position where
-## the difference is located.  All the parts before this position will
-## be kept as they are, the part at the position is updated from
-## 'input' and then everything after that position will be updated
-## based on the earlier part and the information that can be found in
-## 'TS_logging'.  This is done in order (if possible) to switch back
-## to the last input-configuration that was used if the new branch was
-## visited at some earlier time.  If the new branch is visited for the
-## first time it will instead be an attempt at detecting if something
-## can be auto-selected (relevant when e.g. only one approx is
-## present).
