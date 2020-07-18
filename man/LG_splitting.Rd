@@ -8,32 +8,39 @@ LG_splitting(books)
 }
 \arguments{
 \item{books}{The (internal) result we get from
-\code{LG_bookkeeping}, that contains all the information needed
-for this function.  This includes paths to data-files, the size
-and dimension-names of the objects found in these -- and the
-arguments that will be used in the desired computation based
-upon these data.}
+\code{LG_bookkeeping}, which contains all the information
+needed for this function.  This includes paths to data-files,
+the size and dimension-names of the objects found in these --
+and the arguments that will be used in the desired computation
+based upon these data.}
 }
 \value{
 This function will return a "loop-list" to be used
     internally in the \code{LG_scribe}-function.  This is a list
-    with the following components: \code{data_files} that gives the
-    paths to the files that the main-function must read to get
-    access to the data. \code{arg_list} that contains the arguments
-    needed for the computation -- and this part will also decide if
-    a computation must be split into smaller chunks due to large
-    intermediate objects.
+    with the following components:
+
+\describe{
+
+\item{data_files}{This contains the paths to the files that the
+    main-function must read in order to access the data.}
+
+\item{arg_list}{This contains the arguments needed for the
+    computation -- and this part will also decide if a computation
+    must be split into smaller chunks due to large intermediate
+    objects.}
+
+}
 }
 \description{
 To reduce the chance for out of memory problems (see
-\code{help("Memory-limits")} for more information), some
-computations will be partitioned into smaller chunks.  This
-function checks if a splitting is required, and it gives a
-partition of the arguments that should (hopefully) ensure that the
-available amount of memory is sufficient for the task at hand.
-Warning: This is a rather crude approach, that does not measure how
-much memory that is available, i.e. it might fail if the work-space
-is cluttered with large objects.
+    \code{help("Memory-limits")} for more information), some
+    computations will be partitioned into smaller chunks.  This
+    function checks if a splitting is required, and it gives a
+    partitioning of the arguments.  This should (hopefully) ensure
+    that the available amount of memory is sufficient for the task
+    at hand.  Warning: This is a rather crude approach, that does
+    not measure how much memory that is available, i.e. it might
+    fail if the work-space is cluttered with large objects.
 }
 \details{
 The argument and value of this function reflects that it
