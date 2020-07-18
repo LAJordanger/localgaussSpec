@@ -1,5 +1,8 @@
-#' An internal helper-function that updates lists.
+#' Updating of internal lists.
 #'
+#' @description This internal function is primarily used to update the
+#'     \code{curlicues}-list.
+#' 
 #' @param .new A list that should be used to update (or add) content
 #'     to the list given in \code{.old}
 #'

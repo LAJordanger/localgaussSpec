@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_update_list.R
 \name{LG_update_list}
 \alias{LG_update_list}
-\title{An internal helper-function that updates lists.}
+\title{Updating of internal lists.}
 \usage{
 LG_update_list(.new, .old)
 }
@@ -20,6 +20,7 @@ The result of this function will be an updated version of
     that occur both places will be updated.
 }
 \description{
-An internal helper-function that updates lists.
+This internal function is primarily used to update the
+    \code{curlicues}-list.
 }
 \keyword{internal}
