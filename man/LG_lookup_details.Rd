@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_lookup_details.R
 \name{LG_lookup_details}
 \alias{LG_lookup_details}
-\title{Helper-function to deal with the details.}
+\title{Helper-function to create the \code{details}-list of \code{look_up}}
 \usage{
 LG_lookup_details(look_up, .AB_env)
 }
@@ -14,11 +14,17 @@ LG_lookup_details(look_up, .AB_env)
 information.  This argument is inherited from \code{LG_lookup}.}
 }
 \value{
-A \code{details} list will be returned to the calling
-    function (i.e. \code{LG_lookup}), and this list contains
+A \code{details}-list will be returned to the calling
+    function (i.e. \code{LG_lookup}), and this list contains the
     details needed for the description of the content of the plots.
 }
 \description{
-Helper-function to deal with the details.
+This internal helper function prepares the information
+    that is needed in order to describe the content of a given
+    plot.  This information will be added as an attribute when a
+    plot is created in a nonreactive setting, which implies that it
+    is easily available when a plot is to be included in a
+    paper/presentation.  See \code{LG_explain_plots} for further
+    details.
 }
 \keyword{internal}

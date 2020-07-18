@@ -1,13 +1,16 @@
-#' Helper-function to deal with the caching.
+#' Helper-function to create the \code{cache}-list of \code{look_up}
+#'
+#' @description This internal helper function prepares the unique
+#'     cache-keys that enables a primitive caching-procedure to be
+#'     used in the interactive \code{LG_shiny}-application.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
 #'
-#' @return A list with cache-values will be returned to the calling
-#'     function \code{LG_lookup}, and it will there be added as a node
-#'     to the \code{look_up}-list.  The cache-values in this list will
-#'     be used in order to avoid that already performed tasks are
-#'     recomputed.
+#' @return A \code{cache}-list will be returned to the calling
+#'     function (i.e. \code{LG_lookup}), and this list contains the
+#'     cache-keys that are used in order to avoid that already
+#'     performed tasks are recomputed.
 #'
 #' @keywords internal
 
@@ -21,8 +24,6 @@ LG_lookup_cache <- function(look_up) {
     ##  Caching for the initial step.
     cache$initial$global <- digest::digest(look_up$restrict$initial$global)
     cache$initial$local <- digest::digest(look_up$restrict$initial$local)
-
-    
     ##  Caching related to 'LG_shiny_correlation', names matching
     ##  those from 'look_up$restrict'.  The 'C'-node used in the
     ##  internal 'unfolding'-function of 'LG_shiny_correlation' must
@@ -43,8 +44,6 @@ LG_lookup_cache <- function(look_up) {
             digest::digest(cache$G_pairs)
         } else
             digest::digest(cache$L_levels)
-    ###-------------------------------------------------------------------
-    ###-------------------------------------------------------------------
     ##  Caching related to the spectral densities.  First, an array
     ##  with the product of the correlations and the desired
     ##  'exp^{-2*pi*i*omega*h}'-values.  Reminder: This array is based
@@ -57,12 +56,11 @@ LG_lookup_cache <- function(look_up) {
     ##  depends on the lag-window function given in 'look_up$window'.
     cache$weights_f <-
         digest::digest(look_up$window)
-    ##  The weigths to be used for the cumulative spectral density
+    ##  The weights to be used for the cumulative spectral density
     ##  function, which only will be computed when
     ##  'look_up$spectra_f_or_F' is equal to "F".
     cache$weights_F <-
         digest::digest(cache$weights_f)
-    ###-------------------------------------------------------------------
     ##  The storage of the global and local spectra-summands, i.e. the
     ##  product of the correlations and the complex valued
     ##  'e^{-2*pi*i*omega}', where it then for the local summands is
@@ -72,7 +70,6 @@ LG_lookup_cache <- function(look_up) {
     cache$spectra_summands_local  <- 
         digest::digest(c(cache$exp,
                          look_up[c("bw_points")]))
-    ###-------------------------------------------------------------------
     ##  The storage of the spectra-values, which for both local and
     ##  global spectra depends on the available summands with weights
     ##  based on the desired lag-window function (for all the possible
@@ -89,7 +86,6 @@ LG_lookup_cache <- function(look_up) {
         digest::digest(c(cache$spectra_summands_local,
                          cache$weights_f,
                          sort(unlist(look_up[c("Vi", "Vj")]))))
-    ###-------------------------------------------------------------------
     ##  The storage of the collection of all the available pointwise
     ##  confidence intervals for the selected cut.
     cache$CI_global <-

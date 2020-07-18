@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_lookup_details_NC_fail.R
 \name{LG_lookup_details_NC_fail}
 \alias{LG_lookup_details_NC_fail}
-\title{Helper-function to deal with the details when the numerical
-convergence fails.}
+\title{Helper-function to deal with the details when the numerical convergence fails.}
 \usage{
 LG_lookup_details_NC_fail(look_up, .AB_env)
 }
@@ -15,14 +14,17 @@ LG_lookup_details_NC_fail(look_up, .AB_env)
 information.  This argument is inherited from \code{LG_lookup}.}
 }
 \value{
-A node will be added to the \code{details} list in the
-    calling function \code{LG_lookup_details}.  This list can be
-    used to figure out if the observed issue regarding failed
-    numerical convergence is present for the case under
+An additional node will be added to the \code{details}-list
+    in the calling function \code{LG_lookup_details}.  This list
+    can be used to figure out if the observed issue regarding
+    failed numerical convergence is present for the case under
     investigation.
 }
 \description{
-Helper-function to deal with the details when the numerical
-convergence fails.
+This internal helper function is only called when one
+    (or more) of the estimated local Gaussian (auto- or cross-)
+    correlations fails to converge numerically.  In this case the
+    underlying convergence information will be analysed in order to
+    identify more details about the problem.
 }
 \keyword{internal}

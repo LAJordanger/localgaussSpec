@@ -1,4 +1,12 @@
-#' Helper-function to deal with the details.
+#' Helper-function to create the \code{details}-list of \code{look_up}
+#'
+#' @description This internal helper function prepares the information
+#'     that is needed in order to describe the content of a given
+#'     plot.  This information will be added as an attribute when a
+#'     plot is created in a nonreactive setting, which implies that it
+#'     is easily available when a plot is to be included in a
+#'     paper/presentation.  See \code{LG_explain_plots} for further
+#'     details.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
@@ -6,8 +14,8 @@
 #' @param .AB_env The environment that contains the desired
 #'     information.  This argument is inherited from \code{LG_lookup}.
 #'
-#' @return A \code{details} list will be returned to the calling
-#'     function (i.e. \code{LG_lookup}), and this list contains
+#' @return A \code{details}-list will be returned to the calling
+#'     function (i.e. \code{LG_lookup}), and this list contains the
 #'     details needed for the description of the content of the plots.
 #' 
 #' @keywords internal
@@ -29,7 +37,6 @@ LG_lookup_details <- function(look_up,
     if (details$is_block) {
         details$nr_simulated_samples <- .AB_env$details$nr_simulated_samples
     }
-    ###-------------------------------------------------------------------
     ##  Add information about the content of the plot.
     details$TCS_type <- look_up$TCS_type
     details$text$length_variables <- paste(
@@ -49,7 +56,6 @@ LG_lookup_details <- function(look_up,
         sep = "")
     details$window <- look_up$window
     details$truncation_level <- look_up$m_selected
-    ###-------------------------------------------------------------------
     ##  Investigate if information about convergence-status is
     ##  available, which only is relevant for the local cases when the
     ##  five-parameter approximation has been used.  Reminder: This
@@ -69,7 +75,6 @@ LG_lookup_details <- function(look_up,
                 })
             }
         }
-    ###-------------------------------------------------------------------
     ##  Add information about the type of local Gaussian approximation
     ##  that was used in the construction, i.e. if the estimated local
     ##  Gaussian correlations stems from a one- or five-parameter
@@ -150,7 +155,6 @@ LG_lookup_details <- function(look_up,
     ##  percentage.  Some care must thus be taken when the text
     ##  version is to be created.
     details$bandwidth <- look_up$bw_points
-    ###-------------------------------------------------------------------
     ##  If a bootstrap is present: Extract 'boot_type', 'block_length'
     ##  and 'nb' (number of bootstrap replicates).
     if (look_up$is_bootstrap) {
@@ -158,7 +162,6 @@ LG_lookup_details <- function(look_up,
             details [[.arg]] <- look_up[[.arg]]
         kill(.arg)
     }
-    ###-------------------------------------------------------------------
     ##  If a confidence interval is needed, find the relevant values.
     if (details$is_CI_needed) 
         details$CI_percentage <- local({
@@ -170,38 +173,31 @@ LG_lookup_details <- function(look_up,
             } else
                 as.numeric(look_up$confidence_interval)
         })
-    ###-------------------------------------------------------------------
     ##  Specify if the plot shows correlations or a spectrum.
     details$content <- switch(
         EXPR = look_up$TCS_type,
         C = "correlations",
         S = "spectrum",
         T = "time series")
-    ###-------------------------------------------------------------------
     ##  Register the original variable names.
     details$.original_variable_names <-
         .AB_env$details$.original_variable_names
-    ###-------------------------------------------------------------------
-    ######################################################################
+    ###------------------------------------------------------###
     ##  Add text-information based on 'details_values' to simplify the
     ##  explanation of the plots that is investigated.
-    ######################################################################    
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Add information about the line-types and colours that is used
     ##  for the different configurations.
     details$text$local_colour <- "blue"
     details$text$global_colour <- "red"
     details$text$simulated_data_lty <- "dashed line"
     details$text$real_data_lty <- "line"
-    ###-------------------------------------------------------------------
     ##   Add a description of the content.  This specifies first
     ##   auto/cross and correlations/spectrum, then it mentions
     ##   the point (bot has ordinary coordinates and percentiles).
     ##   If the plot is of correlations, additional information
     ##   will be added based on 'lag_zero_needed' and
     ##   'negative_lags_needed'.
-
-
     .basic <- sprintf(
         "A plot of the %s %s-%s",
         ifelse(test = details$is_local,
@@ -261,8 +257,6 @@ LG_lookup_details <- function(look_up,
                                     .spectra,
                                     .spectra_local_global,
                                     .explanations)
-    
-    ###-------------------------------------------------------------------
     ##  Add information about bandwidth and type of local Gaussian
     ##  approximation.  Add a warning if the heinous one-parameter local
     ##  Gaussian approximations are used.
@@ -286,8 +280,6 @@ LG_lookup_details <- function(look_up,
                         " in general fail to capture the local properties",
                         " of interest.  Use the five-parameter approach instead!")),
                 collapse = "")
-            
-            
     #####  Reminder: This needs to be tweaked a bit to cover the cases
     #####  where the bandwidth is given as a percentage...  Trigger below
     #####  to ensure that these cases will be taken care of.
@@ -296,7 +288,6 @@ LG_lookup_details <- function(look_up,
                 sQuote("look_up$bw_points"),
                 "is not a numerical value.",
                 "Update code for extraction in this case!"))
-    ###-------------------------------------------------------------------
     ##  Add CI-text (when relevant)
     if (details$is_CI_needed) {
         details$text$CI <- paste(
@@ -320,7 +311,6 @@ LG_lookup_details <- function(look_up,
                       sep = ""),
             sep = "")
     }
-    ###-------------------------------------------------------------------
     ##  Add information about the type of the plot, that covers both
     ##  correlations and spectra.
     details$text$plot_type <-  paste(
@@ -342,8 +332,6 @@ LG_lookup_details <- function(look_up,
           },
           details$content),
         collapse = "")
-
-    
     details$text$plot_type_YiYj <- paste(
         if (look_up$is_auto_pair) {
             c(" of ",
@@ -353,8 +341,6 @@ LG_lookup_details <- function(look_up,
                  " and ",
                  details$Vj),
         collapse = "")
-
-
     ##  Add information about the percentile when a local
     ##  investigation is performed.
     details$.selected_percentile <-
@@ -382,7 +368,6 @@ LG_lookup_details <- function(look_up,
                stop = nchar(details$text$plot_type)),
         details$text$plot_type_YiYj,
         sep = "")
-    ###-------------------------------------------------------------------
     ##  When necessary, investigate the status regarding the
     ##  problematic numerical convergence.  The first test reports the
     ##  existence of some problem for some of the tuning parameters
@@ -400,7 +385,6 @@ LG_lookup_details <- function(look_up,
             }
         }
     }
-    ###-------------------------------------------------------------------
     ##  Add information about whether or not the numerical convergence
     ##  should be trusted, i.e. if 'eflag' was 0 when the
     ##  five-parameter local Gaussian approach was used.  If for some

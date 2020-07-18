@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_lookup_cache.R
 \name{LG_lookup_cache}
 \alias{LG_lookup_cache}
-\title{Helper-function to deal with the caching.}
+\title{Helper-function to create the \code{cache}-list of \code{look_up}}
 \usage{
 LG_lookup_cache(look_up)
 }
@@ -11,13 +11,14 @@ LG_lookup_cache(look_up)
 \code{LG_lookup}.}
 }
 \value{
-A list with cache-values will be returned to the calling
-    function \code{LG_lookup}, and it will there be added as a node
-    to the \code{look_up}-list.  The cache-values in this list will
-    be used in order to avoid that already performed tasks are
-    recomputed.
+A \code{cache}-list will be returned to the calling
+    function (i.e. \code{LG_lookup}), and this list contains the
+    cache-keys that are used in order to avoid that already
+    performed tasks are recomputed.
 }
 \description{
-Helper-function to deal with the caching.
+This internal helper function prepares the unique
+    cache-keys that enables a primitive caching-procedure to be
+    used in the interactive \code{LG_shiny}-application.
 }
 \keyword{internal}

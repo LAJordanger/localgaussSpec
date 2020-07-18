@@ -1,5 +1,10 @@
-#' Helper-function to deal with the details when the numerical
-#' convergence fails.
+#' Helper-function to deal with the details when the numerical convergence fails.
+#'
+#' @description This internal helper function is only called when one
+#'     (or more) of the estimated local Gaussian (auto- or cross-)
+#'     correlations fails to converge numerically.  In this case the
+#'     underlying convergence information will be analysed in order to
+#'     identify more details about the problem.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
@@ -7,17 +12,13 @@
 #' @param .AB_env The environment that contains the desired
 #'     information.  This argument is inherited from \code{LG_lookup}.
 #'
-#'
-#' @return A node will be added to the \code{details} list in the
-#'     calling function \code{LG_lookup_details}.  This list can be
-#'     used to figure out if the observed issue regarding failed
-#'     numerical convergence is present for the case under
+#' @return An additional node will be added to the \code{details}-list
+#'     in the calling function \code{LG_lookup_details}.  This list
+#'     can be used to figure out if the observed issue regarding
+#'     failed numerical convergence is present for the case under
 #'     investigation.
 #' 
 #' @keywords internal
-
-##  Reminder: The present solution must be updated in order to cover
-##  the issues related to the heatmap- and distance-based plots.
 
 LG_lookup_details_NC_fail <- function(look_up,
                                       .AB_env) {
@@ -112,7 +113,7 @@ LG_lookup_details_NC_fail <- function(look_up,
             ##  Create a vector that can be used to specify colours
             ##  and fill for the boxplots related to the local
             ##  Gaussian autocorrelations.  As before this starts with
-            ##  the positve lags and then adds negative lags when
+            ##  the positive lags and then adds negative lags when
             ##  needed.  The names of this vector is only used in
             ##  order to see if the lag "0" case might need to be
             ##  removed in the auto-covariance cases.

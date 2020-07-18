@@ -1,9 +1,14 @@
-#' Helper-function to create the restrict-list
+#' Helper-function to create the \code{restrict}-list of \code{look_up}
+#'
+#' @description This internal helper function prepares the information
+#'     that is needed in order to extract the desired local Gaussian
+#'     auto- and cross-correlations from the data-structure created by
+#'     the scribe-functions.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
 #'
-#' @return A \code{restrict} list will be returned to the calling
+#' @return A \code{restrict}-list will be returned to the calling
 #'     function (i.e. \code{LG_lookup}), and this list contains the
 #'     details needed for the slicing and dicing of the data loaded
 #'     from file.
@@ -53,20 +58,18 @@ LG_lookup_restrict <- function (look_up = look_up) {
               }
           },
           list(variable = "rho"))}
-    ###-------------------------------------------------------------------
     ##  Different restrictions are needed at different stages of the
     ##  investigation.  The names used here should (if possible) be
     ##  reflected by those used in the caching of the results.  The
     ##  first bunch of restriction lists are aimed at those used in
     ##  'LG_shiny_correlation'.
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Restrict attention to the main branches for the the global and
     ##  local data.  NB: Need an additional 'bookmark' for the initial
     ##  subsetting for the local case.
     restrict$G_branch <- .template$global_branch
     restrict$L_branch <- list(bm = .template$local_branch,
                               rl = .template$bw_points)
-    ###-------------------------------------------------------------------
     ##  Restrict attention to the pairs, with an additional
     ##  restriction if the lag zero component also can be dropped
     ##  (i.e. the cases where it is constant and equal to one.)
@@ -74,7 +77,6 @@ LG_lookup_restrict <- function (look_up = look_up) {
                           if  (!look_up$is_lag_zero_needed)
                               .template$pos_lags)
     restrict$L_pairs <- restrict$G_pairs
-    ###-------------------------------------------------------------------
     ##  The restrictions to be used in the internal 'unfold'-function
     ##  of 'LG_shiny_correlation'.  The unfolding is necessary in
     ##  order to get the correct plots for those cases where the local
@@ -96,8 +98,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
     restrict$C$global$.never_drop <- c("lag", "content")
     ##  Reminder: The 'local'-part of the details above are used in
     ##  order to define the 'L_levels'-node of the cache.
-    ###-------------------------------------------------------------------
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  The restrictions in the function 'LG_shiny_spectra' often
     ##  depends on values from internal loop-constructions, and
     ##  functions must thus be used for this part.  Reminder: Some
@@ -142,7 +143,6 @@ LG_lookup_restrict <- function (look_up = look_up) {
                       yes  = look_up$levels_point_reflected,
                       no   = look_up$levels_point)),
         never_drop  = c("omega", "content"))
-    ###-------------------------------------------------------------------
     ##  The restriction to be used in 'LG_create_plot_df', i.e. the
     ##  last restrictions before data-frames for the plots are
     ##  created.  Reminder: For the spectra, we will always need one
@@ -156,7 +156,6 @@ LG_lookup_restrict <- function (look_up = look_up) {
                            no   = "orig"),
                     if (look_up$is_CI_needed)
                         look_up$.CI_low_high))
-    ###-------------------------------------------------------------------
     ##  The restrictions to be used when it turns out that at least
     ##  one of the local Gaussian estimates did not succeed, and it is
     ##  of interest to check if the problem is present for the tuning
@@ -171,7 +170,6 @@ LG_lookup_restrict <- function (look_up = look_up) {
     ##  Tweak the list to ensure that lag "0" also is included for the
     ##  positive lags.
     restrict$NC_check$CS$pos_lags$lag <- .template$non_neg_lags$lag
-    ###-------------------------------------------------------------------
     ##  Include a helper function that will be used as the initial
     ##  step in several other functions.  Reminder: If all the
     ##  investigations starts with this, then it would have been
@@ -243,7 +241,6 @@ LG_lookup_restrict <- function (look_up = look_up) {
         ##  Return nothing to the workflow.
         return(invisible(NULL))
     }
-    ###-------------------------------------------------------------------
     ##  Return the 'restrict'-list, so 'LG_lookup' can add it as a new
     ##  node to the 'look_up'-list
     restrict

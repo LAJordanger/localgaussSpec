@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_lookup_curlicues_plot_stamp.R
 \name{LG_lookup_curlicues_plot_stamp}
 \alias{LG_lookup_curlicues_plot_stamp}
-\title{Create the plot-stamp-label for the the curlicues list}
+\title{Helper-function to create the plot-stamp-label for the the \code{curlicues}-list}
 \usage{
 LG_lookup_curlicues_plot_stamp(look_up, CSC)
 }
@@ -14,10 +14,14 @@ LG_lookup_curlicues_plot_stamp(look_up, CSC)
 workings of the \code{LG_lookup_curlicues}-function.}
 }
 \value{
-This function will create the plot-stamp-label that should
-    be added to the \code{CSC}-list in the calling function.
+This function returns the plot-stamp-label to the calling
+    function, i.e. \code{LG_lookup_curlicues}, which will add it to
+    the \code{CSC}-list.
 }
 \description{
-Create the plot-stamp-label for the the curlicues list
+This internal function is called by
+    \code{LG_lookup_curlicues} in order to produce the plot-stamp,
+    i.e. the annotated text that reveals the content of the plot
+    under investigation.
 }
 \keyword{internal}

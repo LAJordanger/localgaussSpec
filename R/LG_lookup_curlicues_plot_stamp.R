@@ -1,4 +1,9 @@
-#' Create the plot-stamp-label for the the curlicues list
+#' Helper-function to create the plot-stamp-label for the the \code{curlicues}-list
+#'
+#' @description This internal function is called by
+#'     \code{LG_lookup_curlicues} in order to produce the plot-stamp,
+#'     i.e. the annotated text that reveals the content of the plot
+#'     under investigation.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
@@ -6,15 +11,16 @@
 #' @param CSC The case-specific-curlicues (CSC) from the internal
 #'     workings of the \code{LG_lookup_curlicues}-function.
 #'
-#' @return This function will create the plot-stamp-label that should
-#'     be added to the \code{CSC}-list in the calling function.
+#' @return This function returns the plot-stamp-label to the calling
+#'     function, i.e. \code{LG_lookup_curlicues}, which will add it to
+#'     the \code{CSC}-list.
 #'
 #' @keywords internal
 
 LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
     ##  Create the key ingredients of the plot-stamp-label.  Note that
     ##  some of the distance based plots (those that consider
-    ##  percentwise changes) will require more than one instance of
+    ##  percent-wise changes) will require more than one instance of
     ##  the basic spectrum-component, and as such it is necessary to
     ##  take that into account while constructing the labels.  The
     ##  present setup starts with the details related to 'm'
@@ -129,23 +135,3 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
     ##  as the 'label'-node of 'CSC$plot_stamp$annotate'.
     .label
 }
-
-
-###  Reminder: An approach where the distance function used norm-signs
-###  where initially desired, but it turned out to look like crap.
-###  The code below is a memento of how the attempted solution.
-
-## if (isTRUE(look_up$L2_distance_normal)) {
-##     .label <- local({
-##         ##  Reminder: It is possible to iterate the
-##         ##  'group'-construction to get "||" instead of "|",
-##         ##  but the result looks like crap.  An alternative is
-##         ##  to use an approach based on "L[2]*(%s)".
-##         .tmp <- sprintf("group('|',%s,'|')",
-##                         .label)
-##         ## sprintf("%s[phantom(.)2]",
-##         ##         .tmp)
-##         sprintf("phantom(.)^phantom(.)^2*%s*phantom(.)^phantom(.)^phantom(2)",
-##                 .tmp)
-##     })
-## }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_lookup_restrict.R
 \name{LG_lookup_restrict}
 \alias{LG_lookup_restrict}
-\title{Helper-function to create the restrict-list}
+\title{Helper-function to create the \code{restrict}-list of \code{look_up}}
 \usage{
 LG_lookup_restrict(look_up = look_up)
 }
@@ -11,12 +11,15 @@ LG_lookup_restrict(look_up = look_up)
 \code{LG_lookup}.}
 }
 \value{
-A \code{restrict} list will be returned to the calling
+A \code{restrict}-list will be returned to the calling
     function (i.e. \code{LG_lookup}), and this list contains the
     details needed for the slicing and dicing of the data loaded
     from file.
 }
 \description{
-Helper-function to create the restrict-list
+This internal helper function prepares the information
+    that is needed in order to extract the desired local Gaussian
+    auto- and cross-correlations from the data-structure created by
+    the scribe-functions.
 }
 \keyword{internal}

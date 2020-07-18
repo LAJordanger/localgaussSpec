@@ -1,18 +1,31 @@
-#' Manage the curlicues to be used on the plots
+#' Helper-function to create the \code{curlicues}-list of \code{look_up}
+#'
+#' @description This internal helper function prepares the information
+#'     that is needed in order to annotate assorted information
+#'     (curlicues) to the final plots.  A plot-stamp that reveals the
+#'     content of the plot will always be present together with
+#'     information about the length of the sample and the number of
+#'     replicates.  Additional information will be added depending on
+#'     the type of plot, this can e.g. be details related to the
+#'     truncation level, the point of investigation, the bandwidth,
+#'     the status for the numerical convergence of the estimates, or
+#'     the block length used for the bootstrapping algorithm.  See the
+#'     scripts for examples related to how the annotated text can
+#'     adjusted when the plots are created in a nonreactive setting.
 #'
 #' @param look_up A list from the internal workings of the function
 #'     \code{LG_lookup}.
 #'
-#' @return A list with the curlicues-information to be used in the
-#'     plot, e.g. details related to the size of lines, and the
-#'     position, colour and size of the annotated text
+#' @return A \code{curlicues}-list will be returned to the calling
+#'     function (i.e. \code{LG_lookup}), and this list contains e.g.
+#'     details related to the size of lines, and the position, colour
+#'     and size of the annotated text.
 #'
 #' @keywords internal
 
 LG_lookup_curlicues <- function(look_up) {
     ##  Read in the most basic 'curlicues'-values.
     curlicues <- LG_default$curlicues
-    ###-------------------------------------------------------------------
     ##  Define case-specific-curlicues (CSC).
     CSC <- list()
     CSC$title  <- list(label = look_up$details$.plot_label)
@@ -205,9 +218,8 @@ LG_lookup_curlicues <- function(look_up) {
         curlicues$NC_value$annotate$label =
             attributes(curlicues$NC_value$annotate$label)$short
     }
-    ###-------------------------------------------------------------------
     ##  Ensure that the proper adjustment is made if a numerical
-    ##  convergence problem should be higlighted for the boxplot of
+    ##  convergence problem should be highlighted for the boxplot of
     ##  the local Gaussian autocorrelations.
     if (all(look_up$TCS_type == "C",
             isFALSE(look_up$details$convergence))) {
@@ -228,7 +240,6 @@ LG_lookup_curlicues <- function(look_up) {
         curlicues$correlation_plot$boxplot$fill <- .fill
         kill(.subsetting, .colour, .fill)
     }
-    ###-------------------------------------------------------------------
     ##  Add the data-frame needed in order for the text-annotations.
     curlicues$text$annotated_df <- local({
         ##  Identify relevant nodes.
@@ -287,7 +298,6 @@ LG_lookup_curlicues <- function(look_up) {
             .tmp,
             .cc_list = TRUE)
     })
-    ###-------------------------------------------------------------------
     ##  Return the result to 'LG_lookup', which will add this as a new
     ##  node to its 'look_up'-list.
     curlicues
