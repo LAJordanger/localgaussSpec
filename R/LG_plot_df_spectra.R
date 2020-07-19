@@ -18,7 +18,7 @@
 #'
 #' @keywords internal
 
-LG_shiny_spectra  <- function(look_up,
+LG_plot_df_spectra  <- function(look_up,
                               ..env) {
     ##  Some shortcuts to get the code more compact.
     cache <- look_up$cache
@@ -71,6 +71,13 @@ LG_shiny_spectra  <- function(look_up,
     ##  Need to decide the task related to extraction of weighted
     ##  correlations, needded for the L2-norm computations.
 
+    ####  Below: Did create crash in 'LG_create_plot_df'
+    ## ## ###-------------------------------------------------------------------
+    ## ## ##  End here if a distance-based is the target.
+    ## ## if (any(look_up$L2_distance_normal,
+    ## ##         look_up$L2_distance_percentages))
+    ## ##     return(invisible(NULL))
+
     ###-------------------------------------------------------------------
     ##  Compute the unweighted product of the 'exp'-array and the
     ##  estimated ordinary (global) correlations.
@@ -118,7 +125,7 @@ LG_shiny_spectra  <- function(look_up,
     ###-------------------------------------------------------------------
     ##  Compute the global spectra.
     if (!exists(x = cache$spectra_global, envir = ..env)) { 
-        LG_shiny_spectra_helper(..env, look_up, .gl = "global")
+        LG_plot_df_spectra_helper(..env, look_up, .gl = "global")
     }
     ###-------------------------------------------------------------------
     ##  Compute the product of the 'exp'-array and the estimated
@@ -169,7 +176,7 @@ LG_shiny_spectra  <- function(look_up,
     ##  Compute the collections of estimated spectra (for different
     ##  lags) given the selected lag-window function.
     if (!exists(x = cache$spectra_local, envir = ..env)) {
-        LG_shiny_spectra_helper(..env, look_up, .gl = "local")
+        LG_plot_df_spectra_helper(..env, look_up, .gl = "local")
     }
     ###-------------------------------------------------------------------
     ##  End here if it is the heatmap-case that is to be investigated.

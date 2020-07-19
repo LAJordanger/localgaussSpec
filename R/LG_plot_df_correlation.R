@@ -20,11 +20,24 @@
 #'
 #' @keywords internal
 
-LG_shiny_correlation <- function(look_up,
+LG_plot_df_correlation <- function(look_up,
                                  ..env) {
     ##  Define shortcuts for the caching and restriction.
     cache <- look_up$cache
     restrict <- look_up$restrict
+    ## ## ##  Perform the inital transformation of the data loaded from
+    ## ## ##  file, i.e. split out the lag-zero part when required.
+    ## ## restrict$F$initial(..env, look_up, .gl="global")
+    ## ## restrict$F$initial(..env, look_up, .gl="local")
+    ## ## names(..env)
+    ## ## capture_env()
+    #####  Reminder: The 'G_branch' and 'L_branch' in this setup seems
+    #####  rather redundant, but this is a task that can be taken care
+    #####  of later.  Similarly with regard to the updating of the
+    #####  'LG_plot_df_spectra'-part.  The main task for
+    #####  'restrict$F$initial' is after all to be used in the
+    #####  'spectrum_norm'-function.
+
     ###-------------------------------------------------------------------
     ##  Create a helper to take care of the unfolding, i.e. the
     ##  reverse of the folding that was done in order to avoid

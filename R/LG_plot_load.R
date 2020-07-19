@@ -118,13 +118,13 @@ LG_plot_load <- function(look_up,
         ##  The extractions and computations required for the
         ##  inspection of the local Gaussian spectra are taken care of
         ##  here, and the results are stored in '..env'.
-        LG_shiny_spectra(look_up = look_up, ..env = ..env)
+        LG_plot_df_spectra(look_up = look_up, ..env = ..env)
     }
     if (look_up$TCS_type == "C") {
         ##  The extractions and computations required for the
         ##  inspection of the local Gaussian correlations are taken
         ##  care of here, and the results are stored in '..env'.
-        LG_shiny_correlation(look_up = look_up, ..env = ..env)
+        LG_plot_df_correlation(look_up = look_up, ..env = ..env)
     }
     if (!look_up$heatmap) {
         ##  Add an environment 'plot_data' to '..env', with the

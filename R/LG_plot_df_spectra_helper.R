@@ -16,7 +16,7 @@
 #'
 #' @keywords internal
 
-LG_shiny_spectra_helper <- function(..env, look_up, .gl = "local") {
+LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
     ##  Two shortcuts to get the code more compact.
     cache <- look_up$cache
     restrict <- look_up$restrict

@@ -99,7 +99,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
     ##  Reminder: The 'local'-part of the details above are used in
     ##  order to define the 'L_levels'-node of the cache.
     ###------------------------------------------------------###
-    ##  The restrictions in the function 'LG_shiny_spectra' often
+    ##  The restrictions in the function 'LG_plot_df_spectra' often
     ##  depends on values from internal loop-constructions, and
     ##  functions must thus be used for this part.  Reminder: Some
     ##  functions are completely trivial, but they are still included
