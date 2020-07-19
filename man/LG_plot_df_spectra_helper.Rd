@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_plot_df_spectra_helper.R
 \name{LG_plot_df_spectra_helper}
 \alias{LG_plot_df_spectra_helper}
-\title{Helper for the computation of the spectra.}
+\title{Helper-function for \code{LG_plot_df_spectra}}
 \usage{
 LG_plot_df_spectra_helper(..env, look_up, .gl = "local")
 }
@@ -10,10 +10,10 @@ LG_plot_df_spectra_helper(..env, look_up, .gl = "local")
 \item{..env}{The environment that contains the correlations, and
 also the environment in which the result will be stored.}
 
-\item{look_up}{A list created by \code{LG_lookup} (in the function
-\code{LG_plot_helper}), where the key details have been
-extracted (or constructed) from a (non-reactive copy) of the
-values defined by the \code{shiny}-interface.}
+\item{look_up}{An environment created by \code{LG_lookup} (in the
+function \code{LG_plot_helper}), where the key details have
+been extracted (or constructed) from a (non-reactive copy) of
+the values defined by the \code{shiny}-interface.}
 
 \item{.gl}{Either "local" or "global", default "local"}
 }
@@ -23,6 +23,8 @@ The environment \code{..env} will be updated with lists
     densities that can be investigated.
 }
 \description{
-Helper for the computation of the spectra.
+This internal function is called by
+    \code{LG_plot_df_spectra} in order to compute the (local
+    Gaussian) spectra.
 }
 \keyword{internal}

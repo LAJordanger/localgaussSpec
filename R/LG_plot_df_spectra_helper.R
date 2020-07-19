@@ -1,12 +1,16 @@
-#' Helper for the computation of the spectra.
+#' Helper-function for \code{LG_plot_df_spectra}
+#'
+#' @description This internal function is called by
+#'     \code{LG_plot_df_spectra} in order to compute the (local
+#'     Gaussian) spectra.
 #'
 #' @param ..env The environment that contains the correlations, and
 #'     also the environment in which the result will be stored.
 #'
-#' @param look_up A list created by \code{LG_lookup} (in the function
-#'     \code{LG_plot_helper}), where the key details have been
-#'     extracted (or constructed) from a (non-reactive copy) of the
-#'     values defined by the \code{shiny}-interface.
+#' @param look_up An environment created by \code{LG_lookup} (in the
+#'     function \code{LG_plot_helper}), where the key details have
+#'     been extracted (or constructed) from a (non-reactive copy) of
+#'     the values defined by the \code{shiny}-interface.
 #'
 #' @param .gl Either "local" or "global", default "local"
 #'
@@ -111,7 +115,6 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
                               .amplitude$.range,
                               .phase$.range))
     }
-    ###-------------------------------------------------------------------
     ##  A function that computes the ylim-value to be used when all
     ##  the cuts are taken into account.  Reminder: The procedure
     ##  applied for this is to collect the information from the nodes
@@ -166,7 +169,6 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
         ..env[[.spec]]$ylim <- .ylim
         ## ## ## attributes(..env[[.spec]])$ylim <- .ylim
     }
-    ###-------------------------------------------------------------------
     ##  Initiate the list-structure.
     ..env[[spectra_cache]] <- list()
     ##  Compute a partial list with the sums based on the
@@ -200,9 +202,8 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
         }
     }
     kill(.cut, .node, .tmp, .dims)
-    ##  REMINDER: Should update the part above so it can be done in
-    ##  parallel.
-    ###-------------------------------------------------------------------
+    ##  REMINDER: Update the part above so it can be done in parallel.
+    ###------------------------------------------------------###
     ##  Use the diagonal reflection to compute the estimated local
     ##  spectra.  Reminder: With (p1,p2) the point of investigation
     ##  and (p2,p1) its diagonally reflection, the local Gaussian
@@ -223,7 +224,7 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
     ##  for the auto-spectra at the moment.  Still, I will use the
     ##  simplification that the local Gaussian auto-spectra for a
     ##  point on the diagonal is real-valued.
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Identify the 'pairs'-values to be used in the
     ##  construction, common for all cases.
     .sorted_ViVj <- look_up$pairs_ViVj
@@ -306,7 +307,7 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
         ##  of the frequency range in the omega-dimension.
         ..env[[spectra_cache]][[.node]][["1"]] <- 
             if (look_up$is_auto_pair) {
-                ##  Adjust the dimenison-names to minimise the size of
+                ##  Adjust the dimension-names to minimise the size of
                 ##  the resulting object.
                 .dn$omega  <- look_up$frequency_range
                 .dn$pairs <- .sorted_ViVj
