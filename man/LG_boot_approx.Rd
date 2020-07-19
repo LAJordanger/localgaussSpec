@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_boot_approx.R
 \name{LG_boot_approx}
 \alias{LG_boot_approx}
-\title{Local Gaussian approximations for bootstrapped replicates}
+\title{Approximations of the local Gaussian auto- and cross-correlations for bootstrapped replicates}
 \usage{
 LG_boot_approx(save_dir = NULL, TS_boot, lag_max, LG_points,
   .bws_mixture, bw_points, .bws_fixed, .bws_fixed_only, content_details,
@@ -87,47 +87,18 @@ five parameters or the simplified approach using only one
 parameter.  The default choice is \code{"par_five"}.}
 }
 \value{
-data.0, a data-frame with a column \code{levels}, which for
-    each value is matched with \code{bw_points} (the prescribed
-    numbers of observations), \code{bw} the corresponding local
-    bandwidths, and then for each replicate in \code{TS_boot} the
-    estimated local Gaussian approximation parameters \code{mu} and
-    \code{sig} obtained when \code{loclik2} has been used on the
-    specified \code{level}.  The estimated value of the density at
-    the point of interest, \code{f.est} are also included.  (Note:
-    The square of \code{sig} gives the value we will need later on
-    in the quest for the local Gaussian spectra based on local
-    Gaussian auto-correlations.)
-
-data.h, a data-frame with columns \code{lag} and
-    \code{levels} that specify the points of interest, and for each
-    combination of these we have information about \code{bw_points}
-    (the prescribed numbers of observations), \code{bw} the
-    corresponding local bandwidths, and then for each replicate in
-    \code{TS_boot} we have from \code{localgauss} the coefficients
-    \code{mu_1}, \code{mu_2}, \code{sig_1}, \code{sig_2} and
-    \code{rho} for the local bivariate Gaussian approximation.  The
-    column \code{par_one} gives the extracted local Gaussian
-    auto-covariance that will be used in the computation of the
-    local Gaussian spectra, and \code{f.est} gives the estimated
-    density.
-
-eflag, \code{vector}, which gives the sum of the exit flags
-    from \code{localgauss}.  If this is something else than 0, then
-    it means that some value(s) for that bootstrap-replicate not
-    should be trusted.  (To find the actual problematic values,
-    pick out the relevant replicate(s) and create a
-    \code{TS.object} based on it, then run \code{LG_approx} on that
-    object.)
+This function is a wrapper around \code{LG_approx}, and the
+    result is thus the same as specified for that function.
 }
 \description{
-This is a wrapper for the function \code{LG_approx}, to be used
-when we want to use bootstrap-based statistics in our analysis of
-e.g. its local Gaussian spectra.
+This function is in essence a wrapper for the function
+    \code{LG_approx}, and it is called when we need to investigate
+    bootstrap-based replicates in our analysis of the local
+    Gaussian spectral densities.
 }
 \details{
-This function can be called manually from the work-space,
-    but the intention is that it only should be called from
+This function can be called manually, but the intention is
+    that it only should be called from
     \code{LG_boot_approx_scribe}, since that will ensure that the
     arguments are properly recorded and that the result are saved
     to appropriately named files.  In order to dissuade users from
