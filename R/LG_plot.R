@@ -1,25 +1,24 @@
-#' Create plots to inspect different aspects of Local Gaussian
-#' Spectral Densities and Local Gaussian Correlations.
+#' Create plots of local Gaussian correlations and spectral densities
 #'
-#' To get a joint setup for plots used in interactive sessions with
-#' \code{LG_shiny} and plots used in a more static setting, the
-#' intention of this function is to collect the creation of the
-#' different plots in one main function.  Note that the arguments of
-#' this function is not as such intended to be written out by the user
-#' when the function is used in a static setting, instead they are
-#' supposed to be given from the \code{LG_shiny}-interface.
+#' @description This internal function creates the plots of the local
+#'     Gaussian correlations and spectral densities.
 #'
-#' @param look_up The list created by \code{LG_lookup}, which keep
-#'     tracks of information over a wide range of helper-functions.
+#' @note The function \code{LG_plot_helper} is the one that should be
+#'     used when it is of interest to reproduce the plots in a
+#'     non-reactive environment, in particular since it is there it is
+#'     possible to fine-tune the size of the annotated text.  This
+#'     latter detail is of importance when several plots are to be
+#'     included in a grid, see the scripts for examples (use
+#'     \code{LG_extract_scripts} in order to access them).
+#'
+#' @param look_up The environment created by \code{LG_lookup}, which
+#'     keep tracks of information for a wide range of
+#'     helper-functions.
 #'
 #' @param ..env The environment with the information needed in order
 #'     to create the desired plot.
 #'
-#' @return The first incarnation of this code will focus on the
-#'     creation of plots depicting the local Gaussian spectral
-#'     densities, with our without the information required to create
-#'     the bootstrap based confidence intervals.  Other plots will
-#'     probably be added later on.
+#' @return A plot is returned to the work-flow.
 #'
 #' @keywords internal
 
@@ -34,7 +33,6 @@ LG_plot <- function(..env,
     ##  on a bit more compact.
     plot_data <- ..env[[look_up$cache$plot_data]]
     curlicues <- look_up$curlicues
-    ###-------------------------------------------------------------------
     ##  Check if 'plot_data$.data_list' contains a 'correlation'-node, since
     ##  that implies that a plot of these are of interest.
     if (!is.null(plot_data$.data_list$correlation)) {
@@ -89,7 +87,6 @@ LG_plot <- function(..env,
                 .result <- .result +
                     eval(curlicues$text$annotated)
         }
-        ###-------------------------------------------------------------------
         ##  Some minor adjustments
         .result <- .result +
             xlab("h") +
@@ -109,12 +106,10 @@ LG_plot <- function(..env,
         ##  Return the result to the workflow
         return(.result)
     }
-    ###-------------------------------------------------------------------
-    ##  The spectra cases.
-    ##  -------------------------------------------------------------------
-    ##  Start with a '.canvas' based on the global data, since those
-    ##  always will be included.  The horizontal line refers to the
-    ##  expected result when white-noise is encountered.
+    ##  The spectra cases: Start with a '.canvas' based on the global
+    ##  data, since those always will be included.  The horizontal
+    ##  line refers to the expected result when white-noise is
+    ##  encountered.
     .canvas <- ggplot(data = plot_data$.data_list$global,
                       mapping = plot_data$.aes_list$xy) +
         coord_cartesian(xlim = plot_data$.xlim,
@@ -128,7 +123,6 @@ LG_plot <- function(..env,
         }
     if (curlicues$spectra_plot$WN_line$include)
         names(.canvas$layers) <- "horizontal_line"
-    ###-------------------------------------------------------------------
     ##  Create a list of logical values to decide what content to
     ##  include in the plot.
     spec_include <- list(
@@ -147,9 +141,8 @@ LG_plot <- function(..env,
         .geom_ribbon_local = all(
             ! is.null(plot_data$.aes_list$.geom_ribbon_local),
             curlicues$spectra_plot$local$ribbon.include))
-    ###-------------------------------------------------------------------
     ##  Create a list containing quoted expressions for the layers.
-    ##  Some of these might become `NULL`, which made `ggplot`
+    ##  Some of these might become 'NULL', which made 'ggplot'
     ##  complain at the time I initially wrote this part of the code.
     ##  This pesky problem seems to be solved for the present version
     ##  of 'ggplot', so I guess it would be preferable to rewrite it
@@ -165,7 +158,7 @@ LG_plot <- function(..env,
                     alpha = curlicues$spectra_plot$local$line.alpha,
                     col = "blue",
                     linetype = curlicues$spectra_plot$local$linetype)),
-        ##  A line dealing with the mean in the `block`-case.
+        ##  A line dealing with the mean in the 'block'-case.
         .geom_line_global_me =
             if (spec_include$.geom_line_global_me)
                 quote(geom_line(
@@ -211,21 +204,19 @@ LG_plot <- function(..env,
                 if (!is.null(curlicues$text$annotated))
                     curlicues$text$annotated
                 })
-    ###-------------------------------------------------------------------
-    ##  Create the sum of layers for `ggplot`, without any
-    ##  `NULL`-values messing up the result.
+    ##  Create the sum of layers for 'ggplot', without any
+    ##  'NULL'-values messing up the result.
     .result <- as.symbol(".canvas")
     .template <- quote(1 + 1)
     for (i in seq_along(.layers))
         if (! is.null(.layers[[i]]))
             .result <- local({
-                ##  Adjust `.template`.
+                ##  Adjust '.template'.
                 .template[[2]] <- .result
                 .template[[3]] <- .layers[[i]]
-                ##  Update `.result`
+                ##  Update '.result'
                 .template
             })
-    ###-------------------------------------------------------------------
     ##  Evaluate '.result' and add names to the layer-part.
     .result <- eval(.result)
     names(.result$layers) <- c(
@@ -233,7 +224,6 @@ LG_plot <- function(..env,
         names(.layers)[! vapply(X = .layers,
                                 FUN = is.null,
                                 FUN.VALUE = logical(1))])
-    ###-------------------------------------------------------------------
     ##  Some minor adjustments
     .result <- .result +
         xlab(quote(omega)) +
@@ -250,7 +240,6 @@ LG_plot <- function(..env,
     ##  Add 'details' and 'curlicues' as attributes.
     attributes(.result)$details <- look_up$details
     attributes(.result)$curlicues <- look_up$curlicues
-    ###-------------------------------------------------------------------
     ##  Only in non-interactive setup: Add information attributes
     ##  specifying the ylim-values for the different cases, to make it
     ##  easier to deal with the rescaling.  Moreover, when required,
@@ -337,7 +326,6 @@ LG_plot <- function(..env,
             kill (.extract_these, .tmp_list, .name)
         }
     }
-    ###-------------------------------------------------------------------
     ##  Return the plot to the workflow.
     .result
 }

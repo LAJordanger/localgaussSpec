@@ -2,8 +2,7 @@
 % Please edit documentation in R/LG_plot.R
 \name{LG_plot}
 \alias{LG_plot}
-\title{Create plots to inspect different aspects of Local Gaussian
-Spectral Densities and Local Gaussian Correlations.}
+\title{Create plots of local Gaussian correlations and spectral densities}
 \usage{
 LG_plot(..env, look_up)
 }
@@ -11,23 +10,24 @@ LG_plot(..env, look_up)
 \item{..env}{The environment with the information needed in order
 to create the desired plot.}
 
-\item{look_up}{The list created by \code{LG_lookup}, which keep
-tracks of information over a wide range of helper-functions.}
+\item{look_up}{The environment created by \code{LG_lookup}, which
+keep tracks of information for a wide range of
+helper-functions.}
 }
 \value{
-The first incarnation of this code will focus on the
-    creation of plots depicting the local Gaussian spectral
-    densities, with our without the information required to create
-    the bootstrap based confidence intervals.  Other plots will
-    probably be added later on.
+A plot is returned to the work-flow.
 }
 \description{
-To get a joint setup for plots used in interactive sessions with
-\code{LG_shiny} and plots used in a more static setting, the
-intention of this function is to collect the creation of the
-different plots in one main function.  Note that the arguments of
-this function is not as such intended to be written out by the user
-when the function is used in a static setting, instead they are
-supposed to be given from the \code{LG_shiny}-interface.
+This internal function creates the plots of the local
+    Gaussian correlations and spectral densities.
+}
+\note{
+The function \code{LG_plot_helper} is the one that should be
+    used when it is of interest to reproduce the plots in a
+    non-reactive environment, in particular since it is there it is
+    possible to fine-tune the size of the annotated text.  This
+    latter detail is of importance when several plots are to be
+    included in a grid, see the scripts for examples (use
+    \code{LG_extract_scripts} in order to access them).
 }
 \keyword{internal}
