@@ -6,8 +6,7 @@
 \title{Internal default values for the local Gaussian machinery}
 \format{list}
 \usage{
-This list is used as an internal reference for the
-    functions in this package.
+LG_default
 }
 \description{
 This list contains internal default-values that other
