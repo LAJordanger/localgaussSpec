@@ -1,14 +1,14 @@
-#' Computation of the spectra based on correlations.
+#' Extract data-frames needed for the plotting of the spectra
 #'
-#' This function computes the spectra for a collection of (local
-#' Gaussian) auto- and cross-correlations.  This function is an
-#' internal function which is called from the functions that creates
-#' the plots.
+#' @description This internal function computes the spectra for a
+#'     collection of (local Gaussian) auto- and cross-correlations.
+#'     This function is an internal function which is called from the
+#'     functions that creates the plots.
 #'
-#' @param look_up A list created by \code{LG_lookup} (in the function
-#'     \code{LG_plot_helper}), where the key details have been
-#'     extracted (or constructed) from a (non-reactive copy) of the
-#'     values defined by the \code{shiny}-interface.
+#' @param look_up An environment created by \code{LG_lookup} (in the
+#'     function \code{LG_plot_helper}), where the key details have
+#'     been extracted (or constructed) from a (non-reactive copy) of
+#'     the values defined by the \code{shiny}-interface.
 #'
 #' @param ..env The environment that contains the correlations, and
 #'     also the environment in which the result will be stored.
@@ -25,7 +25,6 @@ LG_plot_df_spectra  <- function(look_up,
     restrict <- look_up$restrict
     global_name <- look_up$global_name
     local_name <- look_up$local_name
-    ###-------------------------------------------------------------------    
     ##  The investigation of the spectra requires that an array
     ##  with the 'exp^{-2*pi*i*omega*h}'-values must be multiplied
     ##  with the available correlations (depends on bandwidth).
@@ -39,7 +38,6 @@ LG_plot_df_spectra  <- function(look_up,
                              omega = look_up$omega_vec),
             class = LG_default$class$array)
     }
-    ###-------------------------------------------------------------------
     ##  Find the desired 'weights' to be used for the specified
     ##  windows functions.  Reminder: These depend on the "cut"-value,
     ##  which specifies the first term having a weight of zero.  This
@@ -67,18 +65,6 @@ LG_plot_df_spectra  <- function(look_up,
                 seq_along(..env[[cache$weights_f]][[.cut]])
         }
     }
-    
-    ##  Need to decide the task related to extraction of weighted
-    ##  correlations, needded for the L2-norm computations.
-
-    ####  Below: Did create crash in 'LG_create_plot_df'
-    ## ## ###-------------------------------------------------------------------
-    ## ## ##  End here if a distance-based is the target.
-    ## ## if (any(look_up$L2_distance_normal,
-    ## ##         look_up$L2_distance_percentages))
-    ## ##     return(invisible(NULL))
-
-    ###-------------------------------------------------------------------
     ##  Compute the unweighted product of the 'exp'-array and the
     ##  estimated ordinary (global) correlations.
     if (!exists(x = cache$spectra_summands_global, envir = ..env)) {
@@ -122,12 +108,10 @@ LG_plot_df_spectra  <- function(look_up,
         kill(.result, .node, .dn, .corr)
     }
     kill(global_name)
-    ###-------------------------------------------------------------------
     ##  Compute the global spectra.
     if (!exists(x = cache$spectra_global, envir = ..env)) { 
         LG_plot_df_spectra_helper(..env, look_up, .gl = "global")
     }
-    ###-------------------------------------------------------------------
     ##  Compute the product of the 'exp'-array and the estimated
     ##  local Gaussian correlations for the given bandwidth.
     if (!exists(x = cache$spectra_summands_local, envir = ..env)) {
@@ -172,17 +156,14 @@ LG_plot_df_spectra  <- function(look_up,
         kill(.result, .node, .dn, .corr)
     }
     kill(local_name)
-    ###-------------------------------------------------------------------
     ##  Compute the collections of estimated spectra (for different
     ##  lags) given the selected lag-window function.
     if (!exists(x = cache$spectra_local, envir = ..env)) {
         LG_plot_df_spectra_helper(..env, look_up, .gl = "local")
     }
-    ###-------------------------------------------------------------------
     ##  End here if it is the heatmap-case that is to be investigated.
     if (look_up$heatmap)
         return(invisible(NULL))
-    ###-------------------------------------------------------------------
     ##  Extract data from 'cache$spectra_global' and
     ##  'cache$spectra_local'.  The idea is to use subsetting to
     ##  get hold of a two dimensional array with the "omega" and
@@ -228,7 +209,6 @@ LG_plot_df_spectra  <- function(look_up,
                                 dimnames = list(content = newnames)),
                       .drop = FALSE))
     }
-    ###-------------------------------------------------------------------
     ##  The next helper extracts the relevant part of the range, with
     ##  some minor tweaks in order to get out the desired stuff.
     .ylim <- function(global_local, spectra_type) {
@@ -274,7 +254,6 @@ LG_plot_df_spectra  <- function(look_up,
                 -1 * rev(..env[[.cache_code]]$.ylim)
         }   
     }
-    ###-------------------------------------------------------------------
     ##  Read the relevant data for the two cases and perform the
     ##  computations.  Reminder: The idea is to construct a bookmark
     ##  '.bm' that extracts the desired node from the main list, and

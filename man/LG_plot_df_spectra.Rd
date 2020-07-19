@@ -2,15 +2,15 @@
 % Please edit documentation in R/LG_plot_df_spectra.R
 \name{LG_plot_df_spectra}
 \alias{LG_plot_df_spectra}
-\title{Computation of the spectra based on correlations.}
+\title{Extract data-frames needed for the plotting of the spectra}
 \usage{
 LG_plot_df_spectra(look_up, ..env)
 }
 \arguments{
-\item{look_up}{A list created by \code{LG_lookup} (in the function
-\code{LG_plot_helper}), where the key details have been
-extracted (or constructed) from a (non-reactive copy) of the
-values defined by the \code{shiny}-interface.}
+\item{look_up}{An environment created by \code{LG_lookup} (in the
+function \code{LG_plot_helper}), where the key details have
+been extracted (or constructed) from a (non-reactive copy) of
+the values defined by the \code{shiny}-interface.}
 
 \item{..env}{The environment that contains the correlations, and
 also the environment in which the result will be stored.}
@@ -20,9 +20,9 @@ An update of \code{..env} will be performed with values
     needed for the plotting of the spectra.
 }
 \description{
-This function computes the spectra for a collection of (local
-Gaussian) auto- and cross-correlations.  This function is an
-internal function which is called from the functions that creates
-the plots.
+This internal function computes the spectra for a
+    collection of (local Gaussian) auto- and cross-correlations.
+    This function is an internal function which is called from the
+    functions that creates the plots.
 }
 \keyword{internal}
