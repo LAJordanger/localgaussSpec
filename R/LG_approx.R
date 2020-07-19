@@ -1,4 +1,8 @@
-#' Local Gaussian approximations.
+#' Approximations of the local Gaussian auto- and cross-correlations
+#'
+#' @description This function approximates the local Gaussian auto-
+#'     and cross-correlations for the given combination of tuning
+#'     parameters.
 #'
 #' @template save_dir_arg
 #' @template TS_arg
@@ -10,81 +14,50 @@
 #' @template bws_fixed_only_arg
 #' @template content_details_arg
 #' @template LG_type_arg
+#'
+#' @note It is not intended that this function should be called
+#'     directly.  The idea is that the function
+#'     \code{LG_approx_scribe} should be called, which then (after
+#'     some sanity testing of the arguments) will call this function
+#'     only when it is necessary, i.e. it will keep track of the
+#'     bookkeeping and prevent previously computed results from being
+#'     recomputed.
+#'
+#' @return This function will return a list with nodes as described
+#'     below:
 #' 
-#' @return The result of this function will depend upon the value of
-#'     \code{bootstrap}.  The default case, \code{bootstrap=FALSE},
-#'     will create a list with three components, \code{LG_type},
-#'     \code{par_one_data} and \code{par_five_data}, see details
-#'     below.  When \code{bootstrap=FALSE}, i.e. when this function is
-#'     called by \code{LG_boot_approx}, then the specified data will
-#'     be delivered directly to that function -- which then bundles
-#'     together all the parts into one larger object.
+#' \describe{
 #'
-#' @return LG_type This is simply the value of the argument
-#'     \code{LG_type}, included in order to simplify the code later on.
+#' \item{LG_type}{The value of the argument \code{LG_type}.  This is
+#'     included in order to simplify the code later on.}
 #'
-#' @return par_one_data This will be null if \code{LG_type} doesn't
+#' \item{.bws_mixture}{The value of the argument \code{.bws_mixture}.
+#'     This is included in order to simplify the code later on.}
+#'
+#' \item{content_details}{The value of the argument
+#'     \code{content_details}.  This is included in order to simplify
+#'     the code later on.}
+#'
+#' \item{par_one_data}{This will be null if \code{LG_type} does not
 #'     contain "par_one", otherwise it will contain information about
-#'     the Local Gaussian Approximation based on one parameter.  Note
-#'     that this can contain \code{NA}-values if some numerical
-#'     convergence failed, and the code later on need to take that
-#'     into account.
+#'     the Local Gaussian approximation based on the one free
+#'     parameter approach.  This can contain \code{NA}-values if some
+#'     numerical convergence failed.}
 #'
-#' @return par_five_data This will be null if \code{LG_type} doesn't
+#' \item{par_five_data}{This will be null if \code{LG_type} does not
 #'     contain "par_five", otherwise it will contain information about
-#'     the Local Gaussian Approximation based on five parameters.
-#'     This object contains an attribute \code{convergence} that
-#'     reveals if the numerical convergence of the function
-#'     \code{localgauss} was successful.  It's important that the code
-#'     later on checks that this attribute is TRUE, since the
-#'     numerical values otherwise might be erroneous.
+#'     the Local Gaussian approximation based on the five free
+#'     parameters approach.  This object contains an attribute
+#'     \code{convergence} that reveals if the numerical convergence of
+#'     the function \code{localgauss} was successful.}
 #'
-#####  TASK: Keep the text below as a reminder until I've figured out
-#####  how to adjust this function with regard to the level of the
-#####  details to include.
-## #' 
-## #' @return data.0 a data-frame with a column \code{levels}, which for
-## #'     each value is matched with \code{bw_points} (the prescribed
-## #'     numbers of observations), \code{bw} the corresponding local
-## #'     bandwidths, \code{tie} that informs about ties and from the
-## #'     \code{loclik2} function we have \code{mu} and \code{sig} which
-## #'     gives the parameters for the local univariate Gaussian
-## #'     approximations, and in addition \code{f.est} that gives the
-## #'     estimated value of the density at the point of interest.
-## #'     (Note: The square of \code{sig} gives the value we will need
-## #'     later on in the quest for the local Gaussian spectra.)  When
-## #'     \code{bootstrap=TRUE} and \code{zero_or_h="0"}, only this part
-## #'     will be returned, and then converted to an array containing the
-## #'     dimensions \code{levels}, \code{bw_points}, \code{bw},
-## #'     \code{mu}, \code{sig} and \code{f.est}.
-## #' 
-## #' @return data.h a data-frame with columns \code{lag} and
-## #'     \code{levels} that specify the points of interest, and for each
-## #'     combination of these we have information about \code{bw_points}
-## #'     (the prescribed numbers of observations), \code{bw} the
-## #'     corresponding local bandwidths, \code{tie} that tells us if
-## #'     there was a tie (i.e. if we got an extra point inside the
-## #'     resulting "bandwidth-square").  From \code{localgauss} we get
-## #'     the coefficients \code{mu_1}, \code{mu_2}, \code{sig_1},
-## #'     \code{sig_2} and \code{rho} for the local bivariate Gaussian
-## #'     approximation, together with \code{eflag} (the exit flag from
-## #'     the optimiser, which should be 0 in order for the results to be
-## #'     trusted). The column \code{par_one} gives the extracted local
-## #'     Gaussian auto-covariance that will be used in the computation
-## #'     of the local Gaussian spectra, and \code{f.est} gives the
-## #'     estimated density.  When \code{bootstrap=TRUE} and
-## #'     \code{zero_or_h="h"}, only this part will be returned, and then
-## #'     converted to an array containing the dimensions \code{lag},
-## #'     \code{levels}, \code{bw_points}, \code{bw}, \code{mu_1},
-## #'     \code{mu_2}, \code{sig_1}, \code{sig_2}, \code{rho},
-## #'     \code{lg.avc} and \code{f.est}.
+#' \item{level_points}{The attributes that the
+#'     \code{LG_extend_points}-function added when it was given the
+#'     \code{LG_points}-argument.}
 #'
-#' @return eflag 
-#' 
-## #' @keywords internal
+#' }
+#'
 #' @export
-## REMINDER: The use of 'spy' inside of this function seems to crash
-## if the function is not exported...
 
 LG_approx <- function(
     save_dir = NULL,
@@ -95,21 +68,14 @@ LG_approx <- function(
     bw_points = c(25, 35),
     .bws_fixed = NULL,
     .bws_fixed_only = FALSE,
-    ## bootstrap = FALSE,  ##  This might be possible to avoid using, but
-    ##                     ##  I'm not sure if that would be the best
-    ##                     ##  option.
     content_details = c("rho_only", "rho_log.fun", "rho_all"),
     LG_type = c("par_five", "par_one")) {
-###-------------------------------------------------------------------
     ##  Create a spy-report.
     spy_report <- spy()
     kill(save_dir, bw_points)
-###-------------------------------------------------------------------
     ##  If necessary, restrict 'content_details' to one value.
     content_details <- content_details[1]
-###-------------------------------------------------------------------
-    ##  If `TS` is a `list`, update `TS` from disk.  (Used for the
-    ##  boottrap case.)
+    ##  If 'TS' is a 'list', update 'TS' from disk.
     if (is.list(TS)) {
         TS_load(.TS_info = TS,
                 save_dir = FALSE)
@@ -120,10 +86,8 @@ LG_approx <- function(
     if (! identical(x = attributes(TS)$TS_for_analysis,
                     y = NULL)) {
         TS <- attributes(TS)$TS_for_analysis
-        ##---
         spy_report$envir$TS <- TS
     }
-###-------------------------------------------------------------------
     ##  Add an attribute to TS that can be used to identify if the
     ##  investigation should be based on the circular index-based
     ##  block bootstrap for tuples, since that case must be treated
@@ -135,11 +99,9 @@ LG_approx <- function(
         .keep <- ! names(attributes(TS)) %in% .ignore
         attributes(TS)[.keep]
     })
-###-------------------------------------------------------------------
     ##  Create the full set of points to be investigated, i.e. add the
     ##  diagonally related points when required.
     .level_points <- LG_extend_points(LG_points = LG_points)
-###-------------------------------------------------------------------
     ##  Create helper functions to use with argument grids.
     par_one_helper <- function(vec, TS, .arr, .points,
                                content_details,
@@ -237,7 +199,6 @@ LG_approx <- function(
             } else
                 c(bws, tmp$par.est, log_fun = tmp$log_f.est)
     }
-###-------------------------------------------------------------------
     ##  Create a helper-function to deal with the 'par_five'-cases.
     par_five_helper <- function(vec, TS, .arr, .points,
                                 content_details,
@@ -323,7 +284,7 @@ LG_approx <- function(
         ##  local Gaussian correlation, whereas all the other values
         ##  are a bit "meaningless".
         tmp <- if (identical(.x, .y)) {
-            ##  Create components similar to those extrected from the
+            ##  Create components similar to those extracted from the
             ##  result of the 'localgauss'-function (see below).
             param <- structure(
                 .Data = c(NA_real_, NA_real_, NA_real_, NA_real_, 1),
@@ -368,7 +329,6 @@ LG_approx <- function(
                 c(bws, param, log_fun = log_fun, eflag = eflag)
         }
     }
-###-------------------------------------------------------------------
     ##  If '.bws_fixed' are different from 'NULL', compute the
     ##  relevant Local Gaussian Approximations.
     if (is.null(.bws_fixed)) {
@@ -395,7 +355,6 @@ LG_approx <- function(
                          .points = .level_points,
                          content_details = content_details,
                          fixed_bws = TRUE)
-#####  REMINDER: See comment after function: 'my_aaply' vs. 'aaply'.
         ##  Compute data for the 'par_five'-case (this automatically
         ##  becomes 'NULL' if 'LG_type' doesn't contain "par_five").
         par_five_fixed <-
@@ -408,13 +367,9 @@ LG_approx <- function(
                          .points = .level_points,
                          content_details = content_details,
                          fixed_bws = TRUE)
-#####  REMINDER: See comment after function: 'my_aaply' vs. 'aaply'.
         kill(arg_grid_fixed)
     }
     kill(.bws_fixed)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
     ##  If '.bws_fixed_only' are 'TRUE', find the Local Gaussian
     ##  Approximations based on bandwidths computed from the data.
     if (.bws_fixed_only) {
@@ -422,7 +377,7 @@ LG_approx <- function(
         par_five_data <- par_five_fixed
         kill(spy_report, par_one_fixed, par_five_fixed)
     } else {
-        ##  Find the two required bandwidts along the diagonal.
+        ##  Find the two required bandwidths along the diagonal.
         spy_report$envir$levels <- .level_points
         LG_bandwidths_advanced_call <- create_call(
             .cc_fun = LG_bandwidths_advanced,
@@ -432,16 +387,14 @@ LG_approx <- function(
         kill(spy_report, LG_bandwidths_advanced_call)
         ##  Investigate if recycling is possible to do for the mixtures.
         .recycling <- attributes(.mixed_bandwidths$h)$recycling
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  Compute the Local Gaussian Estimates at the specified levels, by
-###  the help of an argument grid based upon the dimension names found
-###  in the two parts of '.mixed_bandwidths'.  A recycling principle
-###  will be used for the "mixed" versions of these bandwidths (by
-###  looking up the results from the "local" and "global" cases).
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
-###-------------------------------------------------------------------
+        ###------------------------------------------------------###
+        ##  Compute the Local Gaussian Estimates at the specified
+        ##  levels, by the help of an argument grid based upon the
+        ##  dimension names found in the two parts of
+        ##  '.mixed_bandwidths'.  A recycling principle will be used
+        ##  for the "mixed" versions of these bandwidths (by looking
+        ##  up the results from the "local" and "global" cases).
+        ###------------------------------------------------------###
         ##  Create the argument grid for the lags.
         .extract_part <- setdiff(
             x = names(dimnames(.mixed_bandwidths$'h')),
@@ -471,7 +424,6 @@ LG_approx <- function(
                                      .points = .level_points,
                                      content_details = content_details,
                                      fixed_bws = FALSE)
-#####  REMINDER: See comment after function: 'my_aaply' vs. 'aaply'.
         ##  Compute data for the 'par_five'-case (this automatically
         ##  becomes 'NULL' if 'LG_type' doesn't contain "par_five").
         par_five_data <- if (any(LG_type == "par_five")) 
@@ -483,11 +435,7 @@ LG_approx <- function(
                                       .points = .level_points,
                                       content_details = content_details,
                                       fixed_bws = FALSE)
-#####  REMINDER: See comment after function: 'my_aaply' vs. 'aaply'.
         kill(arg_grid_h)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
         ##  The part below takes care of the "mixed" case, by adding
         ##  relevant stuff to the previously computed objects
         ##  'par_one_data' and 'par_five_data',
@@ -495,7 +443,6 @@ LG_approx <- function(
             ##  Extract the look-up table.
             .look_up_h <- 
                 attributes(.mixed_bandwidths$h)$look_up
-###-------------------------------------------------------------------
             ##  Need a helper-function to work upon 'arg_grid_h_mix',
             ##  using the look-up tables to avoid recomputing stuff
             ##  whenever possible by picking out the relevant values
@@ -538,7 +485,6 @@ LG_approx <- function(
                 ##  Return '.result' to the work-flow.
                 .result
             }
-###-------------------------------------------------------------------
             ##  Find the mix-part for the 'par-one'-case (becomes
             ##  'NULL' when not asked for).
             par_one_data_mix <- 
@@ -555,7 +501,6 @@ LG_approx <- function(
                         content_details = content_details,
                         .look_up = .look_up_h,
                         .prev = par_one_data)
-###-------------------------------------------------------------------
             ##  Find the mix-part for the 'par-five'-case (becomes
             ##  'NULL' when not asked for). 
             par_five_data_mix <-
@@ -579,7 +524,6 @@ LG_approx <- function(
             par_five_data_mix <- NULL
         }  #  This ends the 'if-else'-statement for '.recycling'.
         kill(.recycling, .mixed_bandwidths, arg_grid_h_mix, TS)
-###-------------------------------------------------------------------
         ##  Combine the pieces, using the 'my_abind' wrapper for
         ##  'abind'.  This adds a tiny overhead, but it makes for
         ##  simpler code here.  Also add the desired information about
@@ -600,7 +544,6 @@ LG_approx <- function(
         }
     }
     kill(par_one_helper, par_five_helper, .bws_fixed_only)
-###-------------------------------------------------------------------
     ##  Add the attributes from the original TS.
     if (any(LG_type == "par_one"))
         attributes(par_one_data) <- c(
@@ -610,34 +553,21 @@ LG_approx <- function(
         attributes(par_five_data) <- c(
             attributes(par_five_data),
             .attr_from_TS)
-###-------------------------------------------------------------------
-    ##  When relevant, add an attribute to 'par_five_data' that
-    ##  reveals if all the values from 'localgauss' originates from a
-    ##  proper numerical convergence, i.e. test if all 'eflag' has the
-    ##  value '0'.
-    if  (any(LG_type == "par_five")) {
+    ##  Add an attribute to 'par_five_data' that reveals if all the
+    ##  values from 'localgauss' originates from a proper numerical
+    ##  convergence, i.e. test if all 'eflag' has the value '0'.
+    if  (LG_type == "par_five") {
         attr(x = par_five_data, which = "convergence") <-
             0 == sum(restrict_array(
                      .arr = par_five_data,
                      list(variable = "eflag")))
-#####  TASK: An additional attribute that in a compact form can reveal
-#####  the trigger for a problematic case might be preferable.  In
-#####  particular if a huge number of bootstraps are considered and it
-#####  might be of interest to know if the result for the most part is
-#####  OK, or if it should not be trusted at all.  This should perhaps
-#####  also be combined as a part of the warning below.
         ##  Create a warning when necessary.
-
-
-        
         if (! attributes(par_five_data)$convergence)
             cat(paste("\n\t",
                       "Nonzero exit-flags detected!",
                       "\n\t",
                       "Some optimisations failed, proceed with care.\n\n"))
     }
-
-###-------------------------------------------------------------------
     ##  Divide the results into components suited for the next
     ##  functions in line.
     .on_diag_restriction <-
@@ -675,7 +605,6 @@ LG_approx <- function(
                              .restrict = .off_diag_restriction))
     kill(.on_diag_restriction, .off_diag_restriction,
          .off_diag_present)
-###-------------------------------------------------------------------
     ##  Collect the pieces to return to the work-flow, i.e. 'LG_type',
     ##  '.bws_mixture', 'content_details', 'par_one_data',
     ##  'par_five_data' and 'level_points'.  Note: Depending on the
@@ -689,29 +618,6 @@ LG_approx <- function(
         par_one_data = par_one_data,
         par_five_data = par_five_data,
         level_points = attributes(.level_points))
-###-------------------------------------------------------------------
     ##  Return '.result' to the work-flow.
     .result
 }
-
-
-################################################################################
-#####  REMINDER: For the computation of 'par_one_data' and
-#####  'par_five_data' I initially wanted to use 'aaply' but that
-#####  resulted in an error, see code and error below.
-## par_one_data <- aaply(
-##         .data = arg_grid_h,
-##         .margins = 1,
-##         .fun = par_one_helper,
-##         TS = TS,
-##         .arr = .mixed_bandwidths$h,
-##         .drop = FALSE,
-##         .parallel = TRUE)
-###############
-## Error in vapply(ids, attr, "n", FUN.VALUE = numeric(1), USE.NAMES = FALSE) : 
-##   values must be length 1,
-##  but FUN(X[[2]]) result is length 36
-#####  This error did also occur for the trivial function that always
-#####  returns '1', and I suspect that it might be something with
-#####  'arg_grid_h' that mess stuff up.  This has not been
-#####  investigated in detail since a work-around was created.

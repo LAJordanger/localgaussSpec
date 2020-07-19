@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_approx.R
 \name{LG_approx}
 \alias{LG_approx}
-\title{Local Gaussian approximations.}
+\title{Approximations of the local Gaussian auto- and cross-correlations}
 \usage{
 LG_approx(save_dir = NULL, TS, lag_max = ceiling(3 * sqrt(length(TS))),
   LG_points, .bws_mixture = c("mixture", "local", "global"),
@@ -91,38 +91,44 @@ five parameters or the simplified approach using only one
 parameter.  The default choice is \code{"par_five"}.}
 }
 \value{
-The result of this function will depend upon the value of
-    \code{bootstrap}.  The default case, \code{bootstrap=FALSE},
-    will create a list with three components, \code{LG_type},
-    \code{par_one_data} and \code{par_five_data}, see details
-    below.  When \code{bootstrap=FALSE}, i.e. when this function is
-    called by \code{LG_boot_approx}, then the specified data will
-    be delivered directly to that function -- which then bundles
-    together all the parts into one larger object.
+This function will return a list with nodes as described
+    below:
 
-LG_type This is simply the value of the argument
-    \code{LG_type}, included in order to simplify the code later on.
+\describe{
 
-par_one_data This will be null if \code{LG_type} doesn't
+\item{LG_type}{The value of the argument \code{LG_type}.  This is
+    included in order to simplify the code later on.}
+
+\item{.bws_mixture}{The value of the argument \code{.bws_mixture}.
+    This is included in order to simplify the code later on.}
+
+\item{content_details}{The value of the argument
+    \code{content_details}.  This is included in order to simplify
+    the code later on.}
+
+\item{par_one_data}{This will be null if \code{LG_type} does not
     contain "par_one", otherwise it will contain information about
-    the Local Gaussian Approximation based on one parameter.  Note
-    that this can contain \code{NA}-values if some numerical
-    convergence failed, and the code later on need to take that
-    into account.
+    the Local Gaussian approximation based on the one free
+    parameter approach.  This can contain \code{NA}-values if some
+    numerical convergence failed.}
 
-par_five_data This will be null if \code{LG_type} doesn't
+\item{par_five_data}{This will be null if \code{LG_type} does not
     contain "par_five", otherwise it will contain information about
-    the Local Gaussian Approximation based on five parameters.
-    This object contains an attribute \code{convergence} that
-    reveals if the numerical convergence of the function
-    \code{localgauss} was successful.  It's important that the code
-    later on checks that this attribute is TRUE, since the
-    numerical values otherwise might be erroneous.
+    the Local Gaussian approximation based on the five free
+    parameters approach.  This object contains an attribute
+    \code{convergence} that reveals if the numerical convergence of
+    the function \code{localgauss} was successful.}
 
-eflag
+\item{level_points}{The attributes that the
+    \code{LG_extend_points}-function added when it was given the
+    \code{LG_points}-argument.}
+
+}
 }
 \description{
-Local Gaussian approximations.
+This function approximates the local Gaussian auto-
+    and cross-correlations for the given combination of tuning
+    parameters.
 }
 \note{
 Regarding the case where the \code{LG_type}-argument is equal
@@ -134,4 +140,12 @@ Regarding the case where the \code{LG_type}-argument is equal
     local geometrical properties of the targeted distribution at
     the point of investigation.  The "par_one"-approach is as such
     (in general) a complete waste of computation resources.
+
+It is not intended that this function should be called
+    directly.  The idea is that the function
+    \code{LG_approx_scribe} should be called, which then (after
+    some sanity testing of the arguments) will call this function
+    only when it is necessary, i.e. it will keep track of the
+    bookkeeping and prevent previously computed results from being
+    recomputed.
 }
