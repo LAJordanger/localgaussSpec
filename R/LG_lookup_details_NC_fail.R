@@ -109,7 +109,7 @@ LG_lookup_details_NC_fail <- function(look_up,
             ##  Create a node with the convergence result for the
             ##  different truncation values of the spectra.
             .result$S_status <- .pos_part
-            kill(.pas_part, .neg_part)
+            kill(.pos_part, .neg_part)
             ##  Create a vector that can be used to specify colours
             ##  and fill for the boxplots related to the local
             ##  Gaussian autocorrelations.  As before this starts with
