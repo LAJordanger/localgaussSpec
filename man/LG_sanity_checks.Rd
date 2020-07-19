@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_sanity_cheks.R
 \name{LG_sanity_checks}
 \alias{LG_sanity_checks}
-\title{Check the sanity of arguments to the scribes and the wrappers}
+\title{Sanity-check the arguments of the major exported functions}
 \usage{
 LG_sanity_checks(spy_report)
 }
@@ -11,17 +11,19 @@ LG_sanity_checks(spy_report)
 the targeted function.}
 }
 \value{
-If any arguments are erroneous, the program will be stopped
-    and information about the problems returned to the workspace.
-    If no problems are found, the programs returns nothing.  Note
-    that the program will work upon a shortcut to the environment
-    part of \code{spy_report}, and that implies that any updates
-    will have been registered in the \code{spy_report} in the
-    calling function.
+The execution will be stopped if any erroneous arguments
+    are detected, in which case information about the problem(s)
+    will be returned to the workspace.  If no problems are found,
+    the programs returns nothing.  Note that this function works
+    upon a shortcut to the environment part of \code{spy_report},
+    and this implies that any adjustments performed by this
+    function are registered in the corresponding
+    \code{spy_report}-environment in the calling function.
 }
 \description{
-This function checks that the arguments are valid, and it might
-also add values to the environment of the function under
-investigation.
+This internal function checks that the arguments of
+    some of the major exported functions are valid, and it will
+    also adjust/standardise some of the values in the environment
+    of the function under investigation.
 }
 \keyword{internal}
