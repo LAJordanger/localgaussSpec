@@ -14,7 +14,7 @@ observation in each row.}
 \item{grid}{A matrix containing the points where we want to find
 the local correlations, one bivariate point in each row.}
 
-\item{b}{A vector containing the two bandwidhts to use.}
+\item{b}{A vector containing the two bandwidths to use.}
 
 \item{.kernel}{Specification of the kernel to use, either
 \code{normal} or \code{uniform}, with default being the
@@ -28,36 +28,36 @@ that can be used to include the three arguments \code{data},
 }
 \value{
 The result of this function is a list.  For each grid-point
-there will be an estimate of the local correlation and the
-log-density of the corresponding local Gaussian approximation at
-that point.  When \code{return_arguments} is \code{TRUE}, the three
-arguments \code{data}, \code{grid} and \code{b} will also be
-included.
+    there will be an estimate of the local correlation and the
+    log-density of the corresponding local Gaussian approximation
+    at that point.  When \code{return_arguments} is \code{TRUE},
+    the three arguments \code{data}, \code{grid} and \code{b} will
+    also be included.
 }
 \description{
-This function use the local likelihood function proposed by Hjort &
-Jones (1996) to find an estimate of the local correlation
-\eqn{$\rho$} given \eqn{$n$} bivariate observations and a vector
-\eqn{$b$} with the specified bandwidths.  Note that the code use
-the simplifying assumption that the the marginals are standard
-normal, which reduces the number of parameters to estimate from
-five to one.  This function is based on code from H{\\aa}kon
-Otneim.
+This function uses the local likelihood function
+    proposed by Hjort & Jones (1996) to find an estimate of the
+    local correlation \eqn{$\rho$} given \eqn{$n$} bivariate
+    observations and a vector \eqn{$b$} with the specified
+    bandwidths.  Note that the code use the simplifying assumption
+    that the the marginals are standard normal, which reduces the
+    number of parameters to estimate from five to one.  This
+    function is based on code from H{\\aa}kon Otneim.
 }
 \details{
 In the computation, a product kernel that either is based
-on the standard normal distribution or the uniform distribution is
-used.  The default kernel is the normal one, since it seems to
-behave better than the uniform kernel with regard to being able to
-get a proper result (i.e. not \code{NA}) and since it also seems to
-compute a bit faster when a computation is possible.  Note that the
-code computes the required densities (related to the normal
-distribution) directly instead of using \code{dnorm} and
-\code{dmvnorm}, since that gives a speed gain.
+    on the standard normal distribution or the uniform distribution
+    is used.  The default kernel is the normal one, since it seems
+    to behave better than the uniform kernel with regard to being
+    able to get a proper result (i.e. not \code{NA}) and since it
+    also seems to compute a bit faster when a computation is
+    possible.  Note that the code computes the required densities
+    (related to the normal distribution) directly instead of using
+    \code{dnorm} and \code{dmvnorm}, since that gives a speed gain.
 }
 \references{
-Hjort, N. L., and Jones, M. C.: "Locally parametric
-nonparametric density estimation.", The Annals of Statistics
-(1996): 1619-1647.
+Hjort, N. L., and Jones, M. C.:
+    "Locally parametric nonparametric density estimation.", The
+    Annals of Statistics (1996): 1619-1647.
 }
 \keyword{internal}
