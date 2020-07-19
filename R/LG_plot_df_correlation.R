@@ -1,21 +1,21 @@
-#' Extraction of the correlations.
+#' Extract data-frames needed for the plotting of the correlations
 #'
-#' This helper function extracts the (local Gaussian) auto- and
-#' cross-correlations into the shapes needed in order for the
-#' plot-function to present the result.
+#' @description This internal function extracts the (local Gaussian)
+#'     auto- and cross-correlations into the shapes needed in order
+#'     for the plot-function to present the result.
 #'
-#' @param look_up A list created by \code{LG_lookup} (in the function
-#'     \code{LG_plot_helper}), where the key details have been
-#'     extracted (or constructed) from a (non-reactive copy) of the
-#'     values defined by the \code{shiny}-interface.
+#' @param look_up An environment created by \code{LG_lookup} (in the
+#'     function \code{LG_plot_helper}), where the key details have
+#'     been extracted (or constructed) from a (non-reactive copy) of
+#'     the values defined by the \code{shiny}-interface.
 #'
 #' @param ..env The environment that contains the correlations, and
 #'     also the environment in which the result will be stored.
 #'
 #' @return The environment \code{..env} will be updated with values
 #'     needed for the plotting of the spectra.  Internal caching is
-#'     used in order to avoid repetition of already performed tasks.
-#'     The creation of data-frames are taken care of in
+#'     used in order to avoid redoing already performed tasks.  The
+#'     creation of data-frames are taken care of in
 #'     \code{LG_create_plot_df}.
 #'
 #' @keywords internal
@@ -25,20 +25,6 @@ LG_plot_df_correlation <- function(look_up,
     ##  Define shortcuts for the caching and restriction.
     cache <- look_up$cache
     restrict <- look_up$restrict
-    ## ## ##  Perform the inital transformation of the data loaded from
-    ## ## ##  file, i.e. split out the lag-zero part when required.
-    ## ## restrict$F$initial(..env, look_up, .gl="global")
-    ## ## restrict$F$initial(..env, look_up, .gl="local")
-    ## ## names(..env)
-    ## ## capture_env()
-    #####  Reminder: The 'G_branch' and 'L_branch' in this setup seems
-    #####  rather redundant, but this is a task that can be taken care
-    #####  of later.  Similarly with regard to the updating of the
-    #####  'LG_plot_df_spectra'-part.  The main task for
-    #####  'restrict$F$initial' is after all to be used in the
-    #####  'spectrum_norm'-function.
-
-    ###-------------------------------------------------------------------
     ##  Create a helper to take care of the unfolding, i.e. the
     ##  reverse of the folding that was done in order to avoid
     ##  redundant computations when the correlations where computed.
@@ -75,7 +61,6 @@ LG_plot_df_correlation <- function(look_up,
             pos_lags,
             negative_lags)
     }
-    ###-------------------------------------------------------------------
     ##  Restrict the attention to the main branches.
     if (!exists(x = cache$G_branch, envir = ..env)) {
         ##  The branch for the global correlations.
@@ -86,13 +71,12 @@ LG_plot_df_correlation <- function(look_up,
     if (!exists(x = cache$L_branch, envir = ..env)) {
         ##  The branch for the local Gaussian correlations.
         .bm <- unlist(restrict$L_branch$bm)
-        ##  Return the resticted array.
+        ##  Return the restricted array.
         ..env[[cache$L_branch]] <- restrict_array(
             .arr = ..env[[.bm[1]]][[.bm[2]]],
             .restrict = restrict$L_branch$rl)
         kill(.bm)
     }
-    ###-------------------------------------------------------------------
     ##  Restrict the attention to the pairs of interest (it is
     ##  possible that a multivariate time series has been analysed).
     if (!exists(x = cache$G_pairs, envir = ..env)) {
@@ -124,7 +108,6 @@ LG_plot_df_correlation <- function(look_up,
                  .ylim = range(0, .tmp))
         })
     }
-    ###-------------------------------------------------------------------
     ##  Restrict the attention to the point(s) of interest for the
     ##  local Gaussian correlations, and unfold.
     if (!exists(x = cache$L_levels, envir = ..env)) {

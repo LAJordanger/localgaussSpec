@@ -2,15 +2,15 @@
 % Please edit documentation in R/LG_plot_df_correlation.R
 \name{LG_plot_df_correlation}
 \alias{LG_plot_df_correlation}
-\title{Extraction of the correlations.}
+\title{Extract data-frames needed for the plotting of the correlations}
 \usage{
 LG_plot_df_correlation(look_up, ..env)
 }
 \arguments{
-\item{look_up}{A list created by \code{LG_lookup} (in the function
-\code{LG_plot_helper}), where the key details have been
-extracted (or constructed) from a (non-reactive copy) of the
-values defined by the \code{shiny}-interface.}
+\item{look_up}{An environment created by \code{LG_lookup} (in the
+function \code{LG_plot_helper}), where the key details have
+been extracted (or constructed) from a (non-reactive copy) of
+the values defined by the \code{shiny}-interface.}
 
 \item{..env}{The environment that contains the correlations, and
 also the environment in which the result will be stored.}
@@ -18,13 +18,13 @@ also the environment in which the result will be stored.}
 \value{
 The environment \code{..env} will be updated with values
     needed for the plotting of the spectra.  Internal caching is
-    used in order to avoid repetition of already performed tasks.
-    The creation of data-frames are taken care of in
+    used in order to avoid redoing already performed tasks.  The
+    creation of data-frames are taken care of in
     \code{LG_create_plot_df}.
 }
 \description{
-This helper function extracts the (local Gaussian) auto- and
-cross-correlations into the shapes needed in order for the
-plot-function to present the result.
+This internal function extracts the (local Gaussian)
+    auto- and cross-correlations into the shapes needed in order
+    for the plot-function to present the result.
 }
 \keyword{internal}
