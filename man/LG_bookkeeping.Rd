@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_bookkeeping.R
 \name{LG_bookkeeping}
 \alias{LG_bookkeeping}
-\title{Keep the records up to date}
+\title{Bookkeeping for the local Gaussian estimates}
 \usage{
 LG_bookkeeping(spy_report)
 }
@@ -11,33 +11,24 @@ LG_bookkeeping(spy_report)
 the targeted function.}
 }
 \value{
-The result will be a list with either three or six
-    components.  The first component, the logic value
-    \code{done_before}, tells us if there already has been
-    performed (and stored in \code{data_dir} an identical
-    computation.  If this is the case, then the second component of
-    the result, also named \code{data_dir}, will tell us the
-    directory to find the result -- whereas the third component
-    \code{data_files} gives the files containing the results.  If
-    no similar computation has been found, then \code{data_dir} and
-    \code{data_files} will tell \code{LG_save} where to store the
-    results, and the result will in addition also contained an
-    updated version of \code{info} a \code{bookmark} and the path
-    to the info-file, in order for the parent-function to update
-    the info-file _after_ the computation has been successfully
-    performed and saved.
+This function returns a list to the internal workflow, with
+    some key details related to the computations to be performed.
+    The pivotal detail of this list is the logical value
+    \code{done_before}, since this can be used to prevent that
+    computational time is used to reproduce local Gaussian
+    estimates that already are available in the file-hierarchy.
 }
 \description{
-This is an internal function that works upon the \code{spy}-report
-from the targeted function, that should be one of the functions
-\code{LG_approx_scribe}, \code{LG_boot_approx_scribe}, and
-\code{LG_shiny}.
+This internal function perform the bookkeeping for the
+    arguments gathered by the \code{spy}-report from the targeted
+    function, which should be one of the functions
+    \code{LG_approx_scribe}, \code{LG_boot_approx_scribe}, and
+    \code{LG_shiny}.
 }
 \details{
-This function starts out by calling
-    \code{LG_sanity_checks} that investigates if the arguments
-    given to the targeted function makes sense.  Then it does as
-    its name suggests, i.e. it takes care of the bookkeeping of the
+This function records the given arguments and sends them
+    to \code{LG_sanity_checks} in order to see if those arguments
+    are sensible.  Then it takes care of the bookkeeping of the
     information stored in the info-file.
 }
 \keyword{internal}
