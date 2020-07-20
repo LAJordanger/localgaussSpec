@@ -1,18 +1,21 @@
-#' Complex-valued-plots for LGSD-data
+#' Complex-valued-plots for the local Gaussian spectra
+#'
+#' @description This internal function plots the complex-valued
+#'     spectra (for a given frequency) in the complex plane.
 #'
 #' @param ..env The environment containing the desired information
 #'     from which the data should be extracted
 #'
-#' @param look_up The usual list of details needed for the
-#'     investigation.
+#' @param look_up The environment containing the details needed for
+#'     the investigation.
 #'
-#' @param .selection Specifies the type of plot to be used.  This
-#'     should be a temporary argument, as it seems natural that it
-#'     should be defined as a part of the shiny-interface.
+#' @param .selection Specifies the type of plot to be used.  The value
+#'     should be one of \code{c("polar", "Cartesian", "zoom")}.  (This
+#'     should be a temporary argument, since it later on should be
+#'     defined as a part of the shiny-interface, and thus occur in the
+#'     \code{look_up}-environment.)
 #'
-#' @return A heatmap-plot of either the estimated local Gaussian
-#'     spectral density estimates for a combination of
-#'     points-frequency, or points-lags.
+#' @return A plot is returned to the workflow.
 #'
 #' @keywords internal
 
