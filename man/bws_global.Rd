@@ -2,7 +2,7 @@
 % Please edit documentation in R/bws_global.R
 \name{bws_global}
 \alias{bws_global}
-\title{Compute global bandwidths for Local Gaussian Estimates.}
+\title{Compute global bandwidths for Local Gaussian estimates}
 \usage{
 bws_global(save_dir = NULL, TS, lag_min = 0, lag_max)
 }
@@ -12,13 +12,13 @@ saving (and loading) data.  The default value \code{NULL} will
 turn of the interaction with disk.}
 
 \item{TS}{The time series we want to investigate by means of local
-Gaussian approximation (and later on with local Gaussian
-spectra).  Note that it is assumed that this time series have
-normalised marginals.  The code anticipates that this time
-series should have a logical attribute \code{bootstrap} that
-decides some of the actions taken under the evaluation, if no
-such attribute are found, the default will be to assume that
-\code{bootstrap} should be \code{FALSE}.}
+Gaussian (auto- and cross-) correlations, and later on with
+local Gaussian spectra.  Note that it is assumed that this time
+series have normalised marginals.  The code anticipates that
+this time series should have a logical attribute
+\code{bootstrap} that decides some of the actions taken under
+the evaluation, if no such attribute are found, the default
+will be to assume that \code{bootstrap} should be \code{FALSE}.}
 
 \item{lag_min}{A non-negative integer, default value \code{0}, that
 specifies the lowest lagged pairs to compute the bandwidths
@@ -30,17 +30,17 @@ performed in smaller chunks.}
 \value{
 This function will return the desired bandwidths to the
     work-flow, and in addition save/update a file with the desired
-    information.  If later on there's a need for a computation with
-    a higher value for \code{lag_max}, then the values from the
-    saved file will be used in order to avoid redoing previous
+    information.  If later on there is a need for a computation
+    with a higher value for \code{lag_max}, then the values from
+    the saved file will be used in order to avoid redoing previous
     computations.
 }
 \description{
-This function will check if a file with previous computations
-exists, and if so rather read the results from that file than
-recomputing the results.  If no file is found in the specified
-directory, or if only some of the results are computed, then it
-will do the required computations and create a file to be used
-later on.
+This internal function will check if a file with
+    previous computations exists, and if so rather read the results
+    from that file than recomputing the results.  If no file is
+    found in the specified directory, or if only some of the
+    results are computed, then it will do the required computations
+    and create a file to be used later on.
 }
 \keyword{internal}
