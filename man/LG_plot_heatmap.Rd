@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_plot_heatmap.R
 \name{LG_plot_heatmap}
 \alias{LG_plot_heatmap}
-\title{Heatmap-plots for LGSD-data}
+\title{Heatmap-plots for local Gaussian correlations and spectra}
 \usage{
 LG_plot_heatmap(..env, look_up)
 }
@@ -10,15 +10,14 @@ LG_plot_heatmap(..env, look_up)
 \item{..env}{The environment containing the desired information
 from which the data should be extracted}
 
-\item{look_up}{The usual list of details needed for the
-investigation.}
+\item{look_up}{The environment containing the details needed for
+the investigation.}
 }
 \value{
-A heatmap-plot of either the estimated local Gaussian
-    spectral density estimates for a combination of
-    points-frequency, or points-lags.
+A heatmap-plot is returned to the workflow.
 }
 \description{
-Heatmap-plots for LGSD-data
+This internal function creates heatmap-based plots
+    based on the estimated local Gaussian correlations and spectra.
 }
 \keyword{internal}

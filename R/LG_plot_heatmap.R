@@ -1,21 +1,21 @@
-#' Heatmap-plots for LGSD-data
+#' Heatmap-plots for local Gaussian correlations and spectra
+#'
+#' @description This internal function creates heatmap-based plots
+#'     based on the estimated local Gaussian correlations and spectra.
 #'
 #' @param ..env The environment containing the desired information
 #'     from which the data should be extracted
 #'
-#' @param look_up The usual list of details needed for the
-#'     investigation.
+#' @param look_up The environment containing the details needed for
+#'     the investigation.
 #'
-#' @return A heatmap-plot of either the estimated local Gaussian
-#'     spectral density estimates for a combination of
-#'     points-frequency, or points-lags.
+#' @return A heatmap-plot is returned to the workflow.
 #'
 #' @keywords internal
 
 LG_plot_heatmap <- function(..env, look_up) {
-    ##  Check if we have an investigation along the diagonal, and if
-    ##  not return a message stating that the function has not yet
-    ##  been implemented for that case.
+    ##  Check if we have an investigation along the diagonal, and
+    ##  return a "missing implementation"-message for other cases.
     if (! look_up$point_type_branch == "on_diag")
         return("Not implemented outside of diagonal")
     ##  Specify the dimensions that never should be dropped in the
@@ -141,13 +141,13 @@ LG_plot_heatmap <- function(..env, look_up) {
                 "Heatmap-visualisation for diferent truncation levels"
             }        
     }
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  If the length of the 'content'-dimension is larger than one,
     ##  then it is first necessary to compute the mean of the
     ##  values. Note: For local Gaussian spectral densities, this is
     ##  the same as the result obtained when the means of the local
     ##  Gaussian autocorrelations are used in the computation.
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     ##  Reminder: We might also like to loop over the individual
     ##  samples in a block, since that could give us a brief idea with
     ##  regard to the variability between different samples.  However,
@@ -155,7 +155,7 @@ LG_plot_heatmap <- function(..env, look_up) {
     ##  like to include for other plots too), and it is then also
     ##  necessary to consider in more detail the limits that should be
     ##  used on the legend-colours.
-    ###-------------------------------------------------------------------
+    ###------------------------------------------------------###
     if (length(dimnames(..the_data)$content) > 1) {
         ##  In the bootstrap-case, the 'content'-dimension contains
         ##  the "orig"-values, but those should not be included if we
@@ -192,7 +192,7 @@ LG_plot_heatmap <- function(..env, look_up) {
         if (!is.null(look_up$heatmap_m_restrict)) {
             ..step_1 <- restrict_array(
                 .arr= ..step_1,
-                .restrict = look_up$heatmap_m_restrict,# list(m = as.character(1:25)),
+                .restrict = look_up$heatmap_m_restrict,
                 .drop = TRUE,
                 .never_drop = .never_drop)
         }
