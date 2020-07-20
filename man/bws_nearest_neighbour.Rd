@@ -46,11 +46,11 @@ This function will return a list with the desired
     computations.
 }
 \description{
-This function will check if a file with previous computations
-exists, and if so rather read the results from that file than
-recomputing the results.  If no file is found in the specified
-directory, or if only some of the results are computed, then it
-will do the required computations and create a file to be used
-later on.
+This internal function will check if a file with
+    previous computations exists, and if so rather read the results
+    from that file than recomputing the results.  If no file is
+    found in the specified directory, or if only some of the
+    results are computed, then it will do the required computations
+    and create a file to be used later on.
 }
 \keyword{internal}

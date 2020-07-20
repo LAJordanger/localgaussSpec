@@ -1,13 +1,11 @@
-################################################################################
-#'
 #' Compute nearest-neighbour bandwidths, (with file-storage).
 #'
-#' This function will check if a file with previous computations
-#' exists, and if so rather read the results from that file than
-#' recomputing the results.  If no file is found in the specified
-#' directory, or if only some of the results are computed, then it
-#' will do the required computations and create a file to be used
-#' later on.
+#' @description This internal function will check if a file with
+#'     previous computations exists, and if so rather read the results
+#'     from that file than recomputing the results.  If no file is
+#'     found in the specified directory, or if only some of the
+#'     results are computed, then it will do the required computations
+#'     and create a file to be used later on.
 #'
 #' @template save_dir_arg
 #' 
@@ -45,12 +43,6 @@
 #'
 #' @keywords internal
 
-#####  2017-01-04: The default value for 'lag_min' adjusted from '1'
-#####  to '0', to get everything in one array.  This implies that some
-#####  of the old stuff that are saved to file might now be
-#####  obsolete...  Check this later on, and clean away superfluous
-#####  stuff from the code.
-
 bws_nearest_neighbour <- function(
     save_dir = NULL,
     TS,
@@ -58,26 +50,21 @@ bws_nearest_neighbour <- function(
     lag_max,
     bw_points = c(25, 35),
     levels) {
-###-------------------------------------------------------------------
     ##  Create a spy report, to use the call recursively at the end.
     spy_report <- spy()
-###-------------------------------------------------------------------
     ##  Find the path to the file.
     bws_file <- file.path(save_dir,
                           LG_default$bws_local_file)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  The algorithm that computes the negative lags based on a given
-###  grid-point use the same information as those found when
-###  considering positive lags for the diagonal-symmetric grid-points.
-###  To avoid to much fuzz in the code, the given grid-points will
-###  thus be "diagonally-completed" in order to obtain all the values
-###  of interest.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  The algorithm that computes the negative lags based on a given
+    ##  grid-point use the same information as those found when
+    ##  considering positive lags for the diagonal-symmetric
+    ##  grid-points.  To avoid to much fuzz in the code, the given
+    ##  grid-points will thus be "diagonally-completed" in order to
+    ##  obtain all the values of interest.
+    ###------------------------------------------------------###
     ##  Record the occurrences of unique components in 'levels'.
     unique_grid_coeff <- unique(as.vector(levels))
-###-------------------------------------------------------------------
     ##  Ensure that we compute the required data for both original and
     ##  diagonal-reflected grid-points (if the latter for some reason
     ##  should be missing from 'levels').
@@ -92,14 +79,12 @@ bws_nearest_neighbour <- function(
     ##  Reduce the selection to unique points.
     levels <-
         levels[unique(rownames(levels)), , drop  = FALSE]
-###-------------------------------------------------------------------
     ##  If 'TS' originates from a 'TS_LG_object', it should have an
     ##  attribute 'TS_for_analysis' that should be used instead of TS.
     if (! identical(x = attributes(TS)$TS_for_analysis,
                     y = NULL)) {
         TS <- attributes(TS)$TS_for_analysis
     }
-###-------------------------------------------------------------------
     ##  Create a logical value to see if old data can (should) be
     ##  used, i.e. if there already has been performed computations
     ##  that either can be used directly or built upon if an extended
@@ -107,7 +92,6 @@ bws_nearest_neighbour <- function(
     old_data <- all(
         ! is.null(save_dir),
         file.exists(bws_file))
-###-------------------------------------------------------------------
     ##  When old data exists, read them in and investigate if any new
     ##  computations must be performed.
     if (old_data) {
@@ -138,7 +122,6 @@ bws_nearest_neighbour <- function(
         new_lags <- setdiff(
             x = lag_min:lag_max,
             y = old_lags)
-###-------------------------------------------------------------------
         ##  If no new computations are necessary, then simply extract
         ##  the desired result and return those to the work-flow.
         ##  (Note: A restriction is necessary, since the old
@@ -166,12 +149,10 @@ bws_nearest_neighbour <- function(
         new_unique_grid_coeff <- unique_grid_coeff
         new_levels <- rownames(levels)
     }
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  The code below is written in order to cope with the case that
-###  'old_data' might be 'TRUE', and that new stuff must be added.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  The code below is written in order to cope with the case that
+    ##  'old_data' might be 'TRUE', and that new stuff must be added.
+    ###------------------------------------------------------###
     ##  Compute/update "grid-adjusted" distances.
     new_.ga_distances <- structure(
         .Data = abs(outer(
@@ -197,7 +178,6 @@ bws_nearest_neighbour <- function(
     } else
         .ga_distances <- new_.ga_distances
     kill(new_.ga_distances)
-###-------------------------------------------------------------------
     ##  Compute/update "grid_lag_distances" (for the old lags) with
     ##  new data if new grid points are present, or create a
     ##  skeleton-list if this is the first time the function is used.
@@ -208,7 +188,6 @@ bws_nearest_neighbour <- function(
                     .arr = .ga_distances,
                     .restrict = list(
                         grid = as.character(levels[i, "v1"])))        
-#####  Reminder: 'grid' must be a character!
                 .tmp_v2 <- restrict_array(
                     .arr = .ga_distances,
                     .restrict = list(
@@ -236,7 +215,6 @@ bws_nearest_neighbour <- function(
                 levels = rownames(levels),
                 lag = new_lags),
             add_names_list_as_attribute = FALSE)
-###-------------------------------------------------------------------
     ##  Compute/update "grid_lag_distances" if new lags are present,
     ##  by extracting relevant data from '.ga_distances' in order to
     ##  compute the distances upon which 'bw_points' will be used.
@@ -247,7 +225,6 @@ bws_nearest_neighbour <- function(
             .arr = .ga_distances,
             .restrict = list(
                 grid = as.character(levels[i, "v1"])))        
-#####  Reminder: 'grid' must be a character!
         .tmp_v2 <- restrict_array(
             .arr = .ga_distances,
             .restrict = list(
@@ -270,9 +247,6 @@ bws_nearest_neighbour <- function(
                          n = - .lag))
     }
     kill(.tmp_v1, .tmp_v2)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
     ##  Compute/update ".bws_data', with adjustments depending on the
     ##  presence of new grid points, new percentages (i.e. new values
     ##  in 'bw-points') or new lags.  Do this by using 'aaply' on an
@@ -291,9 +265,6 @@ bws_nearest_neighbour <- function(
               .parallel = TRUE,
               .drop = FALSE)
     }
-
-
-###-------------------------------------------------------------------
     ##  Update '.bws_data' if 'old_data' is 'TRUE' and new grid points
     ##  where given.
     if (old_data) {
@@ -324,7 +295,6 @@ bws_nearest_neighbour <- function(
                 names(dimnames(new_grid_old_lag_data))
             kill(new_grid_old_lag_data)
         }
-###-------------------------------------------------------------------
         ##  Update '.bws_data' and '.bws_zero' if 'old_data' is 'TRUE'
         ##  and new percentages are present in 'bw_points'.
         if (length(new_bw_points) > 0) {
@@ -356,7 +326,6 @@ bws_nearest_neighbour <- function(
             ##  Add stuff to '.bws_zero'.
         }
     }
-###-------------------------------------------------------------------
     ##  Compute/update '.bws_data' for new lags, when present (that
     ##  might not be the case if old data exists).
     if (length(new_lags) > 0) {
@@ -365,7 +334,6 @@ bws_nearest_neighbour <- function(
             pairs  = attributes(TS)$.variable_pairs,
             levels = rownames(levels),
             stringsAsFactors = FALSE)
-###-------------------------------------------------------------------
         ##  Use 'aaply' and 'local_bws' on 'arg_grid'.
         new_.bws_data <- aaply(
             .data = arg_grid,
@@ -375,13 +343,11 @@ bws_nearest_neighbour <- function(
             bw_points = bw_points,
             .drop = FALSE,
             .parallel = TRUE)
-###-------------------------------------------------------------------
         ##  Add the dimension name 'bw_points'
         names(dimnames(new_.bws_data))[5] <- "bw_points"
         ## names(dimnames(new_.bws_data))[4] <- "bw_points"
     } else
         new_.bws_data <- NULL
-###-------------------------------------------------------------------
     ##  Compose this with with older values when necessary, otherwise
     ##  create new object '.ga_distances'.
     if (old_data) {
@@ -398,13 +364,11 @@ bws_nearest_neighbour <- function(
         .bws_data <- new_.bws_data
     kill(new_.bws_data)
     class(.bws_data) <- LG_default$class$array
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  When it comes to '.bws_zero' and 'old_data' is true, then we
-###  might need to grow it based on new percentiles in 'bw_points' or
-###  when new grid points have been added.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  When it comes to '.bws_zero' and 'old_data' is true, then we
+    ##  might need to grow it based on new percentiles in 'bw_points'
+    ##  or when new grid points have been added.
+    ###------------------------------------------------------###
     if (old_data)
         if (length(new_levels) > 0) {
             new_levels_.bws_zero <- aaply(
@@ -430,7 +394,6 @@ bws_nearest_neighbour <- function(
                 names(dimnames(new_levels_.bws_zero))
             kill(new_levels_.bws_zero)
         }
-###-------------------------------------------------------------------
     ##  Compute new lag zero information from '.ga_distances' for the
     ##  percentiles given in 'bw_points'.
     if (length(new_bw_points) > 0) {
@@ -445,7 +408,6 @@ bws_nearest_neighbour <- function(
         ##  Add the dimension name 'bw_points'
         names(dimnames(new_.bws_zero))[3] <- "bw_points"
     }
-###-------------------------------------------------------------------
     ##  Adjust based on 'old_data'.
     if (old_data) {
         if (length(new_bw_points != 0)) {
@@ -460,28 +422,21 @@ bws_nearest_neighbour <- function(
     } else
         .bws_zero <- new_.bws_zero
     kill(new_.bws_zero)
-###-------------------------------------------------------------------
     ##  Save to file, when required.
     if (! is.null(save_dir))
         save(.bws_zero, .bws_data, .ga_distances,
              grid_lag_distances, file = bws_file)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  The procedure used here when 'old_data' is TRUE will create an
-###  object that might be larger than what we need.  Since stuff now
-###  is saved to file, it will be sufficient to call this function
-###  recursively to extract the desired components without repeating
-###  the code.  However, that strategy can not be used when 'save_dir'
-###  is 'NULL' -- but that's OK since no old data will mess up the
-###  result in that case.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  The procedure used here when 'old_data' is TRUE will create an
+    ##  object that might be larger than what we need.  Since stuff
+    ##  now is saved to file, it will be sufficient to call this
+    ##  function recursively to extract the desired components without
+    ##  repeating the code.  However, that strategy can not be used
+    ##  when 'save_dir' is 'NULL' -- but that is OK since no old data
+    ##  will mess up the result in that case.
+    ###------------------------------------------------------###
     ##  Return the result to the work-flow.
     if (is.null(save_dir)) {
-        ## return(list('0' = .bws_zero,
-        ##             h = .bws_data))
-#####  TASK: Modify code later on to to deal with adjusted result,
-#####  then clean away superfluous stuff from the present function.
         return(.bws_data)
     } else
         ##  Reminder: The evaluation of the call below will trigger
