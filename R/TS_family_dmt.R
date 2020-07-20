@@ -221,14 +221,16 @@ dmt <- function(
                 expr = eval(dist_call),
                 silent = TRUE)
             ##  Stop if someting fishy:
-            if ("try-error" %in% class(dist_result))
+            if ("try-error" %in% class(dist_result)) {
+                .this_function <- this_function()
                 stop("\t",
                      "Erroneous argument in '",
-                     .this_function,
+                     sQuote(.this_function),
                      "'.  Not able to evaluate:\n\t\t'",
                      capture.output(dist_call),
                      "'\n",
                      call. = FALSE)
+            }
             ##  Return the result to the workflow.
             dist_result - dist_info$adjust
         }
