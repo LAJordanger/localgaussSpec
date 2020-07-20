@@ -1,47 +1,65 @@
-################################################################################
-#####  2015-04-29
-
-#' Estimate bandwidths based on local likelihood...
+#' Estimate bandwidths based on local Gaussian likelihood
+#'
+#' @description This internal function can be used to estimate
+#'     bandwidths based on the local Gaussian likelihood for the
+#'     approach based on the one-free parameter bivariate Gaussian
+#'     distribution.
+#'
+#' @note The results based on the one-free parameter bivariate
+#'     Gaussian distributions can differ quite a bit from the results
+#'     based on the five-free parameter bivariate Gaussian
+#'     distributions.  It is thus not necessarily reasonable to use a
+#'     bandwidth based on the one-free parameter for the five-free
+#'     parameter.
+#'
+#' @note The authors opinion is that the local Gaussian correlation
+#'     extracted from the one-free parameter bivariate Gaussian
+#'     density function is a complete waste of computational
+#'     resources.  Do not use it! Use the local Gaussian correlation
+#'     based on the five-free parameter approach instead.
 #'
 #' @details The defaults for this function has been selected after an
-#' investigation of how different settings affected the final values,
-#' with an emphasis on getting "good enough" values within a shortest
-#' possible computational time.  Keep in mind that the \code{data}
-#' must have normalised marginals.
+#'     investigation of how different settings affected the final
+#'     values, with an emphasis on getting "good enough" values within
+#'     a shortest possible computational time.  Keep in mind that the
+#'     \code{data} must have normalised marginals.
 #' 
 #' @param data A matrix containing the multivariate observations, one
-#' observation in each row.  Note that the marginals of these
-#' observations must be normalised in order for the assumptions of
-#' this code to be satisfied.
+#'     observation in each row.  Note that the marginals of these
+#'     observations must be normalised in order for the assumptions of
+#'     this code to be satisfied.
 #'
 #' @param .kernel Specification of the kernel to use, either
-#' \code{normal} or \code{uniform}, with default being the
-#' \code{normal} one if none is selected.  Note: The
-#' \code{uniform}-kernel takes much longer to compute (a factor of ten
-#' when used on a small sample of size \eqn{$n=200$}).
+#'     \code{normal} or \code{uniform}, with default being the
+#'     \code{normal} one if none is selected.  Note: The
+#'     \code{uniform}-kernel takes much longer to compute (a factor of
+#'     ten when used on a small sample of size \eqn{$n=200$}).
 #'
 #' @param use_boundaries Logic value, default \code{TRUE}, that
-#' decides whether or not the bandwidths will be selected within the
-#' restrictions given by the argument \code{boundary_percentiles}
+#'     decides whether or not the bandwidths will be selected within
+#'     the restrictions given by the argument
+#'     \code{boundary_percentiles}
 #' 
 #' @param boundary_percentiles A vector specifying two percentiles,
-#' default \code{c(0.1, 0.9)}, that will be used on the range of the
-#' individual margins in order to ensure that the returned bandwidths
-#' are within a "reasonable" range.  This argument will be ignored
-#' when \code{use_boundaries} are given as \code{FALSE}.
+#'     default \code{c(0.1, 0.9)}, that will be used on the range of
+#'     the individual margins in order to ensure that the returned
+#'     bandwidths are within a "reasonable" range.  This argument will
+#'     be ignored when \code{use_boundaries} are given as
+#'     \code{FALSE}.
 #'
 #' @param tol Convergence tolerance, default value \code{1e-04}. The
-#' iteration is terminated when the absolute difference in function
-#' value between successive iteration is below \code{tol}.
+#'     iteration is terminated when the absolute difference in
+#'     function value between successive iteration is below
+#'     \code{tol}.
 #'
 #' @return The result of this function is a matrix that for each
-#' bivariate combination from the points given in \code{data} will
-#' return the bandwidths obtained when the function
-#' \code{link{find_rho}} has been optimised with regard to the selected
-#' bivariate subset of the data.  In addition to the bandwidths, there
-#' will also be a \code{convergence}-column that should contain
-#' \code{0} if the numerical combination of the bandwidths succeeded
-#' without any problems.
+#'     bivariate combination from the points given in \code{data} will
+#'     return the bandwidths obtained when the function
+#'     \code{link{find_rho}} has been optimised with regard to the
+#'     selected bivariate subset of the data.  In addition to the
+#'     bandwidths, there will also be a \code{convergence}-column that
+#'     should contain \code{0} if the numerical combination of the
+#'     bandwidths succeeded without any problems.
 #' 
 #' @keywords internal
 
@@ -51,18 +69,15 @@ find_bws <- function(
     use_boundaries = TRUE,
     boundary_percentiles = c(0.1, 0.9),
     tol = 1e-4) {
-###-------------------------------------------------------------------
     ##  Identify the number 'n' of observations and the dimension 'd'
     ##  of the specified observations.
     n <- dim(data)[1]
     d <- dim(data)[2]
-###-------------------------------------------------------------------
     ##  Specify the desired information to keep or compute.
     desired_information <-
         c("bi", "bj", "convergence", "tol", "value", "feval", 
           "use_boundaries", "low_percentile", "high_percentile",
           "low_i", "high_i", "low_j", "high_j")
-###-------------------------------------------------------------------
     ##  An adjustment to "do nothing" for the case where 'd' is equal
     ##  to '2' and the two components are identical (to avoid a messy
     ##  "corner-case" argument in other functions later on).
@@ -76,7 +91,6 @@ find_bws <- function(
                     c("xi", "xj", desired_information),
                     NULL)
             ))
-###-------------------------------------------------------------------
     ## Initialise the matrix to store stuff in.
     joint_bandwidths <- matrix(
         data = NA_real_,
@@ -87,14 +101,11 @@ find_bws <- function(
             NULL))
     ##  Specify the bivariate combinations that we need to inspect.
     joint_bandwidths[c("xi", "xj"), ] <- combn(1:d, 2)
-###-------------------------------------------------------------------
     ##  Add the stuff that is common for all the combinations.
     joint_bandwidths["tol", ] <- tol
     joint_bandwidths["use_boundaries", ] <- use_boundaries
     joint_bandwidths[c("low_percentile", "high_percentile"), ] <-
         boundary_percentiles
-    
-###-------------------------------------------------------------------
     ##  Calculate the bandwidths for each pair of observations
     for(i in 1:dim(joint_bandwidths)[2]) {
         biv.data <- data[, joint_bandwidths[c('xi', 'xj'), i]]
@@ -119,7 +130,6 @@ find_bws <- function(
                       FUN = obj)),
                   na.rm = TRUE)
         }
-###-------------------------------------------------------------------
         ##  Select a method based on the value of 'use_boundaries',
         ##  and compute the desired bandwidths with all the other
         ##  information returned by the selected optimiser.
@@ -136,7 +146,6 @@ find_bws <- function(
                     par = c(1, 1),
                     fn = CV.bivariate,
                     control = list(tol = tol))
-###-------------------------------------------------------------------
         ##  Extract the desired information and update the storage.
         joint_bandwidths[c("low_i", "low_j"), i] <- .lower
         joint_bandwidths[c("high_i", "high_j"), i] <- .upper
@@ -145,14 +154,12 @@ find_bws <- function(
         joint_bandwidths[.extract, i] <- unlist(
             .tmp_bandwidths[c("par", "convergence", "value", "feval")])
     }
-###-------------------------------------------------------------------
     ##  Add an attribute to 'joint_bandwidths' to reveal if all the
     ##  numerical convergences was successful.
     attr(x = joint_bandwidths,
          which = "numerical_convergence") <- 
              sum(joint_bandwidths["convergence", ]) == 0
     
-###-------------------------------------------------------------------
     ##  Write a warning when necessary
     if (! attributes(joint_bandwidths)$numerical_convergence)
         warning("\t",
@@ -161,13 +168,6 @@ find_bws <- function(
                 "Don't trust the result from 'find_bws', proceed with care.",
                 call. = FALSE,
                 immediate. = TRUE)
-###-------------------------------------------------------------------
     ##  Return the result to the work-flow.
     joint_bandwidths
 }
-
-##  And finally, compile the function in order to get it a bit faster.
-
-## require(compiler)
-## find_bws <- cmpfun(find_bws)
-#####  Skip this when the package is installed.

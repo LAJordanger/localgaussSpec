@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_bws.R
 \name{find_bws}
 \alias{find_bws}
-\title{Estimate bandwidths based on local likelihood...}
+\title{Estimate bandwidths based on local Gaussian likelihood}
 \usage{
 find_bws(data, .kernel = c("normal", "uniform"), use_boundaries = TRUE,
   boundary_percentiles = c(0.1, 0.9), tol = 1e-04)
@@ -16,41 +16,61 @@ this code to be satisfied.}
 \item{.kernel}{Specification of the kernel to use, either
 \code{normal} or \code{uniform}, with default being the
 \code{normal} one if none is selected.  Note: The
-\code{uniform}-kernel takes much longer to compute (a factor of ten
-when used on a small sample of size \eqn{$n=200$}).}
+\code{uniform}-kernel takes much longer to compute (a factor of
+ten when used on a small sample of size \eqn{$n=200$}).}
 
 \item{use_boundaries}{Logic value, default \code{TRUE}, that
-decides whether or not the bandwidths will be selected within the
-restrictions given by the argument \code{boundary_percentiles}}
+decides whether or not the bandwidths will be selected within
+the restrictions given by the argument
+\code{boundary_percentiles}}
 
 \item{boundary_percentiles}{A vector specifying two percentiles,
-default \code{c(0.1, 0.9)}, that will be used on the range of the
-individual margins in order to ensure that the returned bandwidths
-are within a "reasonable" range.  This argument will be ignored
-when \code{use_boundaries} are given as \code{FALSE}.}
+default \code{c(0.1, 0.9)}, that will be used on the range of
+the individual margins in order to ensure that the returned
+bandwidths are within a "reasonable" range.  This argument will
+be ignored when \code{use_boundaries} are given as
+\code{FALSE}.}
 
 \item{tol}{Convergence tolerance, default value \code{1e-04}. The
-iteration is terminated when the absolute difference in function
-value between successive iteration is below \code{tol}.}
+iteration is terminated when the absolute difference in
+function value between successive iteration is below
+\code{tol}.}
 }
 \value{
 The result of this function is a matrix that for each
-bivariate combination from the points given in \code{data} will
-return the bandwidths obtained when the function
-\code{link{find_rho}} has been optimised with regard to the selected
-bivariate subset of the data.  In addition to the bandwidths, there
-will also be a \code{convergence}-column that should contain
-\code{0} if the numerical combination of the bandwidths succeeded
-without any problems.
+    bivariate combination from the points given in \code{data} will
+    return the bandwidths obtained when the function
+    \code{link{find_rho}} has been optimised with regard to the
+    selected bivariate subset of the data.  In addition to the
+    bandwidths, there will also be a \code{convergence}-column that
+    should contain \code{0} if the numerical combination of the
+    bandwidths succeeded without any problems.
 }
 \description{
-Estimate bandwidths based on local likelihood...
+This internal function can be used to estimate
+    bandwidths based on the local Gaussian likelihood for the
+    approach based on the one-free parameter bivariate Gaussian
+    distribution.
 }
 \details{
 The defaults for this function has been selected after an
-investigation of how different settings affected the final values,
-with an emphasis on getting "good enough" values within a shortest
-possible computational time.  Keep in mind that the \code{data}
-must have normalised marginals.
+    investigation of how different settings affected the final
+    values, with an emphasis on getting "good enough" values within
+    a shortest possible computational time.  Keep in mind that the
+    \code{data} must have normalised marginals.
+}
+\note{
+The results based on the one-free parameter bivariate
+    Gaussian distributions can differ quite a bit from the results
+    based on the five-free parameter bivariate Gaussian
+    distributions.  It is thus not necessarily reasonable to use a
+    bandwidth based on the one-free parameter for the five-free
+    parameter.
+
+The authors opinion is that the local Gaussian correlation
+    extracted from the one-free parameter bivariate Gaussian
+    density function is a complete waste of computational
+    resources.  Do not use it! Use the local Gaussian correlation
+    based on the five-free parameter approach instead.
 }
 \keyword{internal}
