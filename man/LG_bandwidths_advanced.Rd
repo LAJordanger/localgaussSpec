@@ -63,13 +63,13 @@ A list with the two arrays \code{h} and \code{convergence}.
     global algorithm.
 }
 \description{
-The original bandwidth-algorithm gives a global result that does
-not work so good when used in the periphery of the data.  This
-function enables us to combine the bandwidths from the original
-algorithm and those found by a nearest-neighbour strategy where the
-selection is made with regard to the requirement that a certain
-percentage of the total number of lagged points should be contained
-inside the region specified by a central point and a
-bandwidth-square.
+The original bandwidth-algorithm gives a global result
+    that does not work so good when used in the periphery of the
+    data.  This internal function enables us to combine the
+    bandwidths from the original algorithm and those found by a
+    nearest-neighbour strategy where the selection is made with
+    regard to the requirement that a certain percentage of the
+    total number of lagged points should be contained inside the
+    region specified by a central point and a bandwidth-square.
 }
 \keyword{internal}

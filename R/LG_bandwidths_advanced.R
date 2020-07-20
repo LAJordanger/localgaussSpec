@@ -1,15 +1,13 @@
-################################################################################
-#'
 #' Find bandwidths to use for the local Gaussian estimates
 #'
-#' The original bandwidth-algorithm gives a global result that does
-#' not work so good when used in the periphery of the data.  This
-#' function enables us to combine the bandwidths from the original
-#' algorithm and those found by a nearest-neighbour strategy where the
-#' selection is made with regard to the requirement that a certain
-#' percentage of the total number of lagged points should be contained
-#' inside the region specified by a central point and a
-#' bandwidth-square.
+#' @description The original bandwidth-algorithm gives a global result
+#'     that does not work so good when used in the periphery of the
+#'     data.  This internal function enables us to combine the
+#'     bandwidths from the original algorithm and those found by a
+#'     nearest-neighbour strategy where the selection is made with
+#'     regard to the requirement that a certain percentage of the
+#'     total number of lagged points should be contained inside the
+#'     region specified by a central point and a bandwidth-square.
 #'
 #' @template save_dir_arg
 #' 
@@ -70,33 +68,18 @@ LG_bandwidths_advanced <- function(
     .bws_mixture = c("mixture", "local", "global"),
     bw_points = c(25, 35),
     levels) {
-###-------------------------------------------------------------------
-    ##  Include a sanity-check of the arguments?  Probably something
-    ##  that should be done at an higher level...
-###-------------------------------------------------------------------
     ##  Create a spy-report.
     spy_report <- spy()
     kill(save_dir, lag_max, bw_points, levels)
-###-------------------------------------------------------------------
     ##  If 'TS' originates from a 'TS_LG_object', it should have an
     ##  attribute 'TS_for_analysis' that should be used instead of TS.
     if (! identical(x = attributes(TS)$TS_for_analysis,
                     y = NULL)) {
         TS <- attributes(TS)$TS_for_analysis
-        ##---
         spy_report$envir$TS <- TS
     }
-###-------------------------------------------------------------------
     ##  Find the nearest neighbour bandwidths.  Always do this as we
     ##  need it to mould the remaining results upon.
-
-    ## .bws_nearest_neighbour_call <- create_call(
-    ##     .cc_fun = bws_nearest_neighbour,
-    ##     spy_report$envir,
-    ##     .cc_list = TRUE)
-    ## capture_env()
-    
-    
     .bws_nearest_neighbour <- eval(create_call(
         .cc_fun = bws_nearest_neighbour,
         spy_report$envir,
@@ -109,17 +92,9 @@ LG_bandwidths_advanced <- function(
         orig_arr = .bws_nearest_neighbour,
         added_dimnames = list(find_bws = c("bi", "bj")),
         positions = length(dim(.bws_nearest_neighbour)))
-###-------------------------------------------------------------------
     ##  Find the global bandwidths, when required.
     if (any(c("mixture", "global") %in% .bws_mixture)) {
         ##  Find the values for the positive lags.
-        
-        ## bws_global_call <- create_call(
-        ##     .cc_fun = bws_global,
-        ##     spy_report$envir,
-        ##     .cc_list = TRUE)
-        ## capture_env()
-        
         .bws_global <- eval(create_call(
             .cc_fun = bws_global,
             spy_report$envir,
@@ -135,9 +110,6 @@ LG_bandwidths_advanced <- function(
             y = names(dimnames(.bws_global)))
         .new_pos <- which(TRUE == names(dimnames(
                               .bws_nearest_neighbour)) %in% .new_dims)
-#####  TASK: Update the function 'append_dimensions' in order to allow
-#####  it to do these pesky details.
-        ##---
         .bws_global <- append_dimensions(
             orig_arr = .bws_global,
             added_dimnames =
@@ -155,17 +127,15 @@ LG_bandwidths_advanced <- function(
         dimnames(.bws_global)$bw_points <- "global"
     }
     kill(TS, spy_report)
-###-------------------------------------------------------------------
-#############---------------------------------------------------------
-###  The stuff above can now be combined in order to find the mixture
-###  (when required) where the largest value of the bandwidths will be
-###  used.  The key to doing this without to much fuzz is 'pmax',
-###  using the recycling principle with regard to the global
-###  bandwidths.  Reminder: In order for the result to have the
-###  desired format, the arrays from nearest neighbour must be given
-###  as the first argument.
-#############---------------------------------------------------------
-###-------------------------------------------------------------------
+    ###------------------------------------------------------###
+    ##  The stuff above can now be combined in order to find the
+    ##  mixture (when required) where the largest value of the
+    ##  bandwidths will be used.  The key to doing this without to
+    ##  much fuzz is 'pmax', using the recycling principle with regard
+    ##  to the global bandwidths.  Reminder: In order for the result
+    ##  to have the desired format, the arrays from nearest neighbour
+    ##  must be given as the first argument.
+    ###------------------------------------------------------###
     if (any("mixture" %in% .bws_mixture)) {
         ##  Use 'pmax' on the positive lags, recycling automatic.
         .bws_mixture_h <- pmax(
@@ -177,7 +147,6 @@ LG_bandwidths_advanced <- function(
             dimnames(.bws_mixture_h)$bw_points,
             sep = "_")
     }
-###-------------------------------------------------------------------
     ##  Use abind to produce the final result, by pasting stuff
     ##  together along the dimension named "bw_points".
     .result <- abind(
@@ -193,7 +162,6 @@ LG_bandwidths_advanced <- function(
     ##  Update the names of the dimensions.
     names(dimnames(.result)) <-
         names(dimnames(.bws_nearest_neighbour))
-###-------------------------------------------------------------------
     ##  Add attributes to reveal if computations later on can be
     ##  recycled, i.e. to see if we perhaps can avoid redoing
     ##  computations for the "mixture"-case.
@@ -202,19 +170,16 @@ LG_bandwidths_advanced <- function(
     ##  Create look-up attribute for the positive lags.
     look_up <-
         if (recycling) {
-###-------------------------------------------------------------------
             ##  Identify equalities between mixture and local,
             ##  matching shapes of arrays ensures a simple test.
             p_part <- 
                 .bws_mixture_h == .bws_nearest_neighbour
-###-------------------------------------------------------------------
             ##  Identify equality between mixture and global.  The
             ##  arrays have different shapes, and must be converted to
             ##  vectors in order for recycling to be performed.
             g_part <- p_part  ##  Create storage for global part.
             g_part[] <-
                 as.vector(.bws_mixture_h) == as.vector(.bws_global)
-###-------------------------------------------------------------------
             ##  The two objects 'p_part' and 'g_part' need to be
             ##  reduced one dimension, since we want to know if all
             ##  the bandwidths occur from the same source.
@@ -223,15 +188,11 @@ LG_bandwidths_advanced <- function(
                 .margins = which(names(dimnames(p_part)) != "find_bws"),
                 .fun = all,
                 .drop = FALSE)
-##### TASK: WTF, why did I use 'aaply' here?  There must be a solution
-##### that can fix this in a more efficient manner.
-            ##---
             g_part <- aaply(
                 .data = g_part,
                 .margins = which(names(dimnames(g_part)) != "find_bws"),
                 .fun = all,
                 .drop = FALSE)
-###-------------------------------------------------------------------
             ##   Create the array to use for 'look_up'.
             .tmp <- p_part #  Create a storage for the look-up.
             .tmp[] <- "m"  #  Default 'm' (mixture) means compute new.
@@ -246,13 +207,11 @@ LG_bandwidths_advanced <- function(
             .tmp
         } else
             NA
-###-------------------------------------------------------------------
     ##  Add the attributes to '.result'.
     attributes(.result) <- c(
         attributes(.result),
         list(recycling = recycling,
              look_up = look_up))
-###-------------------------------------------------------------------
     ##  Collect the answer and return it to the work-flow.  Reminder:
     ##  The part '.convergence' might become rather large when used in
     ##  the bootstrap-setting, so it's not added as attribute.
