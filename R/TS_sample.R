@@ -117,7 +117,7 @@ TS_sample <- function (
         LG_default$sample.prefix
     .observations <- paste("t", 1:N, sep = "")
     ##   Generate the information required to generate the data.
-    TS_data <- myTS(TS_key = TS_key,  ...)
+    TS_data <- TS_sample_helper(TS_key = TS_key,  ...)
     ##  Update the formals of the function with the value 'N'
     formals(TS_data$fun)[[TS_data$fun_data$size_name]] <- N
     ##  Generate the required time series sample(s).
