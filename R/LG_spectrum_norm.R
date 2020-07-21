@@ -1,4 +1,8 @@
-#' Compute norms, distances and angles
+#' Compute norms, distances and angles between different spectra
+#'
+#' @description This internal function can compute norms of the
+#'     spectra (seen as members of a Hilbert space), and it can also
+#'     compute the distances and angles between different spectra.
 #' 
 #' @param C1_env The environment containing the coefficients used for
 #'     the first collection of spectra.  These coefficients will be
@@ -38,12 +42,12 @@
 #'     assumptions occur for \code{W2} as those specified for
 #'     \code{W1}.
 #' 
-#' @return The result of this function is a collection of norms,
-#'     distances and angles related to the investigated spectra.  If
-#'     both \code{C1_env} and \code{C2_env} are given, then the
-#'     following four variations will be returned: C1-local
-#'     vs. C1-global, C2-local vs. C2-global, C1-global vs. C2-global,
-#'     and C1-local vs. C2-local.
+#' @return The result of this function is an environment with a
+#'     collection of norms, distances and angles related to the
+#'     investigated spectra.  If both \code{C1_env} and \code{C2_env}
+#'     are given, then the following four variations will be returned:
+#'     C1-local vs. C1-global, C2-local vs. C2-global, C1-global
+#'     vs. C2-global, and C1-local vs. C2-local.
 #'
 #' @keywords internal
 
@@ -59,7 +63,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
     } else {
         ##  Get hold of the desired content when needed.
         if (C1_env$look_up$TCS_type != "C")
-            LG_shiny_correlation(look_up = C1_env$look_up,
+            LG_plot_df_correlation(look_up = C1_env$look_up,
                                  ..env = C1_env)
     }
     ##  Check that 'C2_env', when present, contains 'look_up'.
@@ -71,7 +75,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
         } else  {
         ##  Get hold of the desired content when needed.
         if (C2_env$look_up$TCS_type != "C")
-            LG_shiny_correlation(look_up = C2_env$look_up,
+            LG_plot_df_correlation(look_up = C2_env$look_up,
                                  ..env = C2_env)
         }
     }
@@ -97,7 +101,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
         ##  Throw an error if '.W' goes beyond the content in '.env'.
         if (!all(as.numeric(names(.W)) %in% .env$look_up$lag_vec)) {
             error(sprintf(
-                "Mismatch between weights and correlations. Weigths given up to lag %s, but the highest available lag is %s.",
+                "Mismatch between weights and correlations. Weights given up to lag %s, but the highest available lag is %s.",
                 max(as.numeric(names(.W))),
                 max(.env$look_up$lag_vec)),
                 .argument = c(".W", ".env"))
@@ -130,7 +134,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
                                            names(.W),
                                            sep = ""))))
         ##  Find suitable weights for the different cases.  For the
-        ##  global case we do not need to wory about the issues
+        ##  global case we do not need to worry about the issues
         ##  related to being on or off the diagonal.  Some logical
         ##  values will be stored for the global case, since they are
         ##  needed later on when the inner products between global and
@@ -169,7 +173,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
 
             ##  This part does not play well for all the cases of
             ##  interest.  I guess what I actually would like to use
-            ##  is the 'L_pairs' case, where it is simple to get outh
+            ##  is the 'L_pairs' case, where it is simple to get out
             ##  the desired wrapped version of the correlations in the
             ##  local Gaussian case.  The case with cross-correlation
             ##  for the global case must be dealt with later on...
@@ -492,7 +496,7 @@ LG_spectrum_norm <- function(C1_env=NULL,
                 .tmp[.problems] <- 1
         }
         f1_angle_f2 <- acos(.tmp)
-        ##  Rteurn a matrix with the desired content as columns
+        ##  Return a matrix with the desired content as columns
         ##  vectors (to enable faster extraction).
         matrix(
             data = c(L2_norm_f1,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_spectrum_norm.R
 \name{LG_spectrum_norm}
 \alias{LG_spectrum_norm}
-\title{Compute norms, distances and angles}
+\title{Compute norms, distances and angles between different spectra}
 \usage{
 LG_spectrum_norm(C1_env = NULL, W1 = NULL, C2_env = NULL,
   W2 = NULL)
@@ -47,14 +47,16 @@ assumptions occur for \code{W2} as those specified for
 \code{W1}.}
 }
 \value{
-The result of this function is a collection of norms,
-    distances and angles related to the investigated spectra.  If
-    both \code{C1_env} and \code{C2_env} are given, then the
-    following four variations will be returned: C1-local
-    vs. C1-global, C2-local vs. C2-global, C1-global vs. C2-global,
-    and C1-local vs. C2-local.
+The result of this function is an environment with a
+    collection of norms, distances and angles related to the
+    investigated spectra.  If both \code{C1_env} and \code{C2_env}
+    are given, then the following four variations will be returned:
+    C1-local vs. C1-global, C2-local vs. C2-global, C1-global
+    vs. C2-global, and C1-local vs. C2-local.
 }
 \description{
-Compute norms, distances and angles
+This internal function can compute norms of the
+    spectra (seen as members of a Hilbert space), and it can also
+    compute the distances and angles between different spectra.
 }
 \keyword{internal}
