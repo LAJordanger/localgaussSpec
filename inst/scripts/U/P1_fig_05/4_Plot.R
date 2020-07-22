@@ -38,7 +38,7 @@ library(grid)
 ##  investigated can be found.
 
 ..main_dir <- c("~", "LG_DATA_scripts", "P1_fig_05")
-..TS <- "WNG_1adb5cb875e8f852b5b33946234d9801"
+..TS <- "rnorm_1adb5cb875e8f852b5b33946234d9801"
 
 ###----------------------------------------------------------------###
 

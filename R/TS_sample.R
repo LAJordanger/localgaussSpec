@@ -6,7 +6,7 @@
 #'     later on.
 #'
 #' @param TS_key A key, i.e. a \code{character}, corresponding to an
-#'     element in \code{TS_families}.  Default value \code{WNG},
+#'     element in \code{TS_families}.  Default value \code{rnorm},
 #'     i.e. "White Noise Gaussian".
 #' 
 #' @param N The desired length of the time series.  Default value
@@ -65,7 +65,7 @@
 #' @export
 
 TS_sample <- function (
-    TS_key = "WNG",
+    TS_key = "rnorm",
     N = 500,
     nr_samples = 1,
     ...,

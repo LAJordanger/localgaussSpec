@@ -46,7 +46,7 @@ TS_families <- list()
 
 #' The univariate Gaussian case for \code{TS_key}
 #'
-#' @description The \code{TS_key_WNG}-case part of \code{TS_families}
+#' @description The \code{TS_key_rnorm}-case part of \code{TS_families}
 #'     is simply an implementation of \code{rmnorm} from the
 #'     \code{stats}-package.
 #'
@@ -54,9 +54,9 @@ TS_families <- list()
 #'     \code{TS_sample}, which will send them to this function by the
 #'     internal helper-function \code{TS_sample_helper}.
 #'
-#' @name TS_key_WNG
+#' @name TS_key_rnorm
 
-TS_families$WNG <- list(
+TS_families$rnorm <- list(
     package = "stats",
     fun = "rnorm",
     args = list(mean = 0,

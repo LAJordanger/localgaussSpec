@@ -27,7 +27,7 @@ main_dir <- c("~", "LG_DATA_scripts", "P1_fig_05")
 
 nr_samples <- 100
 N <- 1974
-TS_key <- "WNG"
+TS_key <- "rnorm"
 
 
 .seed_for_sample <- 124
