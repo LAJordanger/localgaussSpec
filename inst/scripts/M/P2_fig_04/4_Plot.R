@@ -201,27 +201,10 @@ rm(.name, .name2, .bm, size_omega, .scaling_for_annotated_text,
 ###----------------------------------------------------------------###
 
 ##  Code only relevant for the trigonometric examples.  Extract
-##  information about the frequencies from the info-file and add as
-##  vertical lines to the plots.
+##  information about the frequencies and phase-adjustments.
 
-.info_path <- file.path(
-    paste(..main_dir,
-          collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$info_file_name)
-
-##  Load the object into the present workflow, and reduce to the
-##  component of interest.
-
-localgaussSpec:::LG_load(.file = .info_path, .name = "info_TS")
-info_TS <- info_TS$TS_info$TS_data
-rm(.info_path)
-
-##  Extract the relevant information.
-
-alpha <- formals(info_TS$fun)$first_dmt$alpha
-phase_adjustment <- formals(info_TS$fun)$phase_adjustment
-rm(info_TS)
+alpha <- attributes(..plot[[c(1,1)]])$details$fun_formals$first_dmt$alpha
+phase_adjustment <- attributes(..plot[[c(1,1)]])$details$fun_formals$phase_adjustment
 
 ##  Add the alpha-values as vertical lines to all the plots.
 
@@ -237,8 +220,6 @@ for (i in names(..plot)) {
     }
 }
 rm(i, j, .bm)
-
-###----------------------------------------------------------------###
 
 ##  Add the phase_adjustment-values as horizontal lines to the
 ##  phase-plots, with an additional point at the intersection of the
