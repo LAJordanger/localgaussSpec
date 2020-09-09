@@ -96,25 +96,12 @@ library(grid)
 
 ###----------------------------------------------------------------###
 
-##  Extract information from the info-file in order to figure out
-##  details related to the frequencies.
+##  Extract information about the frequencies.
 
-.info_path <- file.path(
-    paste(..main_dir,
-          collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$info_file_name)
-
-##  Load the object into the present workflow, and reduce to the
-##  component of interest.
-
-localgaussSpec:::LG_load(.file = .info_path, .name = "info_TS")
-info_TS <- info_TS$TS_info$TS_data
-
-alpha <- formals(info_TS$fun)$alpha
-A <- formals(info_TS$fun)$A
-.delta <- formals(info_TS$fun)$delta
-.delta_range <- formals(info_TS$fun)$delta_range
+alpha <- attributes(..plot[[1]])$details$fun_formals$alpha
+A <- attributes(..plot[[1]])$details$fun_formals$A
+.delta <- attributes(..plot[[1]])$details$fun_formals$delta
+.delta_range <- attributes(..plot[[1]])$details$fun_formals$delta_range
 
 ###----------------------------------------------------------------###
 

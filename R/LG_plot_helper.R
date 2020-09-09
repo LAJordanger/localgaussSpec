@@ -87,6 +87,10 @@ LG_plot_helper <- function(
         ##  Add a logical value to reveal that the function is called
         ##  in a non-interactive environment.
         input$non_interactive <- TRUE
+        ##  Extract the formals for the function that generated the
+        ##  data.  (The value 'NULL' will be added if the sample is
+        ##  based on real data instead of simulated data.)
+        input$fun_formals <- formals(.env$info$TS_info$TS_data$fun)
     } else {
         ##  Create a link to the 'Approx'-level environment.
         .AB_env <- .env$TS_logging[[unlist(.env$input[c("TS_key", "TS", "Approx")])]]

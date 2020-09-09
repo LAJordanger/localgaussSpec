@@ -164,29 +164,10 @@ rm(.name, size_omega)
 
 ###----------------------------------------------------------------###
 
-##  Code only relevant for the trigonometric examples.  Extract
-##  information about the frequencies from the info-file and add as
-##  vertical lines to the plots.
+##  Code only relevant for the trigonometric examples: Extract
+##  information about the frequencies from the info-file.
 
-.info_path <- file.path(
-    paste(..main_dir,
-          collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$info_file_name)
-
-
-##  Load the object into the present workflow, and reduce to the
-##  component of interest.
-
-localgaussSpec:::LG_load(.file = .info_path, .name = "info_TS")
-info_TS <- info_TS$TS_info$TS_data
-rm(.info_path)
-
-##  Extract the relevant information.
-
-alpha <- formals(info_TS$fun)$alpha
-rm(info_TS)
-
+alpha <- attributes(..plot[[1]])$details$fun_formals$alpha
 
 ##  Add the alpha-value as a vertical lines to all the plots, and
 ##  update the names of the layers so the size of the line can be

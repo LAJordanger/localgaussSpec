@@ -121,24 +121,11 @@ heatmap_plot <- heatmap_plot +
         alpha = .5)
 
 ##--------------------------------------------------------------------
-##  Code only relevant for the local trigonometric examples.  Extract
-##  information about the frequencies from the info-file and add
-##  vertical lines to the plot at those frequencies.
-.info_path <- file.path(
-    paste(..main_dir,
-              collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$info_file_name)
 
-##  Load the info-object into the present workflow, and restrict to
-##  the component of interest.
+##  Code only relevant for the trigonometric examples: Extract
+##  information about the frequencies from the info-file.
 
-localgaussSpec:::LG_load(.file = .info_path, .name = "info_TS")
-info_TS <- info_TS$TS_info$TS_data
-rm(.info_path)
-
-##  Extract the relevant information.
-alpha <- formals(info_TS$fun)$alpha
+alpha <- attributes(..plot[[1]])$details$fun_formals$alpha
 
 ##  Add the alpha-value (frequencies) as vertical lines
 heatmap_plot <- heatmap_plot +

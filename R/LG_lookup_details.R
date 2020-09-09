@@ -37,6 +37,12 @@ LG_lookup_details <- function(look_up,
     if (details$is_block) {
         details$nr_simulated_samples <- .AB_env$details$nr_simulated_samples
     }
+    ##  If the function is called in a non-interactive setting, then
+    ##  add a copy of the formals from the function that created the
+    ##  sample.  The value will be 'NULL' for simulated data.
+    if (look_up$non_interactive) {
+        details$fun_formals <- look_up$fun_formals
+    }
     ##  Add information about the content of the plot.
     details$TCS_type <- look_up$TCS_type
     details$text$length_variables <- paste(
