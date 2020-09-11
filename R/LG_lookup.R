@@ -104,6 +104,8 @@ LG_lookup <- function(input,
         look_up$L2_inspection_vbmL <- "v"
     if (is.null(look_up$drop_annotation))
         look_up$drop_annotation <- FALSE
+    if (is.null(look_up$non_interactive))
+        look_up$non_interactive <- FALSE
     
     ##  Adjust for the 'cut' vs. 'm_selected' values
     look_up$m_selected <- look_up$cut
@@ -168,8 +170,16 @@ LG_lookup <- function(input,
                                  test = look_up$heatmap,
                                  yes  = 200,
                                  no   = 64))
+    ##  The lag-vector should include all available values in the
+    ##  interactive setting, but only the ones of interest for the
+    ##  specified plot in the non-interactive setting.
     look_up$lag_vec <-
-        seq_len(max(as.numeric(.AB_env$details$.dimnames$lag)))
+        if (all(look_up$non_interactive,
+                look_up$TCS_type == "S")) {
+            seq_len(look_up$m_selected)
+        } else {
+            seq_len(max(as.numeric(.AB_env$details$.dimnames$lag)))
+        }
     ##  Add a logical value needed in some tests.
     look_up$is_lag_zero_included <- {
         "0" %in% .AB_env$details$.dimnames$lag}

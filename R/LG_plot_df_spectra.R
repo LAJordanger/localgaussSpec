@@ -19,7 +19,7 @@
 #' @keywords internal
 
 LG_plot_df_spectra  <- function(look_up,
-                              ..env) {
+                                ..env) {
     ##  Some shortcuts to get the code more compact.
     cache <- look_up$cache
     restrict <- look_up$restrict
@@ -112,12 +112,25 @@ LG_plot_df_spectra  <- function(look_up,
     if (!exists(x = cache$spectra_global, envir = ..env)) { 
         LG_plot_df_spectra_helper(..env, look_up, .gl = "global")
     }
+    ##  A minor help-function to avoid some computations when this is
+    ##  called in a non-interactive setting.
+    .node_not_needed_non_interactive <- function(.node) {
+        if (look_up$non_interactive) {
+            any(all(.node == "on_diag",
+                    look_up$is_off_diagonal),
+                all(.node == "off_diag",
+                    look_up$is_on_diagonal))
+        } else
+            FALSE
+    }
     ##  Compute the product of the 'exp'-array and the estimated
     ##  local Gaussian correlations for the given bandwidth.
     if (!exists(x = cache$spectra_summands_local, envir = ..env)) {
         .result <- list()
         for (.node in names(..env[[local_name]])) {
             if (is.null(..env[[local_name]][[.node]]))
+                next
+            if (.node_not_needed_non_interactive(.node))
                 next
             .result[[.node]] <- list()
             .corr <- restrict_array(

@@ -93,7 +93,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
         restrict$C$global$neg_lags <- c(.template$pairs_VjVi,
                                         .template$neg_lags)
     }
-    ##  Incude information about '.never_drop' for this case.
+    ##  Include information about '.never_drop' for this case.
     restrict$C$local$.never_drop <- c("lag", "content", "variable")
     restrict$C$global$.never_drop <- c("lag", "content")
     ##  Reminder: The 'local'-part of the details above are used in
@@ -124,6 +124,21 @@ LG_lookup_restrict <- function (look_up = look_up) {
             }
         },
         list(variable = "rho"))
+    ##  Adjust the initial restriction for the non-interactive case
+    ##  for the ordinary spectra (not the heatmaps).
+    if (all(look_up$non_interactive,
+            !look_up$heatmap)) {
+        restrict$S$spectra_summands_local <-
+            c(restrict$S$spectra_summands_local,
+              .template$point_both,
+              .template$bw_points,
+              .template$pairs,
+              if (look_up$is_lag_zero_included) {
+                  .template$non_neg_lags
+              } else {
+                  .template$pos_lags
+              })
+    }
     restrict$S$spectra_global <- function(.cut) {
         list(lag = as.character(1:(as.numeric(.cut)-1)),
              pairs = unique(c(look_up$pairs_ViVj,
