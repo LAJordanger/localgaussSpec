@@ -74,16 +74,20 @@ LG_plot_helper <- function(
                          LG_default$info_file_name),
                        collapse = .Platform$file.sep)),
              envir = .env)
-        ##  Create the 'Approx'-level environment.
-        .AB_env <- LG_shiny_interface_1_helper(
-            .env = .env,
-            .approx = input$Approx)
-        ##  REMINDER: The result of the above function turned out to
-        ##  be a list. It is used other places too, so for the time
-        ##  being I will use this approach as a workaround. Perhaps
-        ##  add an additional argument to deal with this case?
-        if (is.list(.AB_env))
-            .AB_env <- .AB_env[[1]]
+        ##  Create the 'Approx'-level environment when needed.
+        if (input$TCS_type != "T") {
+            .AB_env <- LG_shiny_interface_1_helper(
+                .env = .env,
+                .approx = input$Approx)
+            ##  REMINDER: The result of the above function turned out to
+            ##  be a list. It is used other places too, so for the time
+            ##  being I will use this approach as a workaround. Perhaps
+            ##  add an additional argument to deal with this case?
+            if (is.list(.AB_env))
+                .AB_env <- .AB_env[[1]]
+        } else {
+            .env$input_curlicues <- input_curlicues
+        }
         ##  Add a logical value to reveal that the function is called
         ##  in a non-interactive environment.
         input$non_interactive <- TRUE
@@ -152,7 +156,7 @@ LG_plot_helper <- function(
     ##  is the part concerning 'TS', in which case we need to pick out
     ##  the desired time series from the present 'info'-object.
     if (input$TCS_type == "T") {
-        return()
+        return(LG_plot_TS(.env = .env))
     }
     ##  The function 'LG_plot_load' takes care of the loading and
     ##  computations required for the desired plots to be computed, we
