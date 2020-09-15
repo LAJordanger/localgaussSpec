@@ -324,7 +324,7 @@ LG_default$curlicues <- list(
             linetype = 2,
             col = "brown",
             alpha = 0.8,
-            lwd = .1)),
+            lwd = .4)),
     spectra_plot = list(
         WN_line  = list(
             include = TRUE,

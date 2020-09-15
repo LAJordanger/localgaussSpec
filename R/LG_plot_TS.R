@@ -96,16 +96,22 @@ LG_plot_TS <- function(.env) {
                     .env$input$TS_restrict$observations[1] > 1))
                 .description$x <- .env$input$TS_restrict$observations[1]
         }
+        ##  There seems to be a font-issue related to the use of
+        ##  'geom_text' directly and the use of 'annotate' with
+        ##  'geom="text"'.  An adjustment must be made to mimick the
+        ##  plots used in the papers.
+        .description$geom <- "text"
         .plot <- .plot +
-            do.call(what = "geom_text",
+            do.call(what = annotate,
                     args = .description)
     }
     ##  Add an attribute with the formals of the function that
     ##  generated the samples (will be 'NULL' for real data).
     ##  Reminder: The same basic structure should be used here as the
     ##  one one used for the other plots.
-    attributes(.plot)$details$fun_formals <-
-                        formals(.env$info$TS_info$TS_data$fun)
+    if (!is.null(attributes(.plot)$details$fun_formals))
+        attributes(.plot)$details$fun_formals <-
+                            formals(.env$info$TS_info$TS_data$fun)
     ##  Return the result to the workflow.
     .plot
 }
