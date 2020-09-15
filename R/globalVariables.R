@@ -3,6 +3,7 @@
 my_globalVariables <- c(
     "folder_defaults", # LG_bookkeeping
     "dir_bookmark", # LG_bookkeeping
+    "dmt", # TS_key_dmt_bivariate
     "info", # LG_bookkeeping
     "info_path", # LG_bookkeeping
     "value", # LG_create_plot_df
