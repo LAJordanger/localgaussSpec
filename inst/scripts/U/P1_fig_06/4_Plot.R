@@ -90,7 +90,7 @@ for (.bw in .names) {
                 local = list(
                     line.size = ..line.size))))
 }
-rm(.bw, .names, .input, ..line.size)
+rm(..Approx, .bw, .names, .input, ..line.size)
 
 ##  Ensure that the limit on the y-axis is the same for all the plots,
 ##  and that it is based on the smallest natural range for the
@@ -129,7 +129,6 @@ for (.name in names(annotated_text)) {
     ##  to look a bit more decent.  The plots now have a stamp
     ##  describing the content, so it is feasible to ditch the title.
 
-
     size_omega <- annotated_text[[.name]]$annotated_df["NC_value", "size"] *
         .scaling_for_annotated_text
     
@@ -162,9 +161,7 @@ rm(.name, size_omega)
 
 alpha <- attributes(..plot[[1]])$details$fun_formals$alpha
 
-##  Add the alpha-value as a vertical lines to all the plots, and
-##  update the names of the layers so the size of the line can be
-##  adjusted properly in the code below.
+##  Add the alpha-values as vertical lines to all the plots.
 
 for (i in seq_along(..plot)) {
     ..plot[[i]] <- ..plot[[i]] +
@@ -173,10 +170,6 @@ for (i in seq_along(..plot)) {
                col = "black",
                alpha = 0.8,
                lwd = 0.3)
-    names(..plot[[i]]$layers) <- c(
-        head(x = names(..plot[[i]]$layers),
-             n = -1),
-        "alpha_lines")
 }
 rm(alpha, i)
 
@@ -189,55 +182,35 @@ rm(alpha, i)
 ##  a number of simulations from a parametric model, then the first
 ##  sample will be used.
 
-##  Strategy: Specify a reasonable label, extract the time series
-##  sample of interest, and create a plot of it.
-
-.TS_label <- "cosine and i.i.d. Gaussian noise"
-.TS_path <- file.path(
-    paste(..main_dir,
-          collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$global["TS"])
-
-##  Load the object into the present workflow, and reduce to the case
-##  of interest.
-
-localgaussSpec:::LG_load(.file = .TS_path, .name = ".TS_example")
-.TS_example_pn <- attributes(.TS_example)$TS_for_analysis[1,,]
-
-##  Extract information to be used when adding '.TS_label'.
+##  Strategy: Extract a list with the annotated-text details for
+##  'v_value', and modify this to get the details needed for the
+##  description of the time series under investigation.
 
 .TS_annotation <- annotated_text[[1]]$annotated_df["v_value", ]
+.TS_annotation$size <- .TS_annotation$size *
+    .scaling_for_annotated_text
+.TS_annotation$label <- "cosine and i.i.d. Gaussian noise"
 
-..plot$TS_example <- ggplot(
-    data = data.frame(
-        x = seq_along(.TS_example_pn),
-        y = .TS_example_pn),
-    mapping = aes(x = x, y = y)) + 
-    geom_line(
-        mapping = aes(x = x, y = y),
-        alpha = 0.8,
-        lwd = 0.03) + 
-    theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank()) + 
-    annotate(geom = "text",
-             x = 0,
-             y = Inf,
-             size = .TS_annotation$size *
-                 .scaling_for_annotated_text,
-             label =  .TS_label,
-             col = .TS_annotation$col,
-             alpha = 1,
-             vjust = .TS_annotation$vjust,
-             hjust = .TS_annotation$hjust)  +
+..plot$TS_example <- LG_plot_helper(
+    main_dir = ..main_dir, 
+    input = list(
+        TCS_type = "T",
+        TS = ..TS,
+        TS_type_or.pn = "pseudo-normalised",
+        TS_restrict = list(
+            content = 1)),
+    input_curlicues= list(
+        TS_plot = list(
+            description = .TS_annotation,
+            hline = list(
+                yintercept = qnorm(p = c(0.1, 0.5, 0.9))))))
+rm(.TS_annotation, annotated_text, .scaling_for_annotated_text)
+
+##  Adjust the ticks to match the other plots.
+..plot$TS_example <- ..plot$TS_example +
     theme(axis.ticks = element_line(size = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
-rm(.TS_annotation, .TS_example, .TS_example_pn, .TS_label,
-   .scaling_for_annotated_text, annotated_text)
-
-##  This plot is shrinked a lot later on, and then the tiny `lwd`
-##  gives a decent view.
 
 ###----------------------------------------------------------------###
 
@@ -256,13 +229,7 @@ pdf(file = .save_file)
 grid.newpage()
 pushViewport(viewport(
     layout = grid.layout(7, 2)))
-print(..plot$TS_example  +
-      geom_hline(
-          yintercept = qnorm(p = c(0.1, 0.5, 0.9)),
-          linetype = 2,
-          col = "brown",
-          alpha = 0.8,
-          lwd = 0.4),
+print(..plot$TS_example,
       vp = viewport(
           layout.pos.row = 1,
           layout.pos.col = 1))

@@ -43,33 +43,6 @@ library(grid)
 
 ###----------------------------------------------------------------###
 
-##  Code only relevant for the trigonometric examples.  Extract
-##  information about the frequencies from the info-file and add as
-##  vertical lines to the plots.
-
-.info_path <- file.path(
-    paste(..main_dir,
-          collapse = .Platform$file.sep),
-    ..TS,
-    localgaussSpec:::LG_default$info_file_name)
-
-
-##  Load the object into the present workflow, and reduce to the
-##  component of interest.
-
-localgaussSpec:::LG_load(.file = .info_path, .name = "info_TS")
-info_TS <- info_TS$TS_info$TS_data
-rm(.info_path)
-
-##  Extract the relevant information.
-
-alpha <- formals(info_TS$fun)$alpha
-rm(info_TS)
-
-##  End of part specific for the trigonometric examples.
-
-################################################################################
-
 ##  Create the plot of interest.
 
 input <- list(
@@ -107,13 +80,29 @@ input <- list(
             global = list(
                 line.size = ..line.size),
             local = list(
-                line.size = ..line.size)))) +
+                line.size = ..line.size))))
+rm(input, ..line.size)
+
+###----------------------------------------------------------------###
+
+##  Code only relevant for the trigonometric examples: Extract
+##  information about the frequencies.
+
+alpha <- attributes(.the_plot)$details$fun_formals$alpha
+
+##  Add the alpha-values as vertical lines.
+
+.the_plot <- .the_plot +
     geom_vline(xintercept = alpha/(2*pi),
                linetype = c(1, 3, 3, 3),
                col = c("orange", "black", "black", "black"),
                alpha = 0.8,
                lwd = 0.3)
+rm(alpha)
 
+##  End of part specific for the trigonometric examples.
+
+###----------------------------------------------------------------###
 
 ##  The use of 'drop_annotation=TRUE' in the 'input'-argument of
 ##  'LG_plot_helper' prevented the annotated text to be added to the
@@ -156,6 +145,7 @@ size_omega <- annotated_text$annotated_df["n_R_L_value", "size"] *
     theme(axis.ticks = element_line(size = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
+rm(annotated_text, .scaling_for_annotated_text, size_omega)
 
 ###----------------------------------------------------------------###
 
