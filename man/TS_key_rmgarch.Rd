@@ -25,7 +25,7 @@ from the model fitted to this sample.}
 generator.  This should be of length equal to m.sim.}
 }
 \value{
-
+A multivariate GARCH-type time series is returned.
 }
 \description{
 The \code{TS_key_rmgarch}-function is in essence a

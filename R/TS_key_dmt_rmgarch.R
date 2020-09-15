@@ -34,7 +34,7 @@
 #' @param rseed Optional seeding value(s) for the random number
 #'     generator.  This should be of length equal to m.sim.
 #'
-#' @return
+#' @return A multivariate GARCH-type time series is returned.
 #'
 #' @keywords internal
 
