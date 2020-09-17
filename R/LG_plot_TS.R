@@ -109,7 +109,7 @@ LG_plot_TS <- function(.env) {
     ##  generated the samples (will be 'NULL' for real data).
     ##  Reminder: The same basic structure should be used here as the
     ##  one one used for the other plots.
-    if (!is.null(attributes(.plot)$details$fun_formals))
+    if (!is.null(.env$info$TS_info$TS_data$fun))
         attributes(.plot)$details$fun_formals <-
                             formals(.env$info$TS_info$TS_data$fun)
     ##  Return the result to the workflow.
