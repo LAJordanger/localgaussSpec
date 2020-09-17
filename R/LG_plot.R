@@ -28,6 +28,10 @@ LG_plot <- function(..env,
     if (look_up$heatmap) {
         return(LG_plot_heatmap(..env, look_up))
     }
+    ##  Return a complex-type plot when that is desired.
+    if (look_up$complex) {
+        return(LG_plot_complex(..env, look_up))
+    }
     ##  Still running? Then an ordinary plot of lags or spectra should
     ##  be created.  Start with a few shortcuts to make the code later
     ##  on a bit more compact.
@@ -94,11 +98,11 @@ LG_plot <- function(..env,
         ##  Add the title when relevant
         if (curlicues$title$include) {
             .result  <- .result +
-                ggplot2::ggtitle(label = curlicues$title$label) +
-                ggplot2::theme(plot.title = eval(create_call(
-                                   .cc_fun = "element_text",
-                                   curlicues$title$element_text,
-                                   .cc_list = TRUE)))
+                ggtitle(label = curlicues$title$label) +
+                theme(plot.title = eval(create_call(
+                          .cc_fun = "element_text",
+                          curlicues$title$element_text,
+                          .cc_list = TRUE)))
         }
         ##  Add 'details' and 'curlicues' as attributes.
         attributes(.result)$details <- look_up$details
@@ -231,11 +235,11 @@ LG_plot <- function(..env,
     ##  Add the title when relevant
     if (curlicues$title$include) {
         .result  <- .result +
-            ggplot2::ggtitle(label = curlicues$title$label) +
-            ggplot2::theme(plot.title = eval(create_call(
-                               .cc_fun = "element_text",
-                               curlicues$title$element_text,
-                               .cc_list = TRUE)))
+            ggtitle(label = curlicues$title$label) +
+            theme(plot.title = eval(create_call(
+                      .cc_fun = "element_text",
+                      curlicues$title$element_text,
+                      .cc_list = TRUE)))
     }
     ##  Add 'details' and 'curlicues' as attributes.
     attributes(.result)$details <- look_up$details

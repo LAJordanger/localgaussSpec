@@ -9,37 +9,30 @@
 #' @param look_up The environment containing the details needed for
 #'     the investigation.
 #'
-#' @param .selection Specifies the type of plot to be used.  The value
-#'     should be one of \code{c("polar", "Cartesian", "zoom")}.  (This
-#'     should be a temporary argument, since it later on should be
-#'     defined as a part of the shiny-interface, and thus occur in the
-#'     \code{look_up}-environment.)
-#'
-#' @return A plot is returned to the workflow.
+#' @return A plot is returned to the workflow.  This plot shows the
+#'     complex-valued estimates of the local Gaussian spectra for the
+#'     given combination of frequency, point, truncation level and
+#'     bandwidth.  The resulting (loud of )points can be presented in
+#'     a zoomed in version, or they can be inspected in a zoomed out
+#'     version with confidence intervals that can be based either on a
+#'     Cartesian or polar representation of the complex numbers.
 #'
 #' @keywords internal
 
 LG_plot_complex <- function(..env,
-                            look_up,
-                            .selection = c("polar", "Cartesian", "zoom")) {
+                            look_up) {
     ##  Restrict attention to the cases having complex-valued data.
     if (! any(look_up$is_cross_pair,
               all(look_up$is_off_diagonal,
                   look_up$is_auto_pair)))
         return("We need complex-valued data for this plot to be created")
-    ##  Restrict to default value for '.selection'.
-    .selection <- .selection[1]
     ##  Extract the desired chunk of data.
     .data <- ..env[[look_up$cache$spectra_local]][[look_up$.bm_CI_local_spectra]]
     ##  For this plot, we want (for a given point) to loop over the
     ##  frequency omega, so we need to restrict with that in mind.
-    #####
-    ##  Reminder: Remove the line below when the shiny-interface has
-    ##  been updated, and this is taken care of in 'LG_lookup'.
-    look_up$omega_complex_investigation <- dimnames(.data)$omega[15]
     .restrict_list <- list(
         levels = look_up$levels_point,
-        omega = look_up$omega_complex_investigation)
+        omega = as.character(look_up$complex_frequency))
     .data2 <- restrict_array(
         .arr = .data,
         .restrict = .restrict_list,
@@ -63,96 +56,102 @@ LG_plot_complex <- function(..env,
         .arr = .data2,
         .restrict = list(S_type = "phase")))
     kill(.data2)
-    ##  We will need limits for a rectangular plot, since a circle
-    ##  will be added.  Reminder: If a plot is to be dynamic with
-    ##  regard to the lag-dimension, then '..limits' should also take
-    ##  that dimension into account.
-    ..limits <- c(-1, 1) * max(.amplitude)
+    ##  Create the basic plot for the complex valued local Gaussian
+    ##  spectral densities at the given combination of truncation
+    ##  level, point and frequency
+    .plot <- ggplot(
+        data = points_df,
+        mapping = aes(x = x,
+                      y = y)) +
+        geom_point(
+            size = .3,
+            alpha = 0.25,
+            na.rm = TRUE) +
+        coord_fixed() +
+        theme(axis.title.x = element_blank(),
+              axis.title.y = element_blank())
     ##  We need a minor helper function for the creation of imaginary
     ##  units on the second axis of the plot.
     ..imaginary <- function(x)
         paste(x, "i", sep = "")
-    ##  Create a basic rectangular plot for the complex valued local
-    ##  Gaussian spectral densities at the given combination of
-    ##  truncation level, point and frequency (including information
-    ##  about the numerical convergence).
-    .lag_omega_info <- paste(
-        gsub(pattern = " = ",
-             replacement = " == ",
-             x =look_up$details$.selected_lag),
-        "~~~omega == ",
-        formatC(x = look_up$omega_complex_investigation,
-                digits = 3),
-        sep = "")
-    .canvas <- ggplot(
-        data = points_df,
-        mapping = aes(x = x,
-                      y = y)) +
-        ggplot2::geom_point(
-            size = 1,
-            alpha = 0.5,
-            na.rm = TRUE) +
-        ggplot2::coord_fixed() +
-        theme(axis.title.x = element_blank(),
-              axis.title.y = element_blank()) +
-        annotate(geom = "text",
-                 x = -Inf,
-                 y = -Inf,
-                 size = 5,
-                 label = look_up$details$text$trust_the_result,
-                 col = ifelse(
-                     test = attributes(look_up$details$text$trust_the_result)$convergence,
-                     yes  = "darkgreen",
-                     no   = "red"),
-                 vjust = -.5,
-                 hjust = -0.1) + 
-        annotate(geom = "text",
-                 x = Inf,
-                 y = Inf,
-                 size = 5,
-                 label = look_up$details$.selected_percentile,
-                 col = "brown",
-                 vjust = 1,
-                 hjust = 1) + 
-        annotate(geom = "text",
-                 x = -Inf,
-                 y = Inf,
-                 size = 5,
-                 label = .lag_omega_info,
-                 parse = TRUE,
-                 col = "brown",
-                 vjust = 1,
-                 hjust = -0.1)
-    kill(.lag_omega_info)
-    ##  When required, return the zoom version.
-    if (.selection == "zoom") {
-        .canvas_zoom <- .canvas +
-            ggplot2::scale_y_continuous(
+    ##  Get hold of the quoted annotated values, and update them to
+    ##  suit the present case of investigation.
+    .annotated <- look_up$curlicues$text$annotated
+    ##  The addition of an extra line of information for the Cartesian
+    ##  and polar cases implies that the position of the plot-stamp
+    ##  should be adjusted too.  This requires an adjustment in the
+    ##  first component of the 'vjust'-part of '.annotated'.
+    .annotated$vjust[1]  <- 1.5 * .annotated$vjust[1]
+    ##  Reduce the text-size to half of the original.  Reminder: This
+    ##  is a quick-fix that should be resolved in some other way.
+    .annotated$size <- 0.5 * .annotated$size
+    ##  It is also necessary to adjust the x-position of the
+    ##  annotations, and the updates depends in this case on whether
+    ##  or not a zoomed version of the plot is investigated.  The key
+    ##  idea is that all the plots should be quadratic and having
+    ##  fixed coordinates.  The quadratic requirement is due for the
+    ##  need for circles to be added for the polar case.
+    if (look_up$complex_c_or_p_or_z == "z")  {
+        ##  The zoom case: Find the limits and use them to update the
+        ##  x-values of the annotations.
+        ..range <- max(diff(range(points_df$x)),
+                       diff(range(points_df$y)))
+        ..x_limit <- mean(points_df$x) +
+            c(-1, 1) * 0.5 * ..range
+        ..y_limit <- mean(points_df$y) +
+            c(-1, 1) * 0.5 * ..range
+        .annotated$x <- local({
+            .scaling <-
+                (.annotated$x - min(.annotated$x)) / diff(range(.annotated$x))
+            ..x_limit[1] + .scaling * diff(..x_limit)
+        })
+        ##  Adjust the limits of '.plot' and add imaginary units on
+        ##  the second axis.
+        .plot <- .plot   +
+            scale_x_continuous(
+                limits = ..x_limit) +
+            scale_y_continuous(
+                limits = ..y_limit,
                 labels = ..imaginary)
-        return(.canvas_zoom)
+        kill(.range, ..x_limit, ..y_limit)
+    } else {
+        ##  The Cartesian and polar cases: Find the limits and use
+        ##  them to update the x-values of the annotations.
+        ..limits <-
+            if (look_up$complex_c_or_p_or_z == "z") {
+                range(points_df$x) 
+            } else {
+                c(-1, 1) * max(.amplitude)
+            }
+        .annotated$x <- local({
+            .scaling <-
+                (.annotated$x - min(.annotated$x)) / diff(range(.annotated$x))
+            ..limits[1] + .scaling * diff(..limits)
+        })
+        ##  Adjust the limits of '.plot' and add imaginary units on
+        ##  the second axis.  In addition, add lines to represent the
+        ##  x- and y-axes.
+        .plot <- .plot +
+            scale_x_continuous(
+                limits = ..limits) +
+            scale_y_continuous(
+                limits = ..limits, labels = ..imaginary) +
+            geom_hline(
+                yintercept = 0,
+                col = "black",
+                alpha = 0.25,
+                size = .5) +
+            geom_vline(
+                xintercept = 0,
+                col = "black",
+                alpha = 0.25,
+                size = .5)
+        kill (..limits)
     }
-    ##  Update '.canvas' with new limits (with complex valued y-axis),
-    ##  and add coordinate-axes.
-    .canvas <- .canvas +
-        ggplot2::scale_x_continuous(
-            limits = ..limits) +
-        ggplot2::scale_y_continuous(
-            limits = ..limits,
-            labels = ..imaginary) +
-        geom_hline(
-            yintercept = 0,
-            col = "black",
-            alpha = 0.25,
-            size = .75) +
-        geom_vline(
-            xintercept = 0,
-            col = "black",
-            alpha = 0.25,
-            size = .75)
-    kill(..limits, ..imaginary)
-    ##  We want to add lines (for the selected confidence interval)
-    ##  based on the median/quantiles of the different
-    ##  spectral-values.
+    kill(..imaginary)
+    ##  Find the probabilities that should be used in order to decide
+    ## upon the lines/circles that will indicate the mean and the
+    ## confidence intervals for the Cartesian and polar cases.
     .probs <- local({
         if (look_up$details$CI_percentage == "min_max") {
             c(0, 0.5, 1)
@@ -163,24 +162,19 @@ LG_plot_complex <- function(..env,
             c(.lower, 0.5, .upper)
         }
     })
-    ..x_lines <- quantile(x = points_df$x,
-                          probs = .probs)
-    ..y_lines <- quantile(x = points_df$y,
-                          probs = .probs)
-    ..radii <- quantile(x = .amplitude,
-                        probs = .probs)
-    ..phases <- quantile(x = .phase,
-                         probs = .probs)
-    kill(points_df, .probs, .phase)
     ##  Specify the type, size, colour and alpha-values to be used for
-    ##  these lines.
+    ##  these lines/circles.
     .line_type <- c(3, 2, 3)
     .line_size <- 0.3
     .line_col <- c("blue", "red", "blue")
     .line_alpha <- 0.5
-    ##  When required, return the Cartesion version.
-    if (.selection == "Cartesian") {
-        .canvas_Cartesian <- .canvas +
+    ##  Add the confidence lines for the Cartesian case.
+    if (look_up$complex_c_or_p_or_z == "c")  {
+        ..x_lines <- quantile(x = points_df$x,
+                              probs = .probs)
+        ..y_lines <- quantile(x = points_df$y,
+                              probs = .probs)
+        .plot <- .plot +
             geom_vline(
                 xintercept = ..x_lines,
                 linetype = .line_type,
@@ -192,24 +186,15 @@ LG_plot_complex <- function(..env,
                 linetype = .line_type,
                 col = .line_col,
                 size = .line_size,
-                alpha = .line_alpha) +
-            annotate(
-                geom = "text",
-                x = - Inf,
-                y = Inf,
-                label = paste(
-                    "\"Cartesian, \"",
-                    "z == x + i*y",
-                    sep = "*"),
-                col = "brown",
-                parse = TRUE,
-                hjust = -0.1,
-                vjust = 2,
-                size = 5)
-        return(.canvas_Cartesian)
+                alpha = .line_alpha)
+        kill(..x_lines, ..y_lines)
     }
-    ##  When required, return the Polar version.
-    if (.selection == "polar") {
+    ##  Add the confidence lines/circles for the polar case.
+    if (look_up$complex_c_or_p_or_z == "p")  {
+        ..radii <- quantile(x = .amplitude,
+                            probs = .probs)
+        ..phases <- quantile(x = .phase,
+                             probs = .probs)
         ..frequencies <-
             seq(from = 0,
                 to = 2 * pi,
@@ -218,10 +203,8 @@ LG_plot_complex <- function(..env,
             seq(from = 0,
                 to = 2 * max(.amplitude),
                 length.out = 200)
-        kill(.amplitude)
-        .canvas_polar <- .canvas
         for (.i in seq_along(..radii)) {
-            .canvas_polar <- .canvas_polar +
+            .plot <- .plot +
                 annotate(
                     geom = "path",
                     x = ..radii[.i] * cos(..frequencies),
@@ -241,22 +224,13 @@ LG_plot_complex <- function(..env,
                     alpha = .line_alpha,
                     na.rm = TRUE)
         }
-        kill(.i, ..amplitude, ..frequencies, ..phases, ..radii,
-             .line_alpha, .line_size, .line_col, .line_type, .canvas)
-        .canvas_polar <- .canvas_polar +
-            annotate(
-                geom = "text",
-                x = -Inf,
-                y = Inf,
-                label = paste(
-                    "\"Polar, \"",
-                    "z == re^{i*theta}",
-                    sep = "*"),
-                col = "brown",
-                parse = TRUE,
-                hjust = -0.2,
-                vjust = 2,
-                size = 5)
-        return(.canvas_polar)
+        kill(.i, ..frequencies, ..phases, ..radii)
     }
+    kill(points_df, .probs, .amplitude, .phase,
+         .line_alpha, .line_size, .line_col, .line_type)
+    ##  Add the annotations to the plot.
+    .plot <- .plot +
+        eval(.annotated)
+    ##  Return the annotated plot to the workflow
+    .plot
 }

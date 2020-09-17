@@ -342,9 +342,9 @@ LG_plot_heatmap <- function(..env, look_up) {
             ylim(.ylim)
     } else {
         .plot <- .plot +
-            ggplot2::scale_y_continuous(
-                         limits = .ylim,
-                         labels = scales::percent)
+            scale_y_continuous(
+                limits = .ylim,
+                labels = scales::percent)
     }
     ##  Add contour lines for the spectra case, but only when no
     ##  NA-values where added.  Perhaps also do this conditional on

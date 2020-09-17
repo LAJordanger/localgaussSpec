@@ -90,8 +90,10 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
         .exponent_or_not,
         .h_or_omega,
         .L_sub)
-    ##  We are done if the inspection is of the correlations.
-    if (look_up$TCS_type == "C")
+    ##  We are done if the inspection is of the correlations, or if it
+    ##  is an investigation of the complex-valued presentation.
+    if (any(look_up$TCS_type == "C",
+            look_up$complex))
         return(.label)
     ##  Still running? Then check if it is necessary to add some
     ##  additional stuff, in which case the distance investigation

@@ -4,8 +4,7 @@
 \alias{LG_plot_complex}
 \title{Complex-valued-plots for the local Gaussian spectra}
 \usage{
-LG_plot_complex(..env, look_up, .selection = c("polar", "Cartesian",
-  "zoom"))
+LG_plot_complex(..env, look_up)
 }
 \arguments{
 \item{..env}{The environment containing the desired information
@@ -13,15 +12,15 @@ from which the data should be extracted}
 
 \item{look_up}{The environment containing the details needed for
 the investigation.}
-
-\item{.selection}{Specifies the type of plot to be used.  The value
-should be one of \code{c("polar", "Cartesian", "zoom")}.  (This
-should be a temporary argument, since it later on should be
-defined as a part of the shiny-interface, and thus occur in the
-\code{look_up}-environment.)}
 }
 \value{
-A plot is returned to the workflow.
+A plot is returned to the workflow.  This plot shows the
+    complex-valued estimates of the local Gaussian spectra for the
+    given combination of frequency, point, truncation level and
+    bandwidth.  The resulting (loud of )points can be presented in
+    a zoomed in version, or they can be inspected in a zoomed out
+    version with confidence intervals that can be based either on a
+    Cartesian or polar representation of the complex numbers.
 }
 \description{
 This internal function plots the complex-valued

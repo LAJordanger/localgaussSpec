@@ -32,6 +32,10 @@ LG_lookup_curlicues <- function(look_up) {
     ##  Compute the 'include'-nodes of the different labels.
     CSC$plot_stamp$include <- {look_up$TCS_type %in% c("C", "S")}
     CSC$NC_value$include <- {look_up$global_local == "local"}
+    CSC$complex_Cartesian$include <- all(look_up$complex,
+                                         look_up$complex_c_or_p_or_z == "c")
+    CSC$complex_polar$include <- all(look_up$complex,
+                                     look_up$complex_c_or_p_or_z == "p")
     CSC$n_R_L_values$include <- TRUE
     CSC$m_value$include  <- {look_up$TCS_type == "S"}
     CSC$v_value$include  <- look_up$is_local
@@ -143,7 +147,30 @@ LG_lookup_curlicues <- function(look_up) {
         CSC$m_value$annotate  <-  list(
             x = xlim[1],
             label = sprintf("m == '%s'",
-                            as.numeric(look_up$m_selected)))
+                            look_up$m_selected))
+        ##  The frequency of inspection should be included too when a
+        ##  complex-valued inspection is performed.  The inclusion of
+        ##  the user defined number of digits requires some tweaking.
+        if (look_up$complex) {
+            CSC$m_value$annotate$label <- local({
+                .tmp <- sprintf(
+                    "list(m == '%%s', omega == '%%.%sf')",
+                    look_up$complex_frequency_print_digits)
+                sprintf(.tmp,
+                        look_up$m_selected,
+                        look_up$complex_frequency)
+            })
+        }
+    }
+    if (CSC$complex_Cartesian$include) {
+        CSC$complex_Cartesian$annotate  <-  list(
+            x = xlim[1],
+            label = "'Cartesian, '*z == x + i*y")
+    }
+    if (CSC$complex_polar$include) {
+        CSC$complex_polar$annotate  <-  list(
+            x = xlim[1],
+            label = "'Polar, '*z == re^{i*theta}")
     }
     if (CSC$v_value$include) {
         CSC$v_value$annotate = list(

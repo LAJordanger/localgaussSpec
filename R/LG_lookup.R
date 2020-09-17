@@ -92,6 +92,10 @@ LG_lookup <- function(input,
 
     if (is.null(look_up$spectra_f_or_F))
         look_up$spectra_f_or_F <- "f" # "F"
+    if (is.null(look_up$complex))
+        look_up$complex <- FALSE
+    if (is.null(look_up$complex_c_or_p_or_z))
+        look_up$complex_c_or_p_or_z <- "c" # "p" "z"
     if (is.null(look_up$heatmap))
         look_up$heatmap <- FALSE
     if (is.null(look_up$heatmap_b_or_v))
@@ -158,18 +162,33 @@ LG_lookup <- function(input,
                yes  = "Co",
                no   = .key)
     })
-    ##  Create vectors needed for the investigation of the local
-    ##  Gaussian spectra, i.e. compute the frequency vector based on
-    ##  the 'input'-values, and extract information about the lags.
-    ##  The length out argument might later on be something that
-    ##  should be possible to fine-tune by a user, but for the time
-    ##  being it is selected based on the 'heatmap'-value.
-    look_up$omega_vec <- seq(from = input$frequency_range[1],
-                             to   = input$frequency_range[2],
-                             length.out = ifelse(
-                                 test = look_up$heatmap,
-                                 yes  = 200,
-                                 no   = 64))
+    ##  Adjust the 'frequency_range' when a complex-valued plot is
+    ##  desired in the non-interactive setting.
+    if (look_up$non_interactive) {
+        look_up$frequency_range <-
+            look_up$complex_frequency + c(0, 0.01)
+    }
+    ##  Specify different lengths to be used for the vector of
+    ##  frequencies.  This should be open for adjustment by the user
+    ##  in the non-interactive setting.
+    look_up$frequency_vector_length <- local({
+        if (look_up$heatmap)
+            return(200)
+        if (look_up$non_interactive) {
+            if (look_up$complex) {
+                2
+            } else {
+                128
+            }
+        } else {
+            64
+        }
+    })
+    ##  Create the frequency vector.
+    look_up$omega_vec <- seq(
+        from = look_up$frequency_range[1],
+        to   = look_up$frequency_range[2],
+        length.out = look_up$frequency_vector_length)
     ##  The lag-vector should include all available values in the
     ##  interactive setting, but only the ones of interest for the
     ##  specified plot in the non-interactive setting.

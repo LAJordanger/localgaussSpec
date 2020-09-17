@@ -85,10 +85,11 @@
 #' @importFrom abind abind adrop
 #' @importFrom foreach %do% %dopar% foreach getDoParWorkers
 #' @importFrom digest digest
-#' @importFrom ggplot2 ggplot coord_cartesian labs geom_line
-#'     geom_hline geom_vline geom_boxplot geom_contour geom_tile
-#'     geom_ribbon aes annotate theme cut_width element_blank xlab
-#'     ylab scale_fill_gradient2 element_text ggtitle ylim rel
+#' @importFrom ggplot2 ggplot coord_cartesian coord_fixed labs
+#'     geom_line geom_hline geom_vline geom_boxplot geom_contour
+#'     geom_point geom_tile geom_ribbon aes annotate theme cut_width
+#'     element_blank xlab ylab scale_fill_gradient2 element_text
+#'     ggtitle ylim rel scale_y_continuous scale_x_continuous
 #' @importFrom graphics plot
 #' @importFrom leanRcoding add_arrays append_dimensions
 #'     compare_spy_reports create_call dimnames_intersect
