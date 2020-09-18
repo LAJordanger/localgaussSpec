@@ -164,7 +164,8 @@ LG_lookup <- function(input,
     })
     ##  Adjust the 'frequency_range' when a complex-valued plot is
     ##  desired in the non-interactive setting.
-    if (look_up$non_interactive) {
+    if (all(look_up$non_interactive,
+            look_up$complex)) {
         look_up$frequency_range <-
             look_up$complex_frequency + c(0, 0.01)
     }
