@@ -125,7 +125,7 @@ heatmap_plot <- heatmap_plot +
 ##  Code only relevant for the trigonometric examples: Extract
 ##  information about the frequencies from the info-file.
 
-alpha <- attributes(..plot[[1]])$details$fun_formals$alpha
+alpha <- attributes(heatmap_plot)$details$fun_formals$alpha
 
 ##  Add the alpha-value (frequencies) as vertical lines
 heatmap_plot <- heatmap_plot +
@@ -134,7 +134,7 @@ heatmap_plot <- heatmap_plot +
         lty = 2,
         size = 0.2,
         alpha = .5)
-rm(info_TS, alpha)
+rm(alpha)
 ##  End of part specific for the local trigonometric examples.
 ##--------------------------------------------------------------------
 
