@@ -39,7 +39,7 @@
 
 #####------------------------------------------------------------#####
 
-##  Specify the packaces required for this script.
+##  Specify the packages required for this script.
 
 library(localgaussSpec)
 library(ggplot2)
