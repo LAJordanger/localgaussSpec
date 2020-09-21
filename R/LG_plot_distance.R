@@ -130,19 +130,18 @@ LG_plot_distance <- function(..env, look_up) {
                                   collapse = ", ")))
                 kill(.problems)
             }
-            ##  Skip if no valid levels are present.
-            if (!any(.OK_levels))
-                next
-            ##  Add the points, and ensure to include specifications
-            ##  given to the curlicues-list.
+            ##  Add the points (when possible), and ensure to include
+            ##  specifications given to the curlicues-list.
             .point_details <- look_up$curlicues$distance_plot
-            .point_details$add_points_at_levels <- NULL
-            .point_details$geom  <- "point"
-            .point_details$x <- .levels
-            .point_details$y <- .df$value[which(.df$levels %in% .levels)]
-            distance_plot <-
-                distance_plot +
-                do.call(what = "annotate", args = .point_details)
+            if (any(.OK_levels)) {
+                .point_details$add_points_at_levels <- NULL
+                .point_details$geom  <- "point"
+                .point_details$x <- .levels
+                .point_details$y <- .df$value[which(.df$levels %in% .levels)]
+                distance_plot <-
+                    distance_plot +
+                    do.call(what = "annotate", args = .point_details)
+            }
             rm(.levels, .point_details)
         }
         ##  Add information about the value of the global norm.
