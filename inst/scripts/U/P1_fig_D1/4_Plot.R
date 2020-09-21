@@ -26,17 +26,9 @@
 ##  '..TS'-value in this script by the one created by the
 ##  data-generating script.
 
-###----------------------------------------------------------------###
-
-##  WARNING: The distance-part of this script contains solutions based
-##  on internal code from the 'localgaussSpec'-package.  This implies
-##  that it almost certainly will have to be updated at some point.
-##  The plan is to implement a proper function for this task, and the
-##  mess in this script will then be replaced with proper code.
-
 #####------------------------------------------------------------#####
 
-##  Specify the packaces required for this script.
+##  Specify the packages required for this script.
 
 library(localgaussSpec)
 library(ggplot2)
@@ -85,6 +77,7 @@ input <- list(TCS_type = "S",
               heatmap_b_or_v = "v",
               spectra_f_or_F = "f",
               drop_annotation = TRUE)
+rm(..Approx)
 
 #####------------------------------------------------------------#####
 #####------------------------------------------------------------#####
@@ -152,189 +145,11 @@ heatmap_plot <-
           axis.ticks.length = unit(.06, "cm"),
           axis.text = element_text(size = 6))
 
-##  The annotations must be added back to the plot, but it is better
-##  to deal with that part when the other plot also has been created.
-
-
-#####------------------------------------------------------------#####
-#####------------------------------------------------------------#####
-#####------------------------------------------------------------#####
-
-##  This part deals with the distance-based plot.  Note that it is a
-##  bit messy for the time being.  A latter iteration of the package
-##  will contain a function that internalises this.
-
-##  Strategy: Extract the data.
-
-.extracted <- localgaussSpec:::LG_plot_helper_extract_data_only(
-        main_dir = ..main_dir,
-        input = input,
-        input_curlicues = list(
-            x.label_low_high = c(0, 1),
-            NC_value = list(short_or_long_label = "short")))
-
-##  Get hold of some internal details.
-
-.env <- .extracted$..env
-.env$look_up <- .extracted$look_up
-look_up <- .env$look_up
-rm(.extracted)
-
-##  Extract the details related to the annotation of the plot.
-
-annotate_norm <- look_up$curlicues$text
-
-##--------------------------------------------------------------------
-## ##  Use the norm-function to compute the different norms and
-## ##  distances.
-## .L2_norm <- localgaussSpec:::LG_spectrum_norm(
-##         C1_env = .env,
-##         W1 = localgaussSpec:::myWindows[[look_up$window]](.cut = look_up$cut))
-## ##  REMINDER: This is not used yet in the script below, it is included
-## ##  here as a placeholder for the time when it is due to adjust this mess.
-##--------------------------------------------------------------------
-
-##  Extract the correlations of interest, with a restriction to one of
-##  the points of interest.  OBS: The package 'leanRcoding' lives on
-##  github, but it is installed when localgaussSpec is installed.
-
-..lag_values <- names(.env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
-..restrict <- list(variable = "rho",
-                   bw_points = look_up$bw_points,
-                   lag = ..lag_values)
-.data <- leanRcoding::restrict_array(
-    .arr = .env[["LGC_array_local"]]$on_diag,
-    .restrict = ..restrict,
-    .drop = TRUE,
-    .never_drop = c("lag", "bw_points"))
-.global_data <- leanRcoding::restrict_array(
-    .arr = .env[["LGC_array_global"]],
-    .restrict = list(TS = "TS_for_analysis",
-                     lag = ..lag_values),
-    .drop = TRUE,
-    .never_drop = c("lag", "content"))
-rm(..lag_values, ..restrict)
-
-## Compute the product of the correlations with the weights.
-
-.weighted_data <- leanRcoding::multiply_arrays(
-    .arr1 = .data,
-    .arr2 = .env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
-.global_weighted_data <- leanRcoding::multiply_arrays(
-    .arr1 = .global_data,
-    .arr2 = .env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
-
-##  Next: Compute the norms.  In this "on_diagonal"-case for local
-##  Gaussian autocorrelations, the squared norms are obtained by
-##  squaring the '.weighted_data', summing over the lags,
-##  multiplying with 2 (due to folding) and add 1 (to include the
-##  lag-zero-term).  Take the square root to get the norms.
-
-.the_norms <- sqrt(
-    1 + 2 * leanRcoding::my_apply(
-                X = .weighted_data^2,
-                MARGIN = "levels",
-                FUN = sum))
-.the_global_norm <- sqrt(
-    1 + 2 * leanRcoding::my_apply(
-                X = .global_weighted_data^2,
-                MARGIN = "content",
-                FUN = sum))
-
-##  Need to adjust the dimension-names for '.the_norms', i.e. we want
-##  to have them replaced with the percentages they correspond to.
-##  Recycling som code from 'LG_plot_heatmap'.
-
-.quantile_levels <- vapply(
-    X = strsplit(x = dimnames(.the_norms)$levels, 
-                 split = "_"), FUN = function(..x) pnorm(as.numeric(..x[1])), 
-    FUN.VALUE = numeric(1))
-dimnames(.the_norms)$levels <- .quantile_levels
-rm(.quantile_levels)
-
-##  Create the data-frame needed for the plot.
-
-.df <- reshape2::melt(data = .the_norms)
-
-##  Specify stuff to be included in the plot.
-
-distance_plot_title <- sprintf("Percentiles vs. norm for the m=%s local Gaussian autospectrum",
-                       look_up$m_selected)
-.aes_mapping <- aes(x = levels,
-                    y = value)
-.xlab_expression <- "v = diagonal point/percentage"
-.ylab_expression <- ""
-
-##  Create the plot.
-
-distance_plot <- ggplot(data=.df,
-                mapping = .aes_mapping) +
-    geom_line(size = 0.1,
-              colour = "brown") +    
-    ##  Adjust legend and labels.
-    labs(fill = NULL) +
-    xlab(.xlab_expression) +
-    ylab(.ylab_expression) +
-    ##  Add the title
-    ggtitle(label = distance_plot_title) +
-    theme(plot.title = element_text(hjust = 0.5,
-                                    vjust = 0,
-                                    size = 8,
-                                    colour = "brown")) +
-    ##  Adjust the x-axis.  The values will in this case always be
-    ##  percentiles between 0 and 1
-    ggplot2::scale_x_continuous(
-                 limits = c(0,1),
-                 labels = scales::percent)
-
-###  Add points that shows the 'v'-values used in most of the plots of
-###  the local Gaussian spectral densities.
-
-.levels <- c(0.10, 0.50, 0.90)
-distance_plot <-
-    distance_plot +
-    annotate(geom = "point",
-             x = .levels,
-             y = .df$value[which(.df$levels %in% .levels)],
-             size = .7,
-             shape = 1,
-             colour = "blue")
-rm(.levels)
-
-##  Add information about the value of the global norm.
-
-.global_label <- sprintf("D*(f^'%s'*(omega)) == '%s'",
-                         look_up$m_selected,
-                         .the_global_norm)
-
-distance_plot <- distance_plot +
-    ##  Add a line for the norm of the global spectrum.
-    geom_hline(yintercept = .the_global_norm,
-               size = 0.1,
-               colour = "red",
-               lty = 1)  +
-    ##  Add the label with the value.
-    annotate(
-        geom = "text",
-        x = 0,
-        y = .the_global_norm,
-        size = 2,
-        label = .global_label,
-        col = "red",
-        vjust = -0.3,
-        hjust = "inward",
-        parse = TRUE)
-
-#####------------------------------------------------------------#####
-#####------------------------------------------------------------#####
-#####------------------------------------------------------------#####
-
-##  It is time to add the annotations to the plot.  This requires a
-##  bit of tweaking of the details since the result should look
-##  reasonable when the plots are included in a grid and then saved to
-##  file.  Note that it is the saved file that should be inspected in
-##  order to figure out if the tweaking has produced a reasonable
-##  result.
+##  Add the annotations to the plot.  This requires a bit of tweaking
+##  of the details since the result should look reasonable when the
+##  plots are included in a grid and then saved to file.  Note that it
+##  is the saved file that should be inspected in order to figure out
+##  if the tweaking has produced a reasonable result.
 
 ## Tweak the position of the plot stamp.
 
@@ -348,42 +163,42 @@ annotate_heatmap$annotated$vjust[1] <- 2 * annotate_heatmap$annotated$vjust[1]
 annotate_heatmap$annotated$size <- 
     .scale * annotate_heatmap$annotated$size
 
-annotate_norm$annotated$size <- 
-    .scale * annotate_norm$annotated$size
-
 heatmap_plot <-
     heatmap_plot +
     eval(annotate_heatmap$annotated)
+rm(.scale, annotate_heatmap)
 
-##  Adjust the stamp for the distance-based plot.
+#####------------------------------------------------------------#####
+#####------------------------------------------------------------#####
+#####------------------------------------------------------------#####
 
-annotate_norm$annotated$label[1] <-
-    sprintf("D*(%s)",
-            annotate_norm$annotated$label[1])
+##  This part deals with the distance-based plot.  Note: The present
+##  incarnation of the code primarily aims at removing internal
+##  function from the scripts, and it is thus not possible to tweak
+##  the annotations of this plot in the same manner used for the
+##  heatmap-plot.
 
-distance_plot <-
-    distance_plot +
-    eval(annotate_norm$annotated)
+input$heatmap <- NULL
+input$heatmap_b_or_v <- NULL
 
-##  Adjust details related to the axis ticks/text, and also adjust the
-##  way the axis-labels are given.
+input$distance_plot <- TRUE
+input$distance_plot_b_v_m_L <- "v"
 
-size_v <- annotate_norm$annotated_df["NC_value", "size"] * .scale
-v_just_v <- annotate_norm$annotated_df["NC_value", "vjust"]
-
-distance_plot <- distance_plot +
-    annotate(geom = "text",
-             label = "v",
-             parse = TRUE,
-             x = Inf,
-             y = -Inf,
-             size = size_v,
-             hjust = "inward",
-             vjust = v_just_v) + 
-        xlab(label = NULL) +
-        theme(axis.ticks = element_line(size = 0.3),
-              axis.ticks.length = unit(.06, "cm"),
-              axis.text = element_text(size = 6))
+distance_plot <- LG_plot_helper(
+    main_dir = ..main_dir, 
+    input = input,
+    input_curlicues = list(
+        NC_value = list(short_or_long_label = "short"),
+        limits = list(xlim = c(0, 1)),
+        distance_plot = list(
+            add_points_at_levels = c(0.10, 0.50, 0.90),
+            size = .7,
+            shape = 1,
+            colour = "blue")))  +
+    theme(axis.ticks = element_line(size = 0.3),
+          axis.ticks.length = unit(.06, "cm"),
+          axis.text = element_text(size = 6))
+rm(input)
 
 #####------------------------------------------------------------#####
 #####------------------------------------------------------------#####
@@ -426,6 +241,7 @@ print(distance_plot,
           layout.pos.col = 1:2))
 
 dev.off()
+rm(.x, .y, .z, .heatmap.pos.row, .distance.pos.row)
 
 ##  Crop the resulting file.  This code works on a Linux-based OS, and
 ##  it requires that 'pdfcrop' has been installed on the system.
