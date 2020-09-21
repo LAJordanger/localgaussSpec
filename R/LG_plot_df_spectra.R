@@ -169,6 +169,10 @@ LG_plot_df_spectra  <- function(look_up,
         kill(.result, .node, .dn, .corr)
     }
     kill(local_name)
+    ##  End here if it is the distance-based plot that is to be
+    ##  investigated.
+    if (look_up$distance_plot)
+        return(invisible(NULL))
     ##  Compute the collections of estimated spectra (for different
     ##  lags) given the selected lag-window function.
     if (!exists(x = cache$spectra_local, envir = ..env)) {

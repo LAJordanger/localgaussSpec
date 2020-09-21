@@ -100,6 +100,10 @@ LG_lookup <- function(input,
         look_up$heatmap <- FALSE
     if (is.null(look_up$heatmap_b_or_v))
         look_up$heatmap_b_or_v <- "b" # "v"
+    if (is.null(look_up$distance_plot))
+        look_up$distance_plot <- FALSE
+    if (is.null(look_up$distance_plot_b_v_m_L))
+        look_up$distance_plot_b_v_m_L <- "b" # "v" "m" "L"
     if (is.null(look_up$L2_distance_normal))
         look_up$L2_distance_normal <- FALSE
     if (is.null(look_up$L2_distance_percentages))

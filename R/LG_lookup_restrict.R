@@ -49,12 +49,27 @@ LG_lookup_restrict <- function (look_up = look_up) {
     restrict$initial$global <- function(.node) {
         list(TS = .node)
     }
+    ##  An error-message to be used until the plot-functionality from
+    ##  the scripts has been implemented into this package.
+    if (all(look_up$distance_plot,
+            look_up$distance_plot_b_v_m_L %in% c("m", "L"))) {
+        error("The distance-plots for the m- and L-castes are not yet implemented...")
+    }
     restrict$initial$local <- function(.node) {
         c(if (look_up$heatmap) {
               if (look_up$heatmap_b_or_v == "b") {
                   .template$point_both
               } else {
                   .template$bw_points
+              }
+          },
+          if (look_up$distance_plot) {
+              if (look_up$heatmap_b_v_m_L == "b") {
+                  .template$point_both
+              } else {
+                  if (look_up$heatmap_b_v_m_L == "v") {
+                      .template$bw_points
+                  }
               }
           },
           list(variable = "rho"))}
@@ -125,9 +140,10 @@ LG_lookup_restrict <- function (look_up = look_up) {
         },
         list(variable = "rho"))
     ##  Adjust the initial restriction for the non-interactive case
-    ##  for the ordinary spectra (not the heatmaps).
+    ##  for the ordinary spectra (not the heatmap-/distance-plots).
     if (all(look_up$non_interactive,
-            !look_up$heatmap)) {
+            !look_up$heatmap,
+            !look_up$distance_plot)) {
         restrict$S$spectra_summands_local <-
             c(restrict$S$spectra_summands_local,
               .template$point_both,

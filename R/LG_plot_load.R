@@ -126,7 +126,8 @@ LG_plot_load <- function(look_up,
         ##  care of here, and the results are stored in '..env'.
         LG_plot_df_correlation(look_up = look_up, ..env = ..env)
     }
-    if (!look_up$heatmap) {
+    if (!any(look_up$heatmap,
+             look_up$distance_plot)) {
         ##  Add an environment 'plot_data' to '..env', with the
         ##  data-frames needed for the desired plot of correlations
         ##  and spectra.
