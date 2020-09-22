@@ -67,7 +67,7 @@ library(grid)
     Boot_Approx = "Nothing here to select", 
     confidence_interval = "95",
     bw_points = "0.5",
-    cut = 10,
+    cut = 200,
     frequency_range = c(0, 0.5), 
     type = "par_five",
     TS = ..TS,
