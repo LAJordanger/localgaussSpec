@@ -173,7 +173,7 @@ rm(.scale, annotate_heatmap)
 
 ##  This part deals with the distance-based plot.  Note: The present
 ##  incarnation of the code primarily aims at removing internal
-##  function from the scripts, and it is thus not possible to tweak
+##  functions from the scripts, and it is thus not possible to tweak
 ##  the annotations of this plot in the same manner used for the
 ##  heatmap-plot.
 
