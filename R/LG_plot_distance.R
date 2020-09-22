@@ -24,13 +24,21 @@ LG_plot_distance <- function(..env, look_up) {
     ##  return a "missing implementation"-message for other cases.
     if (! look_up$point_type_branch == "on_diag")
         return("Not implemented outside of diagonal")
-    ##  The investigating of varying points along the diagonal.
-    if (look_up$distance_plot_b_v_m_L == "v") {
+    ##  The investigating of the effect of varying the point along the
+    ##  diagonal, or the varying of the bandwidth.
+    if (look_up$distance_plot_b_v_m_L %in% c("b", "v")) {
+        ##  Create a compactified reference.
+        b_or_v <- look_up$distance_plot_b_v_m_L
         ##  Extract the relevant data in this case.
         ..lag_values <- names(..env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
+        ##  Create the restrict list suitable for the present case.
         ..restrict <- list(variable = "rho",
-                           bw_points = look_up$bw_points,
                            lag = ..lag_values)
+        if (b_or_v == "b")
+            ..restrict$levels = look_up$levels_point
+        if (b_or_v == "v")
+            ..restrict$bw_points = look_up$bw_points
+        ##  Extract the relevant data.
         .data <- restrict_array(
             .arr = ..env[["LGC_array_local"]]$on_diag,
             .restrict = ..restrict,
@@ -58,41 +66,58 @@ LG_plot_distance <- function(..env, look_up) {
         .the_norms <- sqrt(
             1 + 2 * my_apply(
                         X = .weighted_data^2,
-                        MARGIN = "levels",
+                        MARGIN = switch(EXPR = b_or_v,
+                                        v = "levels",
+                                        b = "bw_points"),
                         FUN = sum))
         .the_global_norm <- sqrt(
             1 + 2 * my_apply(
                         X = .global_weighted_data^2,
                         MARGIN = "content",
                         FUN = sum))
-        ##  Need to adjust the dimension-names for '.the_norms', i.e. we want
-        ##  to have them replaced with the percentages they correspond to.
-        .quantile_levels <- vapply(
-            X = strsplit(x = dimnames(.the_norms)$levels, 
-                         split = "_"), FUN = function(..x) pnorm(as.numeric(..x[1])), 
-            FUN.VALUE = numeric(1))
-        dimnames(.the_norms)$levels <- .quantile_levels
-        rm(.quantile_levels)
+        ##  The part below is for the v-case, where we want to adjust
+        ##  the dimension-names for '.the_norms' --- i.e. we want to
+        ##  use the percentages the diagonal points correspond to.
+        if (b_or_v == "v") {
+            .quantile_levels <- vapply(
+                X = strsplit(x = dimnames(.the_norms)$levels, 
+                             split = "_"), FUN = function(..x) pnorm(as.numeric(..x[1])), 
+                FUN.VALUE = numeric(1))
+            dimnames(.the_norms)$levels <- .quantile_levels
+            rm(.quantile_levels)
+        }
         ##  Create the data-frame needed for the plot.
         .df <- reshape2::melt(data = .the_norms)
         ##  Specify stuff to be included in the plot.
         distance_plot_title <- sprintf(
-            "Percentiles vs. norm for the m=%s local Gaussian autospectrum",
+            "%s vs. norm for the m=%s local Gaussian autospectrum",
+            switch(EXPR = b_or_v,
+                   b = "Banwidth",
+                   v = "Percentiles"),
             look_up$m_selected)
-        .aes_mapping <- aes(x = levels,
-                            y = value)
-        ##  Specification of the xlimit.  This should normally be
-        ##  percentiles between 0 and 1, but it can also be cases
-        ##  where it is of interest to restrict this.
-        .xlim <- 
+        .aes_mapping <- switch(
+            EXPR = b_or_v,
+            b = aes(x = bw_points, y = value),
+            v = aes(x = levels, y = value))
+        ##  Specification of the xlimit.  For the case with diagonal
+        ##  points, this should normally be percentiles between 0 and
+        ##  1, but it can also be cases where it is of interest to
+        ##  restrict this.  For the bandwidths-case it should in
+        ##  general be based on the available data.
+        .xlim <-
             if (is.null(look_up$curlicues$limits$xlim)) {
-                c(0,1)
+                if (b_or_v == "b") {
+                    c(0, max(.df$bw_points))
+                } else {
+                    c(0,1)
+                }
             } else {
                 look_up$curlicues$limits$xlim
             }
         ##  Create the plot.
-        distance_plot <- ggplot(data=.df,
-                                mapping = .aes_mapping) +
+        distance_plot <-
+            ggplot(data=.df,
+                   mapping = .aes_mapping) +
             geom_line(size = 0.1,
                       colour = "brown") +    
             ##  Remove the labels.
@@ -103,46 +128,90 @@ LG_plot_distance <- function(..env, look_up) {
             theme(plot.title = element_text(hjust = 0.5,
                                             vjust = 0,
                                             size = 8,
-                                            colour = "brown")) +
-            ##  Adjust the x-axis.
-            scale_x_continuous(
-                limits = .xlim,
-                labels = scales::percent)
+                                            colour = "brown"))
+        ##  Adjust the limits, and for the v-case it should be used
+        ##  percentages.
+        distance_plot <-
+            if  (b_or_v == "b") {
+                distance_plot +
+                    scale_x_continuous(limits = .xlim)
+            } else {
+                distance_plot +
+                    scale_x_continuous(limits = .xlim,
+                                       labels = scales::percent)
+            }
         ##  When required, add points that highlights some of the
         ##  'v'-values, i.e. typically those used in the basic plots
         ##  of the local Gaussian spectral densities.
-        if (!is.null(look_up$curlicues$distance_plot$add_points_at_levels)) {
-            .levels <- look_up$curlicues$distance_plot$add_points_at_levels
-            ##  Perform a check that checks if some of the levels
-            ##  might not be included, and return a warning if so.
-            .OK_levels <- .levels %in% .df$levels
-            if (!all(.OK_levels)) {
-                .problems <- .levels[!.OK_levels]
-                warning(
-                    sprintf("%s %s\n%s%s: %s",
-                            "It is only possible to add a point for a level unless",
-                            "when a distance value has been computed for it.",
-                            "Ignoring level",
-                            ifelse(test = {length(.problems) > 1},
-                                   yes  = "s",
-                                   no   = ""),
-                            paste(.problems,
-                                  collapse = ", ")))
-                kill(.problems)
+        if (b_or_v == "v") {
+            if (!is.null(look_up$curlicues$distance_plot$add_points_at_levels)) {
+                .levels <- look_up$curlicues$distance_plot$add_points_at_levels
+                ##  Check if some of the given levels might not be
+                ##  included, and if so return a warning.
+                .OK_levels <- .levels %in% .df$levels
+                if (!all(.OK_levels)) {
+                    .problems <- .levels[!.OK_levels]
+                    warning(
+                        sprintf("%s %s\n%s%s: %s",
+                                "It is only possible to add a point for a level",
+                                "when a distance value has been computed for it.",
+                                "Ignoring level",
+                                ifelse(test = {length(.problems) > 1},
+                                       yes  = "s",
+                                       no   = ""),
+                                paste(.problems,
+                                      collapse = ", ")))
+                    kill(.problems)
+                }
+                ##  Add points (when possible), include specifications
+                ##  given to the curlicues-list.
+                .point_details <- look_up$curlicues$distance_plot
+                if (any(.OK_levels)) {
+                    .point_details$add_points_at_levels <- NULL
+                    .point_details$geom  <- "point"
+                    .point_details$x <- .levels
+                    .point_details$y <- .df$value[which(.df$levels %in% .levels)]
+                    distance_plot <-
+                        distance_plot +
+                        do.call(what = "annotate", args = .point_details)
+                }
+                rm(.levels, .point_details)
             }
-            ##  Add the points (when possible), and ensure to include
-            ##  specifications given to the curlicues-list.
-            .point_details <- look_up$curlicues$distance_plot
-            if (any(.OK_levels)) {
-                .point_details$add_points_at_levels <- NULL
-                .point_details$geom  <- "point"
-                .point_details$x <- .levels
-                .point_details$y <- .df$value[which(.df$levels %in% .levels)]
-                distance_plot <-
-                    distance_plot +
-                    do.call(what = "annotate", args = .point_details)
+        }
+        if (b_or_v == "b") {
+            if (!is.null(look_up$curlicues$distance_plot$add_points_at_bws)) {
+                .bws <- look_up$curlicues$distance_plot$add_points_at_bws
+                ##  Check if some of the given levels might not be
+                ##  included, and if so return a warning.
+                .OK_bws <- .bws %in% .df$bw_points
+                if (!all(.OK_bws)) {
+                    .problems <- .bws[!.OK_bws]
+                    warning(
+                        sprintf("%s %s\n%s%s: %s",
+                                "It is only possible to add a point for a bandwidth",
+                                "when a distance value has been computed for it.",
+                                "Ignoring bandwidth",
+                                ifelse(test = {length(.problems) > 1},
+                                       yes  = "s",
+                                       no   = ""),
+                                paste(.problems,
+                                      collapse = ", ")))
+                    kill(.problems)
+                }
+                ##  Add points (when possible), include specifications
+                ##  given to the curlicues-list.
+                .point_details <- look_up$curlicues$distance_plot
+                if (any(.OK_bws)) {
+                    .point_details$add_points_at_bws <- NULL
+                    .point_details$geom  <- "point"
+                    .point_details$x <- as.numeric(.bws)
+                    .point_details$y <- .df$value[which(.df$bw_points %in% .bws)]
+                    distance_plot <-
+                        distance_plot +
+                        do.call(what = "annotate", args = .point_details)
+                }
+                rm(.bws, .point_details)
             }
-            rm(.levels, .point_details)
         }
         ##  Add information about the value of the global norm.
         .global_label <- sprintf("D*(f^'%s'*(omega)) == '%s'",
@@ -191,14 +260,13 @@ LG_plot_distance <- function(..env, look_up) {
         v_just_v <- annotate_norm$annotated_df["NC_value", "vjust"]
         distance_plot <- distance_plot +
             annotate(geom = "text",
-                     label = "v",
+                     label = b_or_v,
                      parse = TRUE,
                      x = Inf,
                      y = -Inf,
                      size = size_v,
                      hjust = "inward",
                      vjust = v_just_v)
-
         ##  Return the plot to the workflow.
         return(distance_plot)
     }
