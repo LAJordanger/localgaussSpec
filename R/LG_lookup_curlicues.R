@@ -41,18 +41,18 @@ LG_lookup_curlicues <- function(look_up) {
     CSC$v_value$include  <- look_up$is_local
     CSC$b_value$include <- look_up$is_local
     ##  Adjust details for the 'L2-distance'-investigations.
-    if (any(look_up$L2_distance_normal,
+    if (any(look_up$L2_distance_plot,
             look_up$L2_distance_percentages)) { 
-        if (look_up$L2_inspection_vbmL == "v") {
+        if (look_up$L2_distance_vbmL == "v") {
             CSC$v_value$include <- FALSE
             ## Adjust position of 'b'-label so it moves to the empty
             ## position from the 'v'-label.
             curlicues$b_value$annotate$vjust <-
                 curlicues$v_value$annotate$vjust
         }
-        if (look_up$L2_inspection_vbmL == "b") 
+        if (look_up$L2_distance_vbmL == "b") 
             CSC$b_value$include <- FALSE
-        if (look_up$L2_inspection_vbmL == "m") 
+        if (look_up$L2_distance_vbmL == "m") 
             CSC$m_value$include <- FALSE
         ##  Reminder: The "L"-case is adjusted later on.
     }
@@ -73,11 +73,11 @@ LG_lookup_curlicues <- function(look_up) {
         }
     }
     ##  Adjust details for distance_plot-investigations of 'v' and 'b'.
-    if (look_up$distance_plot) {
-        if (look_up$distance_plot_b_v_m_L == "b") {
+    if (look_up$L2_distance_plot) {
+        if (look_up$L2_distance_bvmL == "b") {
             CSC$b_value$include <- FALSE
         }
-        if (look_up$distance_plot_b_v_m_L == "v") {
+        if (look_up$L2_distance_bvmL == "v") {
             CSC$v_value$include <- FALSE
             ## Adjust position of 'b'-label so it moves to the empty
             ## position from the 'v'-label.
@@ -145,9 +145,9 @@ LG_lookup_curlicues <- function(look_up) {
                 ##  block length only should occur in some cases.
                 .include_L <- all(
                     look_up$is_bootstrap,
-                    ! all(any(look_up$L2_distance_normal,
+                    ! all(any(look_up$L2_distance_plot,
                               look_up$L2_distance_percentages),
-                          look_up$look_up$L2_inspection_vbmL == "L"))
+                          look_up$look_up$L2_distance_vbmL == "L"))
                 sprintf("list(%s,%s%s)",
                         .n,
                         .R,

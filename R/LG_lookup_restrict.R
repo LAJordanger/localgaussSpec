@@ -51,8 +51,8 @@ LG_lookup_restrict <- function (look_up = look_up) {
     }
     ##  An error-message to be used until the plot-functionality from
     ##  the scripts has been implemented into this package.
-    if (all(look_up$distance_plot,
-            look_up$distance_plot_b_v_m_L %in% c("m", "L"))) {
+    if (all(look_up$L2_distance_plot,
+            look_up$L2_distance_bvmL %in% c("m", "L"))) {
         error("The distance-plots for the m- and L-castes are not yet implemented...")
     }
     restrict$initial$local <- function(.node) {
@@ -63,7 +63,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
                   .template$bw_points
               }
           },
-          if (look_up$distance_plot) {
+          if (look_up$L2_distance_plot) {
               if (look_up$heatmap_b_v_m_L == "b") {
                   .template$point_both
               } else {
@@ -143,7 +143,7 @@ LG_lookup_restrict <- function (look_up = look_up) {
     ##  for the ordinary spectra (not the heatmap-/distance-plots).
     if (all(look_up$non_interactive,
             !look_up$heatmap,
-            !look_up$distance_plot)) {
+            !look_up$L2_distance_plot)) {
         restrict$S$spectra_summands_local <-
             c(restrict$S$spectra_summands_local,
               .template$point_both,

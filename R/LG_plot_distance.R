@@ -26,9 +26,9 @@ LG_plot_distance <- function(..env, look_up) {
         return("Not implemented outside of diagonal")
     ##  The investigating of the effect of varying the point along the
     ##  diagonal, or the varying of the bandwidth.
-    if (look_up$distance_plot_b_v_m_L %in% c("b", "v")) {
+    if (look_up$L2_distance_bvmL %in% c("b", "v")) {
         ##  Create a compactified reference.
-        b_or_v <- look_up$distance_plot_b_v_m_L
+        b_or_v <- look_up$L2_distance_bvmL
         ##  Extract the relevant data in this case.
         ..lag_values <- names(..env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
         ##  Create the restrict list suitable for the present case.
@@ -248,10 +248,6 @@ LG_plot_distance <- function(..env, look_up) {
         .scale <- 0.4
         annotate_norm$annotated$size <- 
             .scale * annotate_norm$annotated$size
-        ##  Adjust the stamp for the distance-based plot.
-        annotate_norm$annotated$label[1] <-
-            sprintf("D*(%s)",
-                    annotate_norm$annotated$label[1])
         distance_plot <-
             distance_plot +
             eval(annotate_norm$annotated)

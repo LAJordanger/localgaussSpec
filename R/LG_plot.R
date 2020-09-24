@@ -29,7 +29,7 @@ LG_plot <- function(..env,
         return(LG_plot_heatmap(..env, look_up))
     }
     ##  Return a distance-plot when that is desired.
-    if (look_up$distance_plot) {
+    if (look_up$L2_distance_plot) {
         return(LG_plot_distance(..env, look_up))
     }
     ##  Return a complex-type plot when that is desired.

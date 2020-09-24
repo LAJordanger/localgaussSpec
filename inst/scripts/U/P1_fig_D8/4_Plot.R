@@ -77,7 +77,7 @@ library(grid)
     Vi = "Y",
     Vj = "Y",
     global_local = "local",
-    L2_inspection_vbmL = "m")
+    L2_distance_vbmL = "m")
 
 .names <- c("lower", "center", "upper")
 .env_list <- list()

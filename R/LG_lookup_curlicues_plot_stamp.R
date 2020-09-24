@@ -27,10 +27,10 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
     ##  (truncation level) and 'L' (block length for the bootstrap).
     .m_sup <-
         if (look_up$TCS_type == "S") {
-            if (all(any(look_up$L2_distance_normal,
+            if (all(any(look_up$L2_distance_plot,
                         look_up$L2_distance_percentages),
-                    look_up$L2_inspection_vbmL == "m")) {
-                if (look_up$L2_distance_normal) {
+                    look_up$L2_distance_vbmL == "m")) {
+                if (look_up$L2_distance_plot) {
                     "^m"
                 } else {
                     c("^{m+1}", "^m")
@@ -46,10 +46,10 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
         }
     .L_sub <-
         if (look_up$TCS_type == "S") {
-            if (all(any(look_up$L2_distance_normal,
+            if (all(any(look_up$L2_distance_plot,
                         look_up$L2_distance_percentages),
-                    look_up$L2_inspection_vbmL == "L")) {
-                if (look_up$L2_distance_normal) {
+                    look_up$L2_distance_vbmL == "L")) {
+                if (look_up$L2_distance_plot) {
                     "['[L]']"
                 } else {
                     c("['[L+1]']", "['[L]']")
@@ -98,7 +98,7 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
     ##  Still running? Then check if it is necessary to add some
     ##  additional stuff, in which case the distance investigation
     ##  takes precedence over the other cases.
-    if (any(look_up$L2_distance_normal,
+    if (any(look_up$L2_distance_plot,
             look_up$L2_distance_percentages)) {
         .label <- sprintf("D*(%s)",
                           .label)

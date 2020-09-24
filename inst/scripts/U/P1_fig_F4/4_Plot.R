@@ -79,7 +79,7 @@ input_common <- list(
     Vi = "Y",
     Vj = "Y",
     global_local = "local",
-    L2_inspection_vbmL = "L",
+    L2_distance_vbmL = "L",
     drop_annotation = TRUE)
 
 ###----------------------------------------------------------------###

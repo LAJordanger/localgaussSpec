@@ -130,8 +130,8 @@ for (.levels_Diagonal in .levels) {
     distance_plots[[.name]] <- LG_plot_helper(
         main_dir = ..main_dir,
         input = c(input_common,
-                  list(distance_plot = TRUE,
-                       distance_plot_b_v_m_L = "b",
+                  list(L2_distance_plot = TRUE,
+                       L2_distance_bvmL = "b",
                        levels_Diagonal = .levels_Diagonal)),
         input_curlicues = list(
             NC_value = list(short_or_long_label = "short"),

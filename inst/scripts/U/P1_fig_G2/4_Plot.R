@@ -199,8 +199,8 @@ rm(.scale, annotate_heatmap)
 input$heatmap <- NULL
 input$heatmap_b_or_v <- NULL
 
-input$distance_plot <- TRUE
-input$distance_plot_b_v_m_L <- "v"
+input$L2_distance_plot <- TRUE
+input$L2_distance_bvmL <- "v"
 
 distance_plot <- LG_plot_helper(
     main_dir = ..main_dir, 
