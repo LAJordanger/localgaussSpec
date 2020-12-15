@@ -36,14 +36,14 @@ TS_key_dmt_bivariate <- function(n,
         list(n = n),
         first_dmt)
     .first_part <- do.call(
-        what = dmt,
+        what = TS_key_dmt,
         args = first_dmt)
     ##  Extract the (possibly revised) arguments, adjust with
     ##  'phase_adjustment', and create the second component.
     second_dmt <- attributes(.first_part)$args
     second_dmt$theta <- second_dmt$theta + phase_adjustment
     .second_part <- do.call(
-        what = dmt,
+        what = TS_key_dmt,
         args = second_dmt)
     ##  Combine the two pieces.
     cbind(X1 = .first_part,
