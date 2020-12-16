@@ -37,7 +37,8 @@ LG_plot_heatmap <- function(..env, look_up) {
                  levels = look_up$levels_point)
         } else {
             if (look_up$heatmap_b_or_v == "v") {
-                list(variable = "rho",
+                list(S_type = look_up$spectra_type,
+                     variable = "rho",
                      bw_points = look_up$bw_points)
             } else {
                 list(variable = "rho",
@@ -132,8 +133,11 @@ LG_plot_heatmap <- function(..env, look_up) {
         .xlab_expression <- expression(omega)
         .plot_title <-
             if (look_up$heatmap_b_or_v %in% c("b", "v")) {
-                sprintf("Heatmap for the m=%s local Gaussian autospectrum (%s)",
+                sprintf("Heatmap for the m=%s local Gaussian %sspectrum (%s)",
                         look_up$m_selected,
+                        ifelse(test = look_up$is_univariate,
+                               yes  = "auto",
+                               no   = look_up$spectra_type),
                         ifelse(test = {look_up$heatmap_b_or_v == "b"},
                                yes  = "bandwidth",
                                no   = "along digaonal"))
