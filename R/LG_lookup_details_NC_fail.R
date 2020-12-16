@@ -35,6 +35,9 @@ LG_lookup_details_NC_fail <- function(look_up,
         .AB_env[[.NC_fail_name]] <- lapply(
             X = .tmp,
             FUN = function(x) {
+                if (is.null(x)) {
+                    return(NULL)
+                }
                 restrict_array(
                     .arr = x,
                     .restrict = list(variable = "eflag"),
