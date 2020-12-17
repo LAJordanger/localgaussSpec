@@ -37,8 +37,7 @@ LG_plot_heatmap <- function(..env, look_up) {
                  levels = look_up$levels_point)
         } else {
             if (look_up$heatmap_b_or_v == "v") {
-                list(S_type = look_up$spectra_type,
-                     variable = "rho",
+                list(variable = "rho",
                      bw_points = look_up$bw_points)
             } else {
                 list(variable = "rho",
@@ -78,12 +77,25 @@ LG_plot_heatmap <- function(..env, look_up) {
             }
         .limits_gradient <- c(-1,1)
         .xlab_expression <- "h"
-        .plot_title <- "Heatmap for the local Gaussian autocorrelations (along diagonal)"
+        .plot_title <- sprintf(
+            "Heatmap for the m=%s local Gaussian %scorrelations (%s)",
+            look_up$m_selected,
+            ifelse(test = look_up$is_auto_pair,
+                   yes  = "auto",
+                   no   = "cross"),
+            ifelse(test = {look_up$heatmap_b_or_v == "b"},
+                   yes  = "bandwidth",
+                   no   = "along digaonal"))
     } else {
         ###  The spectra case.
+        if (look_up$is_multivariate) {
+            .restrict_list <- c(
+                list(S_type = look_up$spectra_type),
+                .restrict_list)
+        }
+        ##  Get hold of the desired data.
         .bm_1 <- look_up$cache$spectra_local
         .bm_2 <- look_up$.bm_CI_local_spectra
-        ##  Get hold of the desired data.
         ..the_data <-
             if (look_up$heatmap_b_or_v %in% c("b", "v")) {
                 ..env[[.bm_1]][[.bm_2]]
@@ -186,6 +198,55 @@ LG_plot_heatmap <- function(..env, look_up) {
         .restrict = .restrict_list,
         .drop = TRUE,
         .never_drop = .never_drop)
+    if (look_up$TCS_type == "C") {
+        ##  Use the diagonal reflection property when dealing with the
+        ##  plots of the local Gaussian cross-correlations.
+        if (any(look_up$is_multivariate,
+                look_up$is_off_diagonal))  {
+            ##  Reminder: This part should perhaps be stored in a
+            ##  separate helper function.
+            .levels <- dimnames(..step_1)$levels
+            .levels_reflected <- vapply(
+                X = strsplit(x = level_points,
+                             split = "_"),
+                FUN = function(x)
+                    sprintf("%s_%s",
+                            x[2],
+                            x[1]),
+                FUN.VALUE = character(1))
+            .pos_part <- restrict_array(
+                .arr = ..step_1,
+                .restrict = list(
+                    lag = c(
+                        if (look_up$is_lag_zero_needed)
+                            "0",
+                        as.character(look_up$lag_vec)),
+                    levels = .levels,
+                    pairs = look_up$pairs_ViVj),
+                .drop = TRUE,
+                .never_drop = c("lag", "levels"))
+            .neg_part <- restrict_array(
+                .arr = ..step_1,
+                .restrict = list(
+                    lag = as.character(look_up$lag_vec),
+                    levels = .levels_reflected,
+                    pairs = look_up$pairs_VjVi),
+                .drop = TRUE,
+                .never_drop = c("lag", "levels"))
+            kill(.levels, .levels_reflected)
+            ##  Adjust the dimnames
+            dimnames(.neg_part)$lag <- sprintf(
+                                   "-%s",
+                                   dimnames(.neg_part)$lag)
+            dimnames(.neg_part)$levels <- dimnames(.pos_part)$levels
+            dimnames(.neg_part)$pairs <- dimnames(.pos_part)$pairs
+            ##  Update '..step_1'
+            ..step_1 <- my_abind(
+                .pos_part,
+                .neg_part)
+            kill(.pos_part, .neg_part)
+        }
+    }
     ##  Identify the y-limits to be used.
     if (look_up$heatmap_b_or_v == "b") {
         .y_values <- as.numeric(dimnames(..the_data)$bw_points)
@@ -297,8 +358,9 @@ LG_plot_heatmap <- function(..env, look_up) {
     ##  that we do not look on something that is continuous in the
     ##  lag-argument!
     if (look_up$TCS_type == "C") {
-        .half_lags <- c(look_up$lag_vec - .5,
-                        max(look_up$lag_vec) + .5)
+        .lag_vec <- sort(as.numeric(dimnames(..step_1)$lag))
+        .half_lags <- c(.lag_vec - .5,
+                        max(.lag_vec) + .5)
         .new_dimnames <-
             if (look_up$heatmap_b_or_v == "b") {
                 list(bw_points = unique(.df$bw_points),
