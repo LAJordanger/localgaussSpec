@@ -65,20 +65,27 @@ LG_lookup_curlicues_plot_stamp <- function(look_up, CSC) {
         test = {look_up$TCS_type == "C"},
         yes  = "rho",
         no   = look_up$spectra_f_or_F)
-    .global_or_local <- ifelse(
-        test = look_up$is_local,
-        yes  = sprintf("[%sv]",
-                       ifelse(
-                           test = look_up$is_univariate,
-                           yes  = "",
-                           no   = sprintf("%s%s:",
-                                          gsub(pattern  = "Y",
-                                               replacement = "",
-                                               x = look_up$Vi),
-                                          gsub(pattern  = "Y",
-                                               replacement = "",
-                                               x = look_up$Vj)))),
-        no   = "")
+    .global_or_local <- sprintf(
+        "[%s%s%s]",
+        ifelse(
+            test = look_up$is_univariate,
+            yes  = "",
+            no   = sprintf("%s%s",
+                           gsub(pattern  = "Y",
+                                replacement = "",
+                                x = look_up$Vi),
+                           gsub(pattern  = "Y",
+                                replacement = "",
+                                x = look_up$Vj))),
+        ifelse(
+            test = all(look_up$is_local,
+                       look_up$is_multivariate),
+            yes  = ":",
+            no   = ""),
+        ifelse(
+            test = look_up$is_local,
+            yes  = "v",
+            no   = ""))
     ##  Reminder: The 'ifelse' only picks the first element from a
     ##  vector, and it is thus required to use 'if'-'else' for the
     ##  case below.
