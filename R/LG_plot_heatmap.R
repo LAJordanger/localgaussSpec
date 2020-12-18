@@ -119,9 +119,18 @@ LG_plot_heatmap <- function(..env, look_up) {
                     .TST
                 })
             }
-        .midpoint <- ifelse(test = {look_up$spectra_f_or_F == "F"},
-                            yes  = 0.75,
-                            no   = 1)
+        .midpoint <-
+            if (look_up$is_univariate) {
+                if (look_up$spectra_type %in% c("Quad", "phase")) {
+                    0
+                } else {
+                    ifelse(test = {look_up$spectra_f_or_F == "F"},
+                           yes  = 0.75,
+                       no   = 1)
+                }
+            } else {
+                0
+            }
         .aes_mapping <-
             if (look_up$heatmap_b_or_v == "b") {
                 aes(x = omega,

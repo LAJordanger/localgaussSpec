@@ -344,9 +344,11 @@ LG_plot_df_spectra_helper <- function(..env, look_up, .gl = "local") {
                 ##  the array only contained one value.  The solution
                 ##  below circumvents that problem.
                 .lag_zero[] <- as.complex(.lag_zero)
-                append_dimensions(
-                    orig_arr = .lag_zero,
-                    added_dimnames = list(omega = look_up$frequency_range))
+                if (is.null(dimnames(.lag_zero)$omega)) {
+                    append_dimensions(
+                        orig_arr = .lag_zero,
+                        added_dimnames = list(omega = look_up$frequency_range))
+                }
             }
         kill(.dn)
         ##  Time to find the spectral densities, which can be complex
