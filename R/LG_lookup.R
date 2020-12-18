@@ -294,7 +294,8 @@ LG_lookup <- function(input,
     look_up$xlim <-
         if (look_up$TCS_type == "C") {
             if (look_up$is_negative_lags_needed) {
-                if (look_up$is_global_only) {
+                if (all(look_up$is_global_only,
+                        look_up$is_univariate)) {
                     range(0, look_up$max_lag)
                 } else
                     c(-1, 1) * look_up$max_lag
