@@ -216,7 +216,7 @@ LG_plot_heatmap <- function(..env, look_up) {
             ##  separate helper function.
             .levels <- dimnames(..step_1)$levels
             .levels_reflected <- vapply(
-                X = strsplit(x = level_points,
+                X = strsplit(x = .levels,
                              split = "_"),
                 FUN = function(x)
                     sprintf("%s_%s",
