@@ -90,11 +90,14 @@ LG_plot_distance <- function(..env, look_up) {
         .df <- reshape2::melt(data = .the_norms)
         ##  Specify stuff to be included in the plot.
         distance_plot_title <- sprintf(
-            "%s vs. norm for the m=%s local Gaussian autospectrum",
+            "%s vs. norm for the m=%s local Gaussian %sspectrum",
             switch(EXPR = b_or_v,
                    b = "Banwidth",
                    v = "Percentiles"),
-            look_up$m_selected)
+            look_up$m_selected,
+            ifelse(test = look_up$is_auto_pair,
+                   yes  = "auto",
+                   no   = "cross-"))
         .aes_mapping <- switch(
             EXPR = b_or_v,
             b = aes(x = bw_points, y = value),
@@ -214,7 +217,18 @@ LG_plot_distance <- function(..env, look_up) {
             }
         }
         ##  Add information about the value of the global norm.
-        .global_label <- sprintf("D*(f^'%s'*(omega)) == '%s'",
+        .global_label <- sprintf("D*(%s%s^'%s'*(omega)) == '%s'",
+                                 look_up$spectra_f_or_F,
+                                 ifelse(
+                                     test = look_up$is_univariate,
+                                     yes  = "",
+                                     no   = sprintf("[%s%s]",
+                                                    gsub(pattern  = "Y",
+                                                         replacement = "",
+                                                         x = look_up$Vi),
+                                                    gsub(pattern  = "Y",
+                                                         replacement = "",
+                                                         x = look_up$Vj))),
                                  look_up$m_selected,
                                  .the_global_norm)
         distance_plot <- distance_plot +
