@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure G1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure G1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This investigates the "local trigonometric"-example, that was also seen in P1_fig_07.  The purpose of this plot is to give a visual argument for the heuristic argument that is used to justify that a "local trigonometric"-example can be used to test the sanity of the estimation algorithm.
 

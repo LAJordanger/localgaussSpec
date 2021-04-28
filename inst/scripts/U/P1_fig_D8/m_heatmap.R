@@ -26,7 +26,7 @@ library(localgaussSpec)
     Boot_Approx = "Nothing here to select", 
     confidence_interval = "95",
     bw_points = "0.5",
-    cut = 10,
+    cut = 200,
     frequency_range = c(0, 0.5), 
     type = "par_five",
     TS = "0fb42549ce13fce773c12b77463bdca8", 
@@ -58,6 +58,12 @@ for (.level in 1:3) {
 
 .env_list[[1]]
 
+##  REMINDER: The stuff above did return a plot instead of the
+##  anticipated environments. These plots as such could of course be
+##  of interest, but I guess I need to redo this script in order to
+##  figure out exactly what was supposed to be the result.  Given the
+##  name of the script, it might perhaps be parts of the code below
+##  that belongs somewhere else...
 
 
 ##  Create a list with the annotated labels, as these will be needed
@@ -106,6 +112,17 @@ for (.name in names(.env_list)) {
     })
     names(.norms_list[[.name]]) <- {2:(200+1-lag_diff) -1}
 }
+
+##  OBS:
+
+## Error: 
+##     Erroneous argument in the function ‘localgaussSpec:::LG_spectrum_norm’.
+##     The full call-stack is: ‘lapply’ > ‘FUN’ >
+##     ‘localgaussSpec:::LG_spectrum_norm’.
+
+##     The argument ‘C1_env’ must contain a copy of ‘look_up’.
+
+
 
 #####-----------------------------------------------------------------
 ##  Extract the arrays that can be used to plot the result related to

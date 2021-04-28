@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure 7 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure 7 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This investigates the "local trigonometric"-example, which shows that different peaks occur at three different points.  See P1_fig_G3 for an example that enables the detection of an additional peak for a point in the outer part of the lower tail.  Note that P1_fig_G1 also uses the data computed in this example.
 

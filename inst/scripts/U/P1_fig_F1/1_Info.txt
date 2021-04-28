@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure F1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure F1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This plot combines an investigation of the dmbp-data, see P1_fig_09, with the result from the apARCH(2,3)-example (fitted to the dmbp-data) from P1_fig_11.  The coded needed for the estimation of the required local Gaussian autocorrelations is contained in the "2_Data.R" files in the folders P1_fig_09 and P1_fig_11, and there is thus no "2_Data.R"-file in this folder.  And similarly there is thus neither any "3_Shiny.R"-file in this folder.
 

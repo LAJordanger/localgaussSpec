@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure D6 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure D6 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This is a heatmap-based plot that shows the effect on the estimated local Gaussian autocorrelations as the bandwidth varies.  This investigates the dmbp-data, i.e. the "Deutschemark/British pound Exchange Rate" that was used by Bollerslev, and Ghysels in their paper "Periodic Autoregressive Conditional Heteroscedasticity", 1996, Journal of Business and Economic Statistics, *14*, 139-151.  The data-set used here has been copied from the version used in the rugarch-package (Alexios Ghalanos, https://cran.r-project.org/web/packages/rugarch), since a user might like to test this script without having to install that package first.
 

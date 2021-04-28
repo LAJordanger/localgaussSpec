@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure D1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure D1 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This is a heatmap-based plot with its corresponding distance based plot, that shows the effect on the estimated local Gaussian spectral density as the point varies along the diagonal.  This investigates the apARCH(2,3)-example that was fitted to the dmbp-data, and the simulations are based on the rugarch-package (Alexios Ghalanos, https://cran.r-project.org/web/packages/rugarch).  Note that the rugarch-package is not installed together with the localgaussSpec-package, and it is thus necessary to install rugarch before the code in "2_Data.R" can be used.
 

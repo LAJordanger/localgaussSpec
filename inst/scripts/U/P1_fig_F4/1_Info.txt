@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure F4 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure F4 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This plot investigates a single sample from the "local trigonometric" example, and creates a plot similar to P1_fig_F3.  The local "2_Data.R"-file is similar to the one in P1_fig_F2, and a trivial modification can be done in the "4_Plot.R"-file in P1_fig_F2 if a similar plot is desired for the present case too.
 

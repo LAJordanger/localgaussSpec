@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure 8 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (https://arxiv.org/abs/1708.02166).
+This folder contains the code needed for the reproduction of figure 8 in the paper P1="Nonlinear spectral analysis: A local Gaussian approach" (published in the Journal of the American Statistical Association, https://doi.org/10.1080/01621459.2020.1840991, see also https://arxiv.org/abs/1708.02166).
 
 This is a heatmap-based plot with its corresponding distance based plot, that shows the effect on the estimated local Gaussian spectral density as the point varies along the diagonal.  This investigates the "local trigonometric"-example.  Note that P1_fig_D4 also uses the data computed in this example.
 
