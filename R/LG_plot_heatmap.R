@@ -333,7 +333,7 @@ LG_plot_heatmap <- function(..env, look_up) {
                         list(levels = .new_y_values)
                     }
                 x.part <-
-                    if (look_up$TCS == "C") {
+                    if (look_up$TCS_type == "C") {
                         list(lag = dimnames(..the_data)$lag)
                     } else {
                         list(omega = dimnames(..the_data)$omega)
