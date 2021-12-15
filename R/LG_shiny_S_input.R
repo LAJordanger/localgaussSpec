@@ -115,7 +115,7 @@ LG_shiny_S_input <- function(.env,.env2) {
         ##  Use the 'bquote' + '.()' construction to update the
         ##  'output'-list that lives in '.env2'
         eval(expr = bquote(output$spectrum_arguments  <-
-                               renderUI(.(.result))),
+                               renderUI({.(.result)})),
              envir = .env2)
         kill(.result, .spectrum_interface, .stored_values, x)
     }
@@ -172,7 +172,7 @@ LG_shiny_S_input <- function(.env,.env2) {
     ##  Use the 'eval'+ 'bquote' + '.()' construction to update the
     ##  'output'-list that lives in '.env2'
     eval(expr = bquote(output$spectrum_type <-
-                           renderUI(.(.result))),
+                           renderUI({.(.result)})),
          envir = .env2)
     kill(.result, .ID, .Labels)
     ###-------------------------------------------------------------------

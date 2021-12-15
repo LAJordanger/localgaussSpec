@@ -29,11 +29,12 @@ LG_shiny_interface_plots <- function(
     ##  want the code needed in order to recreate the plot (e.g. if it
     ##  is to be used in a paper).
     if (.env$input$get_code) {
-        eval(bquote(output$graphs_call  <- renderPrint(cat(.(.result),
-                                                           sep = "\n"))),
+        eval(bquote(output$graphs_call  <-
+                        renderPrint({cat(.(.result), sep = "\n")})),
              envir = .env2)
     } else {
-        eval(bquote(output$graphs <- renderPlot(.(.result))),
+        eval(bquote(output$graphs <-
+                        renderPlot({.(.result)})),
              envir = .env2)
     }
 }

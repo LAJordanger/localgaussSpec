@@ -141,8 +141,8 @@ LG_shiny_CS_input <- function(.env,
         ##  Use the 'bquote' + '.()' construction to update the
         ##  'output'-list that lives in '.env2'
         eval(expr = bquote(output[[.(.name)]] <-
-                               renderUI(.(.result))),
-         envir = .env2)
+                               renderUI({.(.result)})),
+             envir = .env2)
     }
     kill(.i, .name, .simpl, .value, .stored_values, .new_radioButtons,
          .result)
@@ -168,7 +168,7 @@ LG_shiny_CS_input <- function(.env,
         ##  Use the 'bquote' + '.()' construction to update the
         ##  'output'-list that lives in '.env2'
         eval(expr = bquote(output$levels <-
-                               renderUI(.(.result))),
+                               renderUI({.(.result)})),
              envir = .env2)
     }
     kill(.stored_values, .result, .new_sliderInputs)
