@@ -25,7 +25,11 @@ LG_plot_heatmap <- function(..env, look_up) {
                C    = "lag",
                S    = "omega"),
         switch(EXPR = look_up$heatmap_b_or_v,
-               b    = "bw_points",
+               b    = c("bw_points",
+                        if (any(look_up$is_multivariate,
+                                look_up$is_off_diagonal)) {
+                            "levels"
+                        }),
                m    = "m",
                v    = "levels"))
     ##  Initiate the restriction list, and add to it later on if
@@ -52,10 +56,15 @@ LG_plot_heatmap <- function(..env, look_up) {
         ..the_data <- 
             if (look_up$heatmap_b_or_v == "b") {
                 local({
-                    not_null <- which(! dimnames(..env[[look_up$local_name]]$on_diag)$lag %in% "0")
+                    include_lags <-
+                        if (look_up$is_auto_pair) {
+                            which(! dimnames(..env[[look_up$local_name]]$on_diag)$lag %in% "0")
+                        } else {
+                            dimnames(..env[[look_up$local_name]]$on_diag)$lag
+                        }
                     .data <- restrict_array(
                         .arr = ..env[[look_up$local_name]]$on_diag,
-                        .restrict = list(lag = not_null),
+                        .restrict = list(lag = include_lags),
                         .drop = TRUE,
                         .never_drop = c("lag", "levels", "bw_points"))
                 })
@@ -150,7 +159,11 @@ LG_plot_heatmap <- function(..env, look_up) {
                         z = value)
                 }
             }
-        .limits_gradient <- NULL
+        if (look_up$spectra_type %in% c("phase")) {
+            .limits_gradient <- c(-1, 1) * pi
+        } else {
+            .limits_gradient <- NULL
+        }
         .xlab_expression <- expression(omega)
         .plot_title <-
             if (look_up$heatmap_b_or_v %in% c("b", "v")) {
@@ -233,7 +246,11 @@ LG_plot_heatmap <- function(..env, look_up) {
                     levels = .levels,
                     pairs = look_up$pairs_ViVj),
                 .drop = TRUE,
-                .never_drop = c("lag", "levels"))
+                .never_drop = c("lag",
+                                ifelse(
+                                    test = {look_up$heatmap_b_or_v == "b"},
+                                    yes  = "bw_points",
+                                    no   = "levels")))
             .neg_part <- restrict_array(
                 .arr = ..step_1,
                 .restrict = list(
@@ -241,7 +258,11 @@ LG_plot_heatmap <- function(..env, look_up) {
                     levels = .levels_reflected,
                     pairs = look_up$pairs_VjVi),
                 .drop = TRUE,
-                .never_drop = c("lag", "levels"))
+                .never_drop = c("lag",
+                                ifelse(
+                                    test = {look_up$heatmap_b_or_v == "b"},
+                                    yes  = "bw_points",
+                                    no   = "levels")))
             kill(.levels, .levels_reflected)
             ##  Adjust the dimnames
             dimnames(.neg_part)$lag <- sprintf(
