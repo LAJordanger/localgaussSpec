@@ -4,8 +4,13 @@
 \alias{find_bws}
 \title{Estimate bandwidths based on local Gaussian likelihood}
 \usage{
-find_bws(data, .kernel = c("normal", "uniform"), use_boundaries = TRUE,
-  boundary_percentiles = c(0.1, 0.9), tol = 1e-04)
+find_bws(
+  data,
+  .kernel = c("normal", "uniform"),
+  use_boundaries = TRUE,
+  boundary_percentiles = c(0.1, 0.9),
+  tol = 1e-04
+)
 }
 \arguments{
 \item{data}{A matrix containing the multivariate observations, one

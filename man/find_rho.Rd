@@ -4,8 +4,13 @@
 \alias{find_rho}
 \title{Estimate local correlation \eqn{$\rho$} between two variables.}
 \usage{
-find_rho(data, grid, b, .kernel = c("normal", "uniform"),
-  return_arguments = FALSE)
+find_rho(
+  data,
+  grid,
+  b,
+  .kernel = c("normal", "uniform"),
+  return_arguments = FALSE
+)
 }
 \arguments{
 \item{data}{A matrix containing the observations, one bivariate

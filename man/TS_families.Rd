@@ -4,7 +4,8 @@
 \name{TS_families}
 \alias{TS_families}
 \title{Time Series Families}
-\format{A list of lists, the names at the top-level will be used as
+\format{
+A list of lists, the names at the top-level will be used as
     the available options for the \code{TS_key}-argument in the
     \code{TS_sample}-function.  The sublist for a given
     \code{TS_key} contains the parts \code{fun}, \code{package},
@@ -31,7 +32,8 @@
     \code{fun} needs to be "extracted" from some deeper level of
     \code{package}.  Simply drop this part when it is superfluous.}
 
-}}
+}
+}
 \usage{
 TS_families
 }

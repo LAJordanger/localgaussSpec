@@ -4,8 +4,7 @@
 \alias{LG_load}
 \title{Load an object into an environment}
 \usage{
-LG_load(.file, .env = parent.frame(), .name = NULL,
-  .attributes_extra = NULL)
+LG_load(.file, .env = parent.frame(), .name = NULL, .attributes_extra = NULL)
 }
 \arguments{
 \item{.file}{The path to the file to be loaded.  An error will be

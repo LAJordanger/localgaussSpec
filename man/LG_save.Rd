@@ -4,9 +4,15 @@
 \alias{LG_save}
 \title{Save function for local Gaussian related information}
 \usage{
-LG_save(data, save_file.Rda = NULL, LG_type = c("par_five", "par_one"),
-  bootstrap = FALSE, part = " ", save_dir = ".",
-  compression_level = 9)
+LG_save(
+  data,
+  save_file.Rda = NULL,
+  LG_type = c("par_five", "par_one"),
+  bootstrap = FALSE,
+  part = " ",
+  save_dir = ".",
+  compression_level = 9
+)
 }
 \arguments{
 \item{data}{The data we want to store.}

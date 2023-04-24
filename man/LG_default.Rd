@@ -4,7 +4,9 @@
 \name{LG_default}
 \alias{LG_default}
 \title{Internal default values for the local Gaussian machinery}
-\format{list}
+\format{
+list
+}
 \usage{
 LG_default
 }

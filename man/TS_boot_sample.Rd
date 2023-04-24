@@ -4,9 +4,15 @@
 \alias{TS_boot_sample}
 \title{Create bootstrap-replicates of a time series.}
 \usage{
-TS_boot_sample(TS, main_dir, save_dir, nb = 5,
-  boot_type = c("cibbb_tuples", "block"), block_length = 20,
-  boot_seed = NULL)
+TS_boot_sample(
+  TS,
+  main_dir,
+  save_dir,
+  nb = 5,
+  boot_type = c("cibbb_tuples", "block"),
+  block_length = 20,
+  boot_seed = NULL
+)
 }
 \arguments{
 \item{TS}{The original time series that we want to create

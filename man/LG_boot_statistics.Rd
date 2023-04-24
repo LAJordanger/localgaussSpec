@@ -4,8 +4,7 @@
 \alias{LG_boot_statistics}
 \title{Statistics based on the bootstrapped replicates}
 \usage{
-LG_boot_statistics(x, all_statistics = FALSE, log_ = FALSE,
-  names_only = FALSE)
+LG_boot_statistics(x, all_statistics = FALSE, log_ = FALSE, names_only = FALSE)
 }
 \arguments{
 \item{x}{A vector extracted from the array of values that we want

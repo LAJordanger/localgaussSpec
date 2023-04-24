@@ -5,7 +5,9 @@
 \alias{myWindows}
 \title{A list with the lag-window functions that is used to smooth the
 estimated spectral densities.}
-\format{An object of class \code{list} of length 3.}
+\format{
+An object of class \code{list} of length 3.
+}
 \usage{
 myWindows
 }

@@ -4,8 +4,7 @@
 \alias{LG_plot_helper_extract_data_only}
 \title{Extract only data for the plots}
 \usage{
-LG_plot_helper_extract_data_only(main_dir, input, input_curlicues = NULL,
-  .env)
+LG_plot_helper_extract_data_only(main_dir, input, input_curlicues = NULL, .env)
 }
 \arguments{
 \item{main_dir}{The part of the \code{data_dir}-argument from the

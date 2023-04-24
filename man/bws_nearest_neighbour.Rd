@@ -4,8 +4,14 @@
 \alias{bws_nearest_neighbour}
 \title{Compute nearest-neighbour bandwidths, (with file-storage).}
 \usage{
-bws_nearest_neighbour(save_dir = NULL, TS, lag_min = 0, lag_max,
-  bw_points = c(25, 35), levels)
+bws_nearest_neighbour(
+  save_dir = NULL,
+  TS,
+  lag_min = 0,
+  lag_max,
+  bw_points = c(25, 35),
+  levels
+)
 }
 \arguments{
 \item{save_dir}{A specification of the directory to be used when

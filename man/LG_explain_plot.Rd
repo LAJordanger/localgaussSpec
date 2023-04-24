@@ -4,8 +4,12 @@
 \alias{LG_explain_plot}
 \title{Explain the content of a plot}
 \usage{
-LG_explain_plot(.plot_details, .mode = NULL, .digits_for_points = 2,
-  .digits_for_percentiles = 0)
+LG_explain_plot(
+  .plot_details,
+  .mode = NULL,
+  .digits_for_points = 2,
+  .digits_for_percentiles = 0
+)
 }
 \arguments{
 \item{.plot_details}{This can either be a saved plot created by

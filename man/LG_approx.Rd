@@ -4,11 +4,18 @@
 \alias{LG_approx}
 \title{Approximations of the local Gaussian auto- and cross-correlations}
 \usage{
-LG_approx(save_dir = NULL, TS, lag_max = ceiling(3 * sqrt(length(TS))),
-  LG_points, .bws_mixture = c("mixture", "local", "global"),
-  bw_points = c(25, 35), .bws_fixed = NULL, .bws_fixed_only = FALSE,
+LG_approx(
+  save_dir = NULL,
+  TS,
+  lag_max = ceiling(3 * sqrt(length(TS))),
+  LG_points,
+  .bws_mixture = c("mixture", "local", "global"),
+  bw_points = c(25, 35),
+  .bws_fixed = NULL,
+  .bws_fixed_only = FALSE,
   content_details = c("rho_only", "rho_log.fun", "rho_all"),
-  LG_type = c("par_five", "par_one"))
+  LG_type = c("par_five", "par_one")
+)
 }
 \arguments{
 \item{save_dir}{A specification of the directory to be used when

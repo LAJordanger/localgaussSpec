@@ -3,7 +3,6 @@
 \docType{package}
 \name{localgaussSpec}
 \alias{localgaussSpec}
-\alias{localgaussSpec-package}
 \title{localgaussSpec}
 \description{
 A package for the investigation of univariate and

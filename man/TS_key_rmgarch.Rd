@@ -4,8 +4,13 @@
 \alias{TS_key_rmgarch}
 \title{A simple multivariate GARCH-models from the \code{rmgarch}-package.}
 \usage{
-TS_key_rmgarch(n.sim = 100, m.sim = 10, uspec = NULL, data = NULL,
-  rseed = NULL)
+TS_key_rmgarch(
+  n.sim = 100,
+  m.sim = 10,
+  uspec = NULL,
+  data = NULL,
+  rseed = NULL
+)
 }
 \arguments{
 \item{n.sim}{The simulation horizon.  Default value 100.}

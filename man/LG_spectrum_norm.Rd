@@ -4,8 +4,7 @@
 \alias{LG_spectrum_norm}
 \title{Compute norms, distances and angles between different spectra}
 \usage{
-LG_spectrum_norm(C1_env = NULL, W1 = NULL, C2_env = NULL,
-  W2 = NULL)
+LG_spectrum_norm(C1_env = NULL, W1 = NULL, C2_env = NULL, W2 = NULL)
 }
 \arguments{
 \item{C1_env}{The environment containing the coefficients used for

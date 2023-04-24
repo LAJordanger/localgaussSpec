@@ -4,8 +4,13 @@
 \alias{TS_LG_object}
 \title{Prepare a time series for a local Gaussian inspection}
 \usage{
-TS_LG_object(TS_data, details = NULL, main_dir = c("~", "LG_DATA"),
-  save_dir = NULL, .remove_ties = TRUE)
+TS_LG_object(
+  TS_data,
+  details = NULL,
+  main_dir = c("~", "LG_DATA"),
+  save_dir = NULL,
+  .remove_ties = TRUE
+)
 }
 \arguments{
 \item{TS_data}{The time series data we will work upon.  This can

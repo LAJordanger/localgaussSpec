@@ -4,8 +4,7 @@
 \alias{LG_shiny_CS_input}
 \title{Create \code{radioButtons} and \code{sliderInputs} for the \code{LG_shiny}-interface.}
 \usage{
-LG_shiny_CS_input(.env, .env2, .part = c("var_local", "p_diag_bw",
-  "levels"))
+LG_shiny_CS_input(.env, .env2, .part = c("var_local", "p_diag_bw", "levels"))
 }
 \arguments{
 \item{.env}{The environment where the original arguments given to

@@ -4,9 +4,16 @@
 \alias{TS_key_dmt}
 \title{"Local trigonometric" samples based on cosine-functions}
 \usage{
-TS_key_dmt(n, A, delta, delta_range = NULL, alpha, theta = NULL,
+TS_key_dmt(
+  n,
+  A,
+  delta,
+  delta_range = NULL,
+  alpha,
+  theta = NULL,
   wn = list(type = "rnorm", args = list(mean = 0, sd = 1), adjust = 0),
-  seed = NULL)
+  seed = NULL
+)
 }
 \arguments{
 \item{n}{The number of samples to create.}

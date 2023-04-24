@@ -4,9 +4,14 @@
 \alias{LG_bandwidths_advanced}
 \title{Find bandwidths to use for the local Gaussian estimates}
 \usage{
-LG_bandwidths_advanced(save_dir = NULL, TS, lag_max,
-  .bws_mixture = c("mixture", "local", "global"), bw_points = c(25,
-  35), levels)
+LG_bandwidths_advanced(
+  save_dir = NULL,
+  TS,
+  lag_max,
+  .bws_mixture = c("mixture", "local", "global"),
+  bw_points = c(25, 35),
+  levels
+)
 }
 \arguments{
 \item{save_dir}{A specification of the directory to be used when

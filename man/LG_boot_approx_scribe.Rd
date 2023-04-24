@@ -4,11 +4,23 @@
 \alias{LG_boot_approx_scribe}
 \title{Local Gaussian Approximations for bootstrap replicates, scribe-function.}
 \usage{
-LG_boot_approx_scribe(main_dir, data_dir, lag_max = NULL,
-  LG_points = NULL, content_details = NULL, LG_type = NULL,
-  .bws_mixture = NULL, bw_points = NULL, .bws_fixed = NULL,
-  .bws_fixed_only = NULL, nb = NULL, boot_type = NULL,
-  block_length = NULL, boot_seed = NULL, threshold = 500)
+LG_boot_approx_scribe(
+  main_dir,
+  data_dir,
+  lag_max = NULL,
+  LG_points = NULL,
+  content_details = NULL,
+  LG_type = NULL,
+  .bws_mixture = NULL,
+  bw_points = NULL,
+  .bws_fixed = NULL,
+  .bws_fixed_only = NULL,
+  nb = NULL,
+  boot_type = NULL,
+  block_length = NULL,
+  boot_seed = NULL,
+  threshold = 500
+)
 }
 \arguments{
 \item{main_dir}{The path to the main directory, that contains the

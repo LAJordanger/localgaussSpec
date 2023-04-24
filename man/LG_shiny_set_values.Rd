@@ -4,9 +4,12 @@
 \alias{LG_shiny_set_values}
 \title{Set some values in the \code{LG_shiny}-application}
 \usage{
-LG_shiny_set_values(.env, .env2, .part = c("TS_info", "TCS_type",
-  "var_local", "p_diag_bw", "spectrum_type", "second_graphical", "plots",
-  "explanations", "derived_graphical"))
+LG_shiny_set_values(
+  .env,
+  .env2,
+  .part = c("TS_info", "TCS_type", "var_local", "p_diag_bw", "spectrum_type",
+    "second_graphical", "plots", "explanations", "derived_graphical")
+)
 }
 \arguments{
 \item{.env}{The environment where the \code{TS_logging}-object
