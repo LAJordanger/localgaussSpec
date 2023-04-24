@@ -102,6 +102,8 @@ for (.point in names(.point_list)) {
             input_curlicues= list(
                 NC_value = list(
                     short_or_long_label = "short"),
+                correlation_plot = list(
+                    boxplot = list(size = 0.1)),
                 spectra_plot = list(
                     WN_line  = list(
                         size = ..line.size),

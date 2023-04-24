@@ -125,7 +125,7 @@ for (i in seq_along(block_length_vec)) {
     input <- c(
         input_common,
         list(Boot_Approx = .Boot_Approx,
-             L2_distance_normal = TRUE))
+             L2_distance_plot = TRUE))
     ##  Extract the data, adjust it to the required format.
     .zzz <- localgaussSpec:::LG_plot_helper_extract_data_only(
             main_dir = ..main_dir,
