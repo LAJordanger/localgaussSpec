@@ -70,9 +70,8 @@ LG_shiny_explain_interface <- function(
         TS_sub_item,
         "further testing...")
     ##  Convert it to html-code
-    .result <- HTML(renderMarkdown(
-        text = .info_vector,
-        encoding = "UTF-8"))
+    .result <- HTML(mark(
+        text = .info_vector))
     
     return(.result)
     
@@ -84,9 +83,8 @@ LG_shiny_explain_interface <- function(
         "of time series under investigation.",
         "()")
 
-    .result <- HTML(renderMarkdown(
-        text = .info_vector,
-        encoding = "UTF-8"))
+    .result <- HTML(mark(
+        text = .info_vector))
 
     return(cat("Select a component to inspect!"))
 

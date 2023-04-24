@@ -47,7 +47,5 @@ LG_shiny_explain_plots <- function(input,
     ## Let 'LG_explain_plot' create the desired information, and
     ## return it to the workflow in the format needed for the
     ## shiny-interface.
-    HTML(renderMarkdown(
-        text = LG_explain_plot(.lookup$details),
-        encoding = "UTF-8"))
+    HTML(mark(text = LG_explain_plot(.lookup$details)))
 }

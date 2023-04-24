@@ -98,7 +98,7 @@
 #'     skeleton_list split_vector spy this_function update_array
 #' @importFrom localgauss localgauss
 #' @importFrom magrittr and or divide_by
-#' @importFrom markdown renderMarkdown
+#' @importFrom markdown mark
 #' @importFrom methods findMethods is
 #' @importFrom mvtnorm dmvnorm pmvnorm
 #' @importFrom plyr aaply
