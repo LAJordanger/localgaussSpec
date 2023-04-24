@@ -2,7 +2,7 @@
 % Please edit documentation in R/LG_plot_distance.R
 \name{LG_plot_distance}
 \alias{LG_plot_distance}
-\title{Heatmap-plots for local Gaussian correlations and spectra}
+\title{Distance-plots for local Gaussian correlations and spectra}
 \usage{
 LG_plot_distance(..env, look_up)
 }
@@ -14,7 +14,7 @@ from which the data should be extracted}
 the investigation.}
 }
 \value{
-A heatmap-plot is returned to the workflow.
+A distance-plot is returned to the workflow.
 }
 \description{
 This internal function creates heatmap-based plots

@@ -1,4 +1,4 @@
-#' Heatmap-plots for local Gaussian correlations and spectra
+#' Distance-plots for local Gaussian correlations and spectra
 #'
 #' @description This internal function creates heatmap-based plots
 #'     based on the estimated local Gaussian correlations and spectra.
@@ -9,7 +9,7 @@
 #' @param look_up The environment containing the details needed for
 #'     the investigation.
 #'
-#' @return A heatmap-plot is returned to the workflow.
+#' @return A distance-plot is returned to the workflow.
 #'
 #' @keywords internal
 
