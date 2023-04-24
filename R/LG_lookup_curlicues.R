@@ -74,10 +74,10 @@ LG_lookup_curlicues <- function(look_up) {
     }
     ##  Adjust details for distance_plot-investigations of 'v' and 'b'.
     if (look_up$L2_distance_plot) {
-        if (look_up$L2_distance_bvmL == "b") {
+        if (look_up$L2_distance_vbmL == "b") {
             CSC$b_value$include <- FALSE
         }
-        if (look_up$L2_distance_bvmL == "v") {
+        if (look_up$L2_distance_vbmL == "v") {
             CSC$v_value$include <- FALSE
             ## Adjust position of 'b'-label so it moves to the empty
             ## position from the 'v'-label.

@@ -26,14 +26,16 @@ LG_plot_distance <- function(..env, look_up) {
         return("Not implemented outside of diagonal")
     ##  The investigating of the effect of varying the point along the
     ##  diagonal, or the varying of the bandwidth.
-    if (look_up$L2_distance_bvmL %in% c("b", "v")) {
+    if (look_up$L2_distance_vbmL %in% c("b", "v")) {
         ##  Create a compactified reference.
-        b_or_v <- look_up$L2_distance_bvmL
+        b_or_v <- look_up$L2_distance_vbmL
         ##  Extract the relevant data in this case.
         ..lag_values <- names(..env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
         ##  Create the restrict list suitable for the present case.
         ..restrict <- list(variable = "rho",
-                           lag = ..lag_values)
+                           lag = ..lag_values,
+                           pairs = c(look_up$pairs_ViVj,
+                                     look_up$pairs_VjVi))
         if (b_or_v == "b")
             ..restrict$levels = look_up$levels_point
         if (b_or_v == "v")

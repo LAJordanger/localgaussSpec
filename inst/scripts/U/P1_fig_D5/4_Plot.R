@@ -131,7 +131,7 @@ for (.levels_Diagonal in .levels) {
         main_dir = ..main_dir,
         input = c(input_common,
                   list(L2_distance_plot = TRUE,
-                       L2_distance_bvmL = "b",
+                       L2_distance_vbmL = "b",
                        levels_Diagonal = .levels_Diagonal)),
         input_curlicues = list(
             NC_value = list(short_or_long_label = "short"),

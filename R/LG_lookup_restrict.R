@@ -52,8 +52,8 @@ LG_lookup_restrict <- function (look_up = look_up) {
     ##  An error-message to be used until the plot-functionality from
     ##  the scripts has been implemented into this package.
     if (all(look_up$L2_distance_plot,
-            look_up$L2_distance_bvmL %in% c("m", "L"))) {
-        error("The distance-plots for the m- and L-castes are not yet implemented...")
+            look_up$L2_distance_vbmL %in% c("m", "L"))) {
+        error("The distance-plots for the m- and L-cases are not yet implemented...")
     }
     restrict$initial$local <- function(.node) {
         c(if (look_up$heatmap) {

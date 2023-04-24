@@ -181,7 +181,7 @@ input$heatmap <- NULL
 input$heatmap_b_or_v <- NULL
 
 input$L2_distance_plot <- TRUE
-input$L2_distance_bvmL <- "v"
+input$L2_distance_vbmL <- "v"
 
 distance_plot <- LG_plot_helper(
     main_dir = ..main_dir, 
