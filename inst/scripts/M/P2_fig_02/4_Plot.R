@@ -299,7 +299,7 @@ pdf(file = .save_file)
 
 grid.newpage()
 pushViewport(viewport(
-    layout = grid.layout(4, length(..plot[[1]]))))
+    layout = grid.layout(8, length(..plot[[1]]))))
 ##  Loop over '..plot_list', such that information about the same
 ##  point is in one column.
 for (i in seq_along(..plot)) {

@@ -189,7 +189,7 @@ pdf(file = .save_file)
 
 grid.newpage()
 pushViewport(viewport(
-    layout = grid.layout(4, 1)))
+    layout = grid.layout(8, 1)))
 for (i in seq_along(..plot)) {
     print(..plot[[i]],
           vp = viewport(
