@@ -50,7 +50,7 @@ dmbp_pn_plot <- ggplot(
              alpha = 1,
              vjust = 1.3,
              hjust = -0.1) +
-    theme(axis.ticks = element_line(size = 0.25),
+    theme(axis.ticks = element_line(linewidth = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
 
@@ -254,7 +254,7 @@ dmbp_pn_lag1 <-
              hjust = -0.1) +
     theme(axis.title.x = element_blank(),
           axis.title.y = element_blank()) +
-    theme(axis.ticks = element_line(size = 0.25),
+    theme(axis.ticks = element_line(linewidth = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
 

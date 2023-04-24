@@ -159,7 +159,7 @@ heatmap_plot <-
              vjust = "inward") +
     xlab(label = NULL) +
     ylab(label = NULL)  +
-    theme(axis.ticks = element_line(size = 0.3),
+    theme(axis.ticks = element_line(linewidth = 0.3),
           axis.ticks.length = unit(.06, "cm"),
           axis.text = element_text(size = 6))
 
@@ -208,7 +208,7 @@ distance_plot <- LG_plot_helper(
     input_curlicues = list(
         NC_value = list(short_or_long_label = "short"),
         limits = list(xlim = c(0, 0.035))))  +
-    theme(axis.ticks = element_line(size = 0.3),
+    theme(axis.ticks = element_line(linewidth = 0.3),
           axis.ticks.length = unit(.06, "cm"),
           axis.text = element_text(size = 6))
 rm(input)

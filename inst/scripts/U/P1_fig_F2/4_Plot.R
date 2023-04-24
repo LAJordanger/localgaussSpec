@@ -475,7 +475,7 @@ for (..type in c("norms", "changes_in_norms")) {
 
     .result <- .result + 
         xlab(label = NULL) +
-        theme(axis.ticks = element_line(size = 0.3),
+        theme(axis.ticks = element_line(linewidth = 0.3),
               axis.ticks.length = unit(.06, "cm"),
               axis.text = element_text(size = 6))
 

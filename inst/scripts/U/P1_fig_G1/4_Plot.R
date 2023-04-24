@@ -89,7 +89,7 @@ library(grid)
         ylim = attributes(..plot$global_spectrum)$ylim_list$ylim_restricted)  + 
         xlab(label = NULL) +
         ggtitle(label = NULL) +
-        theme(axis.ticks = element_line(size = 0.25),
+        theme(axis.ticks = element_line(linewidth = 0.25),
               axis.ticks.length = unit(.04, "cm"),
               axis.text = element_text(size = 4.5))
  
@@ -208,7 +208,7 @@ plot1 <- ggplot(data =  test2, aes(x = t, y = level1)) +
              alpha = 1,
              vjust = "inward",
              hjust = "inward") +
-        theme(axis.ticks = element_line(size = 0.25),
+        theme(axis.ticks = element_line(linewidth = 0.25),
               axis.ticks.length = unit(.04, "cm"),
               axis.text = element_text(size = 4.5))
 
@@ -264,7 +264,7 @@ plot2 <- ggplot(data =  selected_cosine, aes(x = t, y = level)) +
              alpha = 1,
              vjust = "inward",
              hjust = "inward") +
-        theme(axis.ticks = element_line(size = 0.25),
+        theme(axis.ticks = element_line(linewidth = 0.25),
               axis.ticks.length = unit(.04, "cm"),
               axis.text = element_text(size = 4.5))
 

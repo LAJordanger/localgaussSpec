@@ -142,7 +142,7 @@ size_omega <- annotated_text$annotated_df["n_R_L_value", "size"] *
              vjust = "inward") + 
     xlab(label = NULL) +
     ggtitle(label = NULL) +
-    theme(axis.ticks = element_line(size = 0.25),
+    theme(axis.ticks = element_line(linewidth = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
 rm(annotated_text, .scaling_for_annotated_text, size_omega)

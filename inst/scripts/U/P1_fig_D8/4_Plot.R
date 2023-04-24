@@ -236,7 +236,7 @@ for (.name in names(.distance_plots)) {
                  hjust = "inward",
                  vjust = v_just_m) + 
         xlab(label = NULL) +
-        theme(axis.ticks = element_line(size = 0.3),
+        theme(axis.ticks = element_line(linewidth = 0.3),
               axis.ticks.length = unit(.06, "cm"),
               axis.text = element_text(size = 6))
 }

@@ -155,7 +155,7 @@ for (.name in names(annotated_text)) {
                  vjust = "inward") + 
         xlab(label = NULL) +
         ggtitle(label = NULL) +
-        theme(axis.ticks = element_line(size = 0.25),
+        theme(axis.ticks = element_line(linewidth = 0.25),
               axis.ticks.length = unit(.04, "cm"),
               axis.text = element_text(size = 4.5))
 }
@@ -216,7 +216,7 @@ rm(.TS_annotation, annotated_text, .scaling_for_annotated_text)
 
 ##  Adjust the ticks to match the other plots.
 ..plot$TS_example <- ..plot$TS_example +
-    theme(axis.ticks = element_line(size = 0.25),
+    theme(axis.ticks = element_line(linewidth = 0.25),
           axis.ticks.length = unit(.04, "cm"),
           axis.text = element_text(size = 4.5))
 
