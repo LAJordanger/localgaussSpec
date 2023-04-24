@@ -237,7 +237,6 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
              ##  loaded.
              if (! is.null(pre_selected$TS_key)) {
                  TS_logging$last <- pre_selected$TS_key
-                 ## ## ## TS_logging$update$input_triggers$TS_info["TS_key"] <-
                  TS_logging$update$input_triggers$TS_info$TS_key <-
                      TS_logging$last
                  ##  Update the values to be used in 'select_Input'
@@ -248,7 +247,6 @@ LG_shiny_interface_0_create_log <- function(.env, .env2) {
              }
              if (!is.null(pre_selected$TS)) {
                  TS_logging[[pre_selected$TS_key]]$last <- pre_selected$TS
-                 ## ## ## TS_logging$update$input_triggers$TS_info["TS"] <-
                  TS_logging$update$input_triggers$TS_info$TS <-
                      TS_logging[[pre_selected$TS_key]]$last
                  TS_logging$update$select_names[["TS"]] <-

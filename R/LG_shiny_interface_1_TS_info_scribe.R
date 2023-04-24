@@ -215,7 +215,6 @@ LG_shiny_interface_1_TS_info_scribe <- function(.env, .env2) {
                 !is.na(.env$pre_selected$Approx))) {
             .env$TS_logging$update$select_Input$Approx$selected <- .env$pre_selected$Approx
             .env$TS_logging[[.TS_node]]$last <- .env$pre_selected$Approx
-            ## ## .env$TS_logging$update$input_triggers$TS_info["Approx"] <- .env$pre_selected$Approx
             .env$TS_logging$update$input_triggers$TS_info$Approx <- .env$pre_selected$Approx
         }
         ##  Add information to the next position of the
