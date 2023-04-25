@@ -1,6 +1,6 @@
-This folder contains the code needed for the reproduction of figure 6 in the paper P2="Nonlinear cross-spectrum analysis via the local Gaussian correlation" (https://arxiv.org/abs/1708.02495).
+This folder contains the code needed for the reproduction of figure 6 in the paper P2="Local Gaussian Cross-Spectrum Analysis" (publised in Econometrics, https://doi.org/10.3390/econometrics11020012).
 
-This investigates a bivariate extension of the "local trigonometric" example seen in P1_fig_07.  It is in essence the same parameter-configuration that is used for both of the variables, the only difference is that all the cosine-components in the second variable have received individual phase adjustments.  This differs from the case investigated in P2_fig_04 and P2_fig_05, where the cosine-components all had the same phase adjustment.
+This investigates a bivariate extension of the "local trigonometric" example seen in P1_fig_07.  It is in essence the same parameter-configuration that is used for both of the variables, the only difference is that all the cosine-components in the second variable have received individual phase adjustments.  This differs from the case investigated in P2_fig_03 and P2_fig_S6.3, where the cosine-components all had the same phase adjustment.
 
 The file "3_Shiny.R" contains the code that is needed in order to start the interactive shiny-application, which enables the user to see how the resulting local Gaussian spectral densities changes with the different tuning parameters (truncation level, bandwidth, point) that was used in "2_Data.R".
 
