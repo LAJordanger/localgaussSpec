@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The "bivariate cosine" example from P2_fig_02.
+##  The "bivariate cosine" example from P2_fig_01.
 
 ##  Load the required library
 
@@ -9,7 +9,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_02.03")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_01_S6.2")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as

@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The "bivariate cosine" example from P2_fig_02.
+##  The "bivariate cosine" example from P2_fig_01.
 
 ##  This script investigates the local Gaussian cross-spectra for
 ##  for bivariate "phase shifted cosine with some noise".
@@ -37,8 +37,8 @@ library(grid)
 ##  Specify the key arguments that identifies where the data to be
 ##  investigated can be found.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_02.03")
-..TS <- "dmt_bivariate_e65da95d163c4f4df65813aee851ec99"
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_01_S6.2")
+..TS <- "dmt_bivariate_9b04a420df4b6e7ed7e68a96b1b2fc4b"
 ..Approx <- "Approx__1"
 
 ###----------------------------------------------------------------###
@@ -292,7 +292,7 @@ rm(i, j, .bm, .details, .adjust, .adjust_helper)
 
 .save_file <- file.path(paste(c(..main_dir, ..TS),
                               collapse = .Platform$file.sep),
-                        "P2_fig_02.pdf")
+                        "P2_fig_01.pdf")
 rm(..main_dir, ..TS)
 
 pdf(file = .save_file) 

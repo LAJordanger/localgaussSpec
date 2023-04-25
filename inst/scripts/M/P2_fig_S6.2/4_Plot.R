@@ -1,13 +1,13 @@
 ###----------------------------------------------------------------###
-##  The "bivariate cosine" example from P2_fig_03.
+##  The "bivariate cosine" example from P2_fig_S6.2.
 
 ##  This script investigates a complex valued presentation of the data
-##  from P2_fig_02.
+##  from P2_fig_01.
 
 ###----------------------------------------------------------------###
 
 ##  In order for this script to work, it is necessary that the script
-## '2_Data.R' from P2_fig_02 has been used first.
+## '2_Data.R' from P2_fig_01 has been used first.
 
 ##  Warning: The code below assumes that '2_Data.R' was used with its
 ##  initial arguments, i.e. an adjustment of the script that includes
@@ -36,8 +36,8 @@ library(grid)
 ##  Specify the key arguments that identifies where the data to be
 ##  investigated can be found.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_02.03")
-..TS <- "dmt_bivariate_e65da95d163c4f4df65813aee851ec99"
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_01_S6.2")
+..TS <- "dmt_bivariate_9b04a420df4b6e7ed7e68a96b1b2fc4b"
 ..Approx <- "Approx__1"
 
 ###----------------------------------------------------------------###
@@ -117,7 +117,7 @@ rm(..Approx, .cpz, .omega, input)
 
 .save_file <- file.path(paste(c(..main_dir, ..TS),
                               collapse = .Platform$file.sep),
-                        "P2_fig_03.pdf")
+                        "P2_fig_S6.2.pdf")
 rm(..main_dir, ..TS)
 
 pdf(file = .save_file) 
