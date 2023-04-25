@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-## The bivariate Gaussian example from P2_fig_01.
+## The bivariate Gaussian example from P2_fig_S6.1.
 
 ##  This script investigates the local Gaussian cross-spectra for
 ##  bivariate Gaussian white noise.
@@ -37,8 +37,8 @@ library(grid)
 ##  Specify the key arguments that identifies where the data to be
 ##  investigated can be found.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_01")
-..TS <- "rmvnorm_41b3559fddd457ca16acb737b7b9d85d"
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_S6.1")
+..TS <- "rmvnorm_1b6348699b1f40c0505b754c9603d93a"
 ..Approx <- "Approx__1"
 
 ###----------------------------------------------------------------###
@@ -203,7 +203,7 @@ rm(.name, .name2, .bm, size_omega, .scaling_for_annotated_text,
 
 .save_file <- file.path(paste(c(..main_dir, ..TS),
                               collapse = .Platform$file.sep),
-                        "P2_fig_01.pdf")
+                        "P2_fig_S6.1.pdf")
 rm(..main_dir, ..TS)
 
 pdf(file = .save_file) 

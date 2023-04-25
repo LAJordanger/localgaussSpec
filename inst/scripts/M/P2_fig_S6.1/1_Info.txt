@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure 1 in the paper P2="Nonlinear cross-spectrum analysis via the local Gaussian correlation" (https://arxiv.org/abs/1708.02495).
+This folder contains the code needed for the reproduction of figure S6.1 in the paper P2="Local Gaussian Cross-Spectrum Analysis" (publised in Econometrics, https://doi.org/10.3390/econometrics11020012).
 
 This investigates a trivial example based on bivariate Gaussian white noise.
 

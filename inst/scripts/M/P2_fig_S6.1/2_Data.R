@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The bivariate Gaussian example from P2_fig_01.
+##  The bivariate Gaussian example from P2_fig_S6.1.
 
 ##  Load the required library
 
@@ -9,7 +9,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_01")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_S6.1")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as
