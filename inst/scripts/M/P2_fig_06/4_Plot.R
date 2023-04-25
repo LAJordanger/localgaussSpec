@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The EuStockMarkets-example from P2_fig_07.
+##  The EuStockMarkets-example from P2_fig_06.
 
 ##  This script contains the code needed in order to reproduce the
 ##  plot that shows the pseduo-normalised version of the log-returns
@@ -124,7 +124,7 @@ CAC_plot <- ggplot(
 ##  WARNING: For this particular example the file will be saved in the
 ##  active working directory of R.
 
-.save_file <- "P2_fig_07.pdf"
+.save_file <- "P2_fig_06.pdf"
 
 pdf(file = .save_file) 
 
