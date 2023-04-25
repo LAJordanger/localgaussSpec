@@ -17,13 +17,13 @@ examples and figures investigated in the two local Gaussian spectral
 density papers _Nonlinear spectral analysis: A local Gaussian
 approach_ (published in the Journal of the American Statistical
 Association, https://doi.org/10.1080/01621459.2020.1840991, see also
-https://arxiv.org/abs/1708.02166) and _Nonlinear cross-spectrum
-analysis via the local Gaussian correlation_
-(https://arxiv.org/abs/1708.02495), which respectively deals with
-univariate and multivariate time series.  These two papers build upon
-Paper 1 and Paper 2 in the PhD-dissertation _Nonlinear Spectrum
-Analysis based on the Local Gaussian Correlation and Model Selection
-for Copulas_ (https://bora.uib.no/handle/1956/16950).
+https://arxiv.org/abs/1708.02166) and _Local Gaussian Cross-Spectrum
+Analysis_ (publised in Econometrics,
+https://doi.org/10.3390/econometrics11020012), which respectively
+deals with univariate and multivariate time series.  These two papers
+build upon Paper 1 and Paper 2 in the PhD-dissertation _Nonlinear
+Spectrum Analysis based on the Local Gaussian Correlation and Model
+Selection for Copulas_ (https://bora.uib.no/handle/1956/16950).
 
 Note that these scripts also are intended to be used as templates for
 those that would like to investigate their own time series by means of
