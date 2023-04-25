@@ -1,7 +1,7 @@
 ###----------------------------------------------------------------###
 ##  The "bivariate cosine" example from P2_fig_01.
 
-##  This script investigates the local Gaussian cross-spectra for
+##  This script investigates the local Gaussian cross-spectra 
 ##  for bivariate "phase shifted cosine with some noise".
 
 ###----------------------------------------------------------------###
