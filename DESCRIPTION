@@ -8,11 +8,12 @@ Description: A package for the estimation and visualisation of local Gaussian
     spectral densities.
 Remotes: github::LAJordanger/leanRcoding
 Depends:
-    R (>= 3.3.3)
+    R (>= 4.3.0)
 License: file LICENSE
 Imports: 
     abind,
     dfoptim,
+    clipr,
     digest,
     foreach,
     ggplot2,
@@ -27,6 +28,7 @@ Imports:
     reshape2,
     scales,
     shiny,
+    shinycssloaders,
     stats,
     stringr,
     timeDate,
@@ -42,4 +44,4 @@ Suggests:
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3
