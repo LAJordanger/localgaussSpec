@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The "local trigonometric" example from P2_fig_04.
+##  The "local trigonometric" example from P2_fig_03.
 
 ##  Load the required library
 
@@ -9,7 +9,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_04.05")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as

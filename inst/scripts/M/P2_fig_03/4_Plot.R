@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The "local trigonometric" example from P2_fig_04.
+##  The "local trigonometric" example from P2_fig_03.
 
 ##  This script investigates the local Gaussian cross-spectra for a
 ##  "local trigonometric" example, based on P1_fig_07, with a common
@@ -39,8 +39,8 @@ library(grid)
 ##  Specify the key arguments that identifies where the data to be
 ##  investigated can be found.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_04.05")
-..TS <- "dmt_bivariate_6a6f6d4cbc41e96083d61d26469b7ac6"
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
+..TS <- "dmt_bivariate_0fa441a13f46c6a5f53484556b81ef25"
 ..Approx <- "Approx__1"
 
 ###----------------------------------------------------------------###
@@ -297,7 +297,7 @@ rm(i, j, .bm, .details, .adjust, .adjust_helper)
 
 .save_file <- file.path(paste(c(..main_dir, ..TS),
                               collapse = .Platform$file.sep),
-                        "P2_fig_04.pdf")
+                        "P2_fig_03.pdf")
 rm(..main_dir, ..TS)
 
 pdf(file = .save_file) 
