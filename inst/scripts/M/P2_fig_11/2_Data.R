@@ -10,7 +10,7 @@ library(rmgarch)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_11.12")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_11_12")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as

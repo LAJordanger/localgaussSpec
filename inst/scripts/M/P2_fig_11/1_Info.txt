@@ -1,4 +1,4 @@
-This folder contains the code needed for the reproduction of figure 11 in the paper P2="Nonlinear cross-spectrum analysis via the local Gaussian correlation" (https://arxiv.org/abs/1708.02495).
+This folder contains the code needed for the reproduction of figure 11 in the paper P2="Local Gaussian Cross-Spectrum Analysis" (publised in Econometrics, https://doi.org/10.3390/econometrics11020012).
 
 This is based on a simple multivariate GARCH-model (fitted to the log-returns of the EuStockMarkets-data), where the simulations are based on the rmgarch-package (Alexios Ghalanos, https://cran.r-project.org/web/packages/rmgarch).  Note that the rmgarch-package is not installed together with the localgaussSpec-package, and it is thus necessary to install rmgarch before the code in "2_Data.R" can be used.
 
