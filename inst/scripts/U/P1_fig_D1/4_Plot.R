@@ -110,7 +110,7 @@ heatmap_plot <- heatmap_plot +
     geom_hline(
         yintercept = c(0.1, 0.5, 0.9),
         lty = 2,
-        size = 0.2,
+        lwd = 0.2,
         alpha = .5)
 
 ##  Adjust the title manually (update code later on), including

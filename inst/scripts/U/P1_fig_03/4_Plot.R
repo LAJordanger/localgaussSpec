@@ -99,7 +99,7 @@ df_details <- data.frame(
 dmbp_pn_plot_extra <- dmbp_pn_plot +
     geom_hline(yintercept = coord_points,
                linetype = 2,
-               size = .3) +
+               lwd = .3) +
     geom_rect(data = data.frame(
                   xmin = -Inf,
                   xmax = Inf,

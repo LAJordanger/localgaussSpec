@@ -487,7 +487,7 @@ for (..type in c("norms", "changes_in_norms")) {
                          } else
                              0,
             lty = 2,
-            size = 0.1,
+            lwd = 0.1,
             col = "brown")
 
     .result <- .result + 

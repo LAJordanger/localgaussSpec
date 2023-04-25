@@ -130,7 +130,7 @@ annotated_text$annotated$label[2] <- paste(
                linetype = 3,
                col = "black",
                alpha = 0.8,
-               size = 0.3) +
+               lwd = 0.3) +
     eval(annotated_text$annotated) + 
     annotate(geom = "text",
              label = "omega",

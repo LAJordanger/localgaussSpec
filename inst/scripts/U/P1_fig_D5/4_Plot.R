@@ -114,7 +114,7 @@ for (.levels_Diagonal in .levels) {
         ##  And add a horizontal line for the values used as default.
         geom_hline(yintercept = 0.5,
                    lty = 2,
-                   size = 0.2,
+                   lwd = 0.2,
                    alpha = .5)
         
     ##  Store the annotated values.
