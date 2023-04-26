@@ -49,9 +49,32 @@ LG_plot_distance <- function(..env, look_up) {
         .global_data <- restrict_array(
             .arr = ..env[["LGC_array_global"]],
             .restrict = list(TS = "TS_for_analysis",
-                             lag = ..lag_values),
+                             lag = ..lag_values,
+                             pairs = c(look_up$pairs_ViVj,
+                                       look_up$pairs_VjVi)),
             .drop = TRUE,
             .never_drop = c("lag", "content"))
+        ##  Check the settings needed for the lag zero case.
+        if (look_up$is_univariate) {
+            lag_zero_local <- 1
+            lag_zero_global <- 1
+        } else {
+            ..restrict$lag <- "0"
+            ..restrict$pairs <- look_up$pairs_ViVj
+            ..lag_values <- "0"
+            lag_zero_local <- restrict_array(
+                .arr = ..env[["LGC_array_local"]]$on_diag,
+                .restrict = ..restrict,
+                .drop = TRUE,
+                .never_drop = c("lag", "bw_points"))
+            lag_zero_global <- restrict_array(
+                .arr = ..env[["LGC_array_global"]],
+                .restrict = list(TS = "TS_for_analysis",
+                                 lag = ..lag_values,
+                                 pairs = look_up$pairs_ViVj),
+                .drop = TRUE,
+                .never_drop = c("lag", "content"))
+        }
         rm(..lag_values, ..restrict)
         ## Compute the product of the correlations with the weights.
         .weighted_data <- multiply_arrays(
@@ -60,23 +83,53 @@ LG_plot_distance <- function(..env, look_up) {
         .global_weighted_data <- multiply_arrays(
             .arr1 = .global_data,
             .arr2 = ..env[[look_up$cache$weights_f]][[as.character(look_up$cut)]])
-        ##  Next: Compute the norms.  In this "on_diagonal"-case for local
-        ##  Gaussian autocorrelations, the squared norms are obtained by
-        ##  squaring the '.weighted_data', summing over the lags,
-        ##  multiplying with 2 (due to folding) and add 1 (to include the
-        ##  lag-zero-term).  Take the square root to get the norms.
-        .the_norms <- sqrt(
-            1 + 2 * my_apply(
-                        X = .weighted_data^2,
-                        MARGIN = switch(EXPR = b_or_v,
-                                        v = "levels",
-                                        b = "bw_points"),
-                        FUN = sum))
-        .the_global_norm <- sqrt(
-            1 + 2 * my_apply(
-                        X = .global_weighted_data^2,
-                        MARGIN = "content",
-                        FUN = sum))
+        ##  Compute the norms of the local case.  Need to adjust
+        ##  relative univariate/multivariate and on/off_diagonal.
+        .the_norms <- local({
+            .squared_lags <- my_apply(
+                X = .weighted_data^2,
+                MARGIN = switch(EXPR = b_or_v,
+                                v = "levels",
+                                b = "bw_points"),
+                FUN = sum)
+            if (all(look_up$is_univariate,
+                    look_up$is_on_diagonal)) {
+                ##  Adjust for folding.
+                .squared_lags <- 2 * .squared_lags
+            }
+            ##  When required, adjust the dimension names of
+            ##  'lag_zero_local' to enable the use of 'add_arrays'.
+            if (look_up$is_multivariate) {
+                .i <- which(names(dimnames(lag_zero_local)) == "lag")
+                names(dimnames(lag_zero_local))[.i] <- "sum"
+                dimnames(lag_zero_local)$sum <- "sum"
+            }
+            .tmp <- add_arrays(
+                .arr1 = lag_zero_local^2,
+                .arr2 = .squared_lags)
+            sqrt(.tmp)
+        })
+        .the_global_norm <- local({
+            .squared_lags <- my_apply(
+                X = .global_weighted_data^2,
+                MARGIN = "content",
+                FUN = sum)
+            if (look_up$is_univariate) {
+                ##  Adjust for folding.
+                .squared_lags <- 2 * .squared_lags
+            }
+            ##  When required, adjust the dimension names of
+            ##  'lag_zero_local' to enable the use of 'add_arrays'.
+            if (look_up$is_multivariate) {
+                .i <- which(names(dimnames(lag_zero_global)) == "lag")
+                names(dimnames(lag_zero_global))[.i] <- "sum"
+                dimnames(lag_zero_global)$sum <- "sum"
+            }
+            .tmp <- add_arrays(
+                .arr1 = lag_zero_global^2,
+                .arr2 = .squared_lags)
+            sqrt(.tmp)
+        })
         ##  The part below is for the v-case, where we want to adjust
         ##  the dimension-names for '.the_norms' --- i.e. we want to
         ##  use the percentages the diagonal points correspond to.
@@ -236,7 +289,7 @@ LG_plot_distance <- function(..env, look_up) {
         distance_plot <- distance_plot +
             ##  Add a line for the norm of the global spectrum.
             geom_hline(yintercept = .the_global_norm,
-                       size = 0.1,
+                       lwd = 0.1,
                        colour = "red",
                        lty = 1)  +
             ##  Add the label with the value.
