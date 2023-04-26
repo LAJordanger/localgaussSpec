@@ -1,6 +1,8 @@
 This folder contains the code needed for the reproduction of figure S3.5 in the paper P2="Local Gaussian Cross-Spectrum Analysis" (publised in Econometrics, https://doi.org/10.3390/econometrics11020012).
 
-This is a heatmap-based plot that shows the effect on the estimated local Gaussian autocorrelations as the point varies along the diagonal.  This investigates the dmbp-data.
+This is a heatmap-based plot that shows the effect on the estimated local Gaussian cross-correlations as the point varies along the diagonal.  This investigates the DAX- and CAC-components of the log-returns of the EuStockMarkets-data.  (The EuStockMarkets contains 1860 daily closing prices collected in the period 1991-1998, from the following four major European stock indices: Germany DAX (Ibis), Switzerland SMI, France CAC, and UK FTSE.  The data was sampled in business time, i.e., weekends and holidays were omitted.)
+
+Note that this example use the data from P2_fig_07, where the heatmaps for the Co- and Quad-spectra was computed.  See P2_fig_S3.1 for the heatmaps- and distance-plots for the individual marginal local Gaussian autospectra of the DAX- and CAC-components, and see P2_fig_S3.2 for the heatmaps for the Amplitude- and Phase-spectra.
 
 There is no "2_Data.R"-file in this folder, use the one in P2_fig_07 instead.  Use the "3_Shiny.R"-file in P2_fig_07 if it is of interest to start the interactive shiny-application, which enables the user to see how the resulting local Gaussian spectral densities changes with the different tuning parameters (truncation level, bandwidth, point) that was used in "2_Data.R".
 

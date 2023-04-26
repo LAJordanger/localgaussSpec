@@ -45,7 +45,7 @@ library(grid)
 ##  script '2_Data.R', so any modifications there must be mirrored in
 ##  this script.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_07_S3.1_S3.2")
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_07_S3.1_S3.2_S3.5")
 ..TS <- "6c8070689177015432b618c37bce0d69"
 ..Approx <- "Approx__1"
 
