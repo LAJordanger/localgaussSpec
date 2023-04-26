@@ -4,7 +4,7 @@ This investigates the log-returns of the EuStockMarkets-data that is contained i
 
 Note that this particular figure investigates the sensitivity of the truncation level, and it does this by using the 200 first local Gaussian autocorrelations (for three points) that was investigated in P2_fig_08.
 
-There is no "2_Data.R"-file in this folder, use the one in P2_fig_08 instead.  Use the "3_Shiny.R"-file in P1_fig_04 if it is of interest to start the interactive shiny-application, which enables the user to see how the resulting local Gaussian spectral densities changes with the different tuning parameters (truncation level, bandwidth, point) that was used in "2_Data.R".
+There is no "2_Data.R"-file in this folder, use the one in P2_fig_08 instead.  Use the "3_Shiny.R"-file in P2_fig_08 if it is of interest to start the interactive shiny-application, which enables the user to see how the resulting local Gaussian spectral densities changes with the different tuning parameters (truncation level, bandwidth, point) that was used in "2_Data.R".
 
 The file "4_Plot.R" contains the code needed for the reproduction of figure S3.10 in paper P2.  This script will for the specified tuning parameters create the desired plots, adjust them (e.g. having the same scale on all the plots), and then collect the plots in a file that is saved to disk.
 

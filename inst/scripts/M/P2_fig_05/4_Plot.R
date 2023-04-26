@@ -2,9 +2,9 @@
 ##  The "local trigonometric" example from P2_fig_05.
 
 ##  This scripts investigates the local Gaussian cross-spectra for a
-##  "local trigonometric" example, based on P1_fig_07, with individual
-##  phase shift for the four cosine-components.  Inspection along
-##  diagonal points.
+##  "bivariate local trigonometric" example, with individual phase
+##  shift for the four cosine-components.  Inspection along diagonal
+##  points.
 
 ###----------------------------------------------------------------###
 

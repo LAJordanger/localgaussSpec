@@ -9,7 +9,7 @@
 #####------------------------------------------------------------#####
 
 ##  In order for this script to work, it is necessary that the script
-## '2_Data.R' from P1_fig_10 has been used first.
+## '2_Data.R' from P2_fig_10 has been used first.
 
 ##  Warning: The code below assumes that '2_Data.R' was used with its
 ##  initial arguments, i.e. an adjustment of the script that includes
@@ -171,7 +171,7 @@ heatmap_plot <-
 
 .save_file <- file.path(paste(c(..main_dir, ..TS),
                               collapse = .Platform$file.sep),
-                        "P1_fig_S3.5.pdf")
+                        "P2_fig_S3.5.pdf")
 
 pdf(.save_file)
 

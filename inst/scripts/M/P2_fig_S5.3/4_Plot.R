@@ -16,7 +16,7 @@
 #####------------------------------------------------------------#####
 
 ##  In order for this script to work, it is necessary to first use the
-##  script '2_Data.R' for both P1_fig_09 and P1_fig_11.
+##  script '2_Data.R' for both P2_fig_09 and P2_fig_11.
 
 ##  Warning: The code below assumes that the two '2_Data.R'-files were
 ##  used with their initial arguments, i.e. an adjustment of the

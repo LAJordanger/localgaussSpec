@@ -4,7 +4,7 @@ This investigates the log-returns of the EuStockMarkets-data that is contained i
 
 The purpose of this plot is to investigate how the block length L (from the adjusted block bootstrap given in P1) affects the estimated pointwise confidence intervals.  Note that the script in "2_Data.R" takes some time to finish.
 
-Note that P1_fig_S5.8 also uses the data computed in this example.
+Note that P2_fig_S5.8 also uses the data computed in this example.
 
 The file "3_Shiny.R" contains the code that is needed in order to start the interactive shiny-application, which enables the user to see how the resulting local Gaussian spectral densities changes with the different tuning parameters (truncation level, bandwidth, point) that was used in "2_Data.R".
 
