@@ -39,7 +39,7 @@ library(grid)
 ##  Specify the key arguments that identifies where the data to be
 ##  investigated can be found.
 
-..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_08")
+..main_dir <- c("~", "LG_DATA_scripts", "P2_fig_08_S3.10")
 ..TS <- "9e59e59f271b88315be95f9e40025f04"
 ..Approx <- "Approx__1"
 ..Boot_Approx  <- "Nothing here to select"

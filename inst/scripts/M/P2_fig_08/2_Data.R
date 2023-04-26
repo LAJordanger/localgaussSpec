@@ -9,7 +9,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_08")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_08_S3.10")
 
 ## UPDATE: This should have been stored differently in 08 and 09
 ## folders, not together.
