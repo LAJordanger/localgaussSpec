@@ -1,5 +1,12 @@
+##  This is under construction, should become a new out in the extreme
+##  tails example for the bivariate dmt-case.  The main point is to
+##  adjust the setup from P1_fig_G2 to the present bivariate case.
+##  Some issues must be adjusted in order to plot the stuff for the
+##  different spectra, since this approach is based on the
+
+
 ###----------------------------------------------------------------###
-##  The "bivariate local trigonometric" example from P2_fig_03.
+##  The "local trigonometric" example from P2_fig_06.
 
 ##  Load the required library
 
@@ -9,7 +16,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_S6.4_S6.5_S6.6")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as
@@ -25,8 +32,8 @@ main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
 ##  Simulate 'nr_samples' samples of length 'N' from the time series
 ##  corresponding to 'TS_key', and save it into the file-hierarchy.
 
-nr_samples <- 100
-N <- dim(EuStockMarkets)[1] - 1 ## = 1859
+nr_samples <- 1
+N <- 25000
 TS_key <- "dmt_bivariate"
 
 .seed_for_sample <- 4624342
@@ -47,7 +54,7 @@ set.seed(.seed_for_sample)
                          runif(n = 4, min = 0.1, max = 0.2)},
                      theta = NULL,
                      wn = NULL),
-    phase_adjustment = pi/3,
+    phase_adjustment = c(pi/3, pi/4, 0, pi/2),
     .seed = NULL)
 rm(nr_samples, N, .seed_for_sample)
 
@@ -82,14 +89,20 @@ rm(TS_key, .TS_sample, save_dir, main_dir)
 ##  interest to compare the result with "par_five", otherwise avoid it
 ##  as it most likely will be a waste of computational resources.
 
+##  Define the range of points relatively the bandwith.
+
+.b <- 0.4
+
+.point_L  <- pnorm(qnorm(0.05) - 2 * .b)
+.point_U  <- pnorm(qnorm(0.05) - .5 * .b)
+
 .LG_type <- "par_five"
 .LG_points <- LG_select_points(
-    .P1 = c(0.1, 0.1),
-    .P2 = c(0.9, 0.9),
-    .shape = c(3, 3))
-lag_max <- 15
-
-.b <- 0.6
+    .P1 = c(.point_L, .point_L),
+    .P2 = c(.point_U, .point_U),
+    .shape = 200)
+rm(.point_L, .point_U)
+lag_max <- 10
 
 ##  Do the main computation.  
 
@@ -127,3 +140,19 @@ shiny::runApp(LG_shiny(
     data_dir = LG_AS$data_dir))
 
 ###----------------------------------------------------------------###
+
+
+################################################################################
+
+
+library(localgaussSpec)
+
+main_dir <- c("~", "LG_DATA_scripts", "TEST_bivariate_dmt_extreme_tails")
+data_dir <-
+    c(ts.dir = "dmt_bivariate_9cebf62295edc7c1de29a65cf086652a",
+      approx.dir = "Approx__1")
+
+LG_shiny(
+    main_dir = main_dir,
+    data_dir = data_dir)
+

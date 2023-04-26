@@ -1,5 +1,5 @@
 ###----------------------------------------------------------------###
-##  The "bivariate local trigonometric" example from P2_fig_03.
+##  The "bivariate local trigonometric" example from P2_fig_S6.7.
 
 ##  Load the required library
 
@@ -9,7 +9,7 @@ library(localgaussSpec)
 
 ##  Specify the directory where the file-hierarchy will be stored.
 
-main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
+main_dir <- c("~", "LG_DATA_scripts", "P2_fig_S6.7")
 
 ## Note that 'main_dir' only contains the specification of the
 ## in-hierarchy part of the required path, and this path is stored as
@@ -26,10 +26,10 @@ main_dir <- c("~", "LG_DATA_scripts", "P2_fig_03_S6.3")
 ##  corresponding to 'TS_key', and save it into the file-hierarchy.
 
 nr_samples <- 100
-N <- dim(EuStockMarkets)[1] - 1 ## = 1859
+N <- 25000
 TS_key <- "dmt_bivariate"
 
-.seed_for_sample <- 4624342
+.seed_for_sample <- 624342
 set.seed(.seed_for_sample)
 
 ##  Generate the sample.
@@ -84,14 +84,14 @@ rm(TS_key, .TS_sample, save_dir, main_dir)
 
 .LG_type <- "par_five"
 .LG_points <- LG_select_points(
-    .P1 = c(0.1, 0.1),
-    .P2 = c(0.9, 0.9),
-    .shape = c(3, 3))
-lag_max <- 15
+    .P1 = c(0.01, 0.01),
+    .P2 = c(0.01, 0.01),
+    .shape = c(1, 1))
+lag_max <- 10
 
-.b <- 0.6
+.b <- 0.4
 
-##  Do the main computation.  
+##  Do the main computation.
 
 LG_AS <- LG_approx_scribe(
     main_dir = .TS_LG_object$TS_info$main_dir,
